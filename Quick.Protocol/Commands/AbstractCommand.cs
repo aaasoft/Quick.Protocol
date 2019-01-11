@@ -6,7 +6,7 @@ namespace Quick.Protocol.Commands
 {
     public abstract class AbstractCommand<TRequestContent, TResponseData> : ICommand
     {
-        public abstract string Action { get; }
+        public abstract string Action { get; internal set; }
 
         object ICommand.Content => Content;
 
