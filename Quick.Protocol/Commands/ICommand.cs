@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quick.Protocol.Packages;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,8 +12,18 @@ namespace Quick.Protocol.Commands
         /// </summary>
         string Action { get; }
         /// <summary>
+        /// 编号
+        /// </summary>
+        string Id { get; set; }
+        /// <summary>
         /// 内容
         /// </summary>
-        object Content { get; }
+        object Content { get; set; }
+        /// <summary>
+        /// 解析
+        /// </summary>
+        /// <param name="package"></param>
+        /// <returns></returns>
+        ICommand Parse(CommandRequestPackage package);
     }
 }

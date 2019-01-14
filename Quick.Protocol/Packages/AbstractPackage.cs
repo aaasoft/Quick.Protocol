@@ -4,14 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Packages
 {
     public abstract class AbstractPackage : IPackage
     {
         public abstract byte PackageType { get; }
-        public IPackage Parse(byte[] packageBody)
+        public IPackage Parse(byte[] buffer, int index, int count)
         {
-            using (var ms = new MemoryStream(packageBody))
+            using (var ms = new MemoryStream(buffer, index, count))
                 return (IPackage)ProtoBuf.Serializer.Deserialize(this.GetType(), ms);
         }
 

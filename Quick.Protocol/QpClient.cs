@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Quick.Protocol.Commands;
+using Quick.Protocol.Packages;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,27 +12,23 @@ using System.Threading.Tasks;
 
 namespace Quick.Protocol
 {
-    public class QpClient
+    public class QpClient : QpCommandHandler
     {
         private CancellationTokenSource cts = null;
         private QpClientOptions options;
         private TcpClient tcpClient;
-        private NetworkStream stream;
-        private byte[] buffer = new byte[1 * 1024 * 1024];
+
         /// <summary>
         /// 服务端欢迎信息
         /// </summary>
         public WelcomeCommand.CommandContent WelcomeContent { get; private set; }
         /// <summary>
-        /// 收到数据包事件
-        /// </summary>
-        public event EventHandler<IPackage> PackageReceived;
-        /// <summary>
-        /// 连接已经断开事件
+        /// 连接断开时
         /// </summary>
         public event EventHandler Disconnected;
 
         public QpClient(QpClientOptions options)
+            : base(options)
         {
             options.Check();
             this.options = options;
@@ -42,6 +39,7 @@ namespace Quick.Protocol
         /// </summary>
         public async Task ConnectAsync()
         {
+            //清理
             if (cts != null)
             {
                 cts.Cancel();
@@ -52,130 +50,70 @@ namespace Quick.Protocol
 
             if (tcpClient != null)
                 Close();
+            //开始连接
             tcpClient = new TcpClient();
             tcpClient.SendTimeout = options.SendTimeout;
             tcpClient.ReceiveTimeout = options.ReceiveTimeout;
             await tcpClient.ConnectAsync(options.Host, options.Port);
-            stream = tcpClient.GetStream();
+            
+            //初始化网络
+            InitQpPackageHandler_Stream(tcpClient.GetStream());
 
             //读取服务端发来的欢迎信息
-            var welcomePackage = await readPackageAsync(token) as CommandRequestPackage;
+            var welcomePackage = await ReadPackageAsync(token) as CommandRequestPackage;
             if (welcomePackage == null || string.IsNullOrEmpty(welcomePackage.Content))
                 throw new IOException("Could't read welcome command,protocol error.");
+
             //验证指令集
             var welcomeCommand = welcomePackage.ToCommand<WelcomeCommand, WelcomeCommand.CommandContent, object>();
-            WelcomeContent = welcomeCommand.Content;
+            WelcomeContent = welcomeCommand.ContentT;
             if (WelcomeContent == null)
-                throw new IOException("WelcomContent is null,protocol error.");
+            {
+                var errorMessage = "WelcomContent is null,protocol error.";
+                SendPackage(welcomePackage.Id, -1, errorMessage);
+                throw new IOException(errorMessage);
+            }
             var notSupportInstructionNames = options.NeededInstructionSet.Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
             if (notSupportInstructionNames.Length > 0)
-                throw new IOException($"Client need instruction[{string.Join(",", notSupportInstructionNames)}] not support by server.");
+            {
+                var errorMessage = $"Client need instruction[{string.Join(",", notSupportInstructionNames)}] not support by server.";
+                SendPackage(welcomePackage.Id, -1, errorMessage);
+                throw new IOException(errorMessage);
+            }
+            SendPackage(welcomePackage.Id, 0, "OK");
 
             //开始读取其他数据包
-            beginReadPackage(token);
+            BeginReadPackage(token);
+            
+            //开始认证
+            var authenticateResult = await SendCommand(new AuthenticateCommand(new AuthenticateCommand.CommandContent()
+            {
+                Compress = options.Compress,
+                Encrypt = options.Encrypt,
+                Answer = Utils.CryptographyUtils.DesEncrypt(welcomeCommand.Id, options.Password)
+            }));
+            if (authenticateResult.Code != 0)
+                throw new IOException(authenticateResult.Message);
         }
 
-        /// <summary>
-        /// 发送指令
-        /// </summary>
-        /// <typeparam name="TRequestContent"></typeparam>
-        /// <typeparam name="TResponseData"></typeparam>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        public CommandResponse<TResponseData> SendCommand<TRequestContent, TResponseData>(AbstractCommand<TRequestContent, TResponseData> command)
+        protected override void OnReadError(Exception exception)
         {
-            lock (this)
-            {
-                System.Threading.Mutex mutex = new System.Threading.Mutex();
-                CommandResponsePackage responsePackage = null;
-                EventHandler<IPackage> packageHandler = null;
-                packageHandler = (sender, package) =>
-                 {
-                     if (package is null)
-                         return;
-                     if (package is CommandResponsePackage)
-                     {
-                         PackageReceived -= packageHandler;
-                         responsePackage = (CommandResponsePackage)package;
-                         mutex.ReleaseMutex();
-                     }
-                 };
-                PackageReceived += packageHandler;
+            base.OnReadError(exception);
+            cancellAll();
+            disconnect();
+            Disconnected?.Invoke(this, EventArgs.Empty);
+        }
 
-                var request = new CommandRequestPackage()
-                {
-                    Action = command.Action,
-                    Content = JsonConvert.SerializeObject(command.Content)
-                };
-                var requestBuffer = request.Output();
-                stream.Write(requestBuffer, 0, requestBuffer.Length);
-                //等待响应包
-                mutex.WaitOne();
-                if (responsePackage == null)
-                    return null;
-                return new CommandResponse<TResponseData>()
-                {
-                    Code = responsePackage.Code,
-                    Message = responsePackage.Message,
-                    Data = string.IsNullOrEmpty(responsePackage.Content) ? default(TResponseData) : JsonConvert.DeserializeObject<TResponseData>(responsePackage.Content)
-                };
+        private void cancellAll()
+        {
+            if (cts != null)
+            {
+                cts.Cancel();
+                cts = null;
             }
         }
 
-        private void beginReadPackage(CancellationToken token)
-        {
-            if (token.IsCancellationRequested)
-                return;
-            readPackageAsync(token).ContinueWith(t =>
-            {
-                //如果已经取消
-                if (t.IsCanceled)
-                    return;
-
-                //如果读取出错
-                if (t.IsFaulted)
-                {
-                    onDisconnected();
-                    return;
-                }
-                try
-                {
-                    var package = t.Result;
-                    PackageReceived?.Invoke(this, package);
-                }
-                catch (Exception ex)
-                {
-
-                }
-                finally
-                {
-                    //读取下一个数据包
-                    beginReadPackage(token);
-                }
-            });
-        }
-
-        private async Task<IPackage> readPackageAsync(CancellationToken token)
-        {
-            int ret = 0;
-            //读取包头
-            ret = await stream.ReadAsync(buffer, 0, 5, token);
-            if (ret < 5)
-                throw new IOException($"包头读取错误！读取数据长度：{ret}");
-
-            var packageLength = BitConverter.ToInt32(buffer, 0);
-            var packageType = buffer[4];
-            //读取包体
-            ret = await stream.ReadAsync(buffer, 0, packageLength);
-            if (ret < packageLength)
-                throw new IOException($"包体读取错误！包长度：{packageLength}，包类型：{packageType}，读取数据长度：{ret}");
-
-            //解析包
-            var package = options.ParsePackage(packageType, buffer, 0, packageLength);
-            return package;
-        }
-
-        private void onDisconnected()
+        private void disconnect()
         {
             if (tcpClient != null)
             {
@@ -189,11 +127,20 @@ namespace Quick.Protocol
         /// </summary>
         public void Close()
         {
-            if (cts != null)
+            cancellAll();
+            disconnect();
+        }
+
+        public void SendPackage(string id, int code, string message) => SendPackage(id, code, message, null);
+        public void SendPackage(string id, int code, string message, string content)
+        {
+            SendPackage(new CommandResponsePackage()
             {
-                cts.Cancel();
-                cts = null;
-            }
+                Id = id,
+                Code = code,
+                Message = message,
+                Content = content
+            });
         }
     }
 }

@@ -8,15 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Packages
 {
     [ProtoContract]
     public class CommandRequestPackage : AbstractPackage
     {
-        public override byte PackageType => 200;
+        public override byte PackageType => 0;
         [ProtoMember(1)]
-        public string Action { get; set; }
+        public string Id { get; set; }
         [ProtoMember(2)]
+        public string Action { get; set; }
+        [ProtoMember(3)]
         public string Content { get; set; }
 
         /// <summary>
@@ -32,8 +34,9 @@ namespace Quick.Protocol
             var cmd = new T();
             if (cmd.Action != Action)
                 throw new IOException($"Action not match.Package's Action is '{Action}' and Command's Action is '{cmd.Action}'");
+            cmd.Id = Id;
             if (!string.IsNullOrEmpty(Content))
-                cmd.Content = JsonConvert.DeserializeObject<TRequestContent>(Content);
+                cmd.ContentT = JsonConvert.DeserializeObject<TRequestContent>(Content);
             return cmd;
         }
     }

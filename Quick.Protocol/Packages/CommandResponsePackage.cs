@@ -5,17 +5,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Packages
 {
     [ProtoContract]
     public class CommandResponsePackage : AbstractPackage
     {
-        public override byte PackageType => 201;
+        public override byte PackageType => 255;
         [ProtoMember(1)]
-        public int Code { get; set; }
+        public string Id { get; set; }
         [ProtoMember(2)]
-        public string Message { get; set; }
+        public int Code { get; set; }
         [ProtoMember(3)]
+        public string Message { get; set; }
+        [ProtoMember(4)]
         public string Content { get; set; }
+
+        public CommandResponsePackage() { }
+        public CommandResponsePackage(string id)
+        {
+            this.Id = id;
+        }
     }
 }
