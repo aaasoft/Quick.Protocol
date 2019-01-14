@@ -29,7 +29,7 @@ namespace Quick.Protocol
         /// </summary>
         public bool Encrypt { get; set; }
 
-        private Dictionary<byte, IPackage> packageDict;
+        private Dictionary<byte, IPackage> packageDict = new Dictionary<byte, IPackage>();
         /// <summary>
         /// 支持的数据包
         /// </summary>
@@ -37,16 +37,26 @@ namespace Quick.Protocol
         {
             set
             {
-                packageDict = value.ToDictionary(t => t.PackageType, t => t);
+                foreach (var item in value)
+                    packageDict[item.PackageType] = item;
             }
         }
-        
+
         public IPackage ParsePackage(byte packageType, byte[] buffer, int index, int count)
         {
             if (!packageDict.ContainsKey(packageType))
                 return null;
             var package = packageDict[packageType];
             return package.Parse(buffer, index, count);
+        }
+
+        public QpPackageHandlerOptions()
+        {
+            SupportPackages = new IPackage[]{
+                HeartBeatPackage.Instance,
+                new CommandRequestPackage(),
+                new CommandResponsePackage()
+            };
         }
     }
 }

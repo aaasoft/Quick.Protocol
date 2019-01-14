@@ -9,7 +9,7 @@ namespace Quick.Protocol
 {
     public abstract class QpCommandHandlerOptions : QpPackageHandlerOptions
     {
-        private Dictionary<string, ICommand> commandDict;
+        private Dictionary<string, ICommand> commandDict = new Dictionary<string, ICommand>();
 
         /// <summary>
         /// 支持的指令
@@ -18,7 +18,8 @@ namespace Quick.Protocol
         {
             set
             {
-                commandDict = value.ToDictionary(t => t.Action, t => t);
+                foreach (var item in value)
+                    commandDict[item.Action] = item;
             }
         }
 
@@ -28,6 +29,15 @@ namespace Quick.Protocol
                 return null;
             var srcCommand = commandDict[package.Action];
             return srcCommand.Parse(package);
+        }
+
+        public QpCommandHandlerOptions()
+        {
+            SupportCommands = new ICommand[]
+            {
+                new WelcomeCommand(),
+                new AuthenticateCommand()
+            };
         }
     }
 }

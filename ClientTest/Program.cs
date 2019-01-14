@@ -16,17 +16,7 @@ namespace ClientTest
                 Encrypt = true,
                 NeededInstructionSet = new[] { "Quick.Protocol.Base" },
                 SendTimeout = 5000,
-                ReceiveTimeout = 5000,
-                SupportPackages = new Quick.Protocol.Packages.IPackage[]{
-                    Quick.Protocol.Packages.HeartBeatPackage.Instance,
-                    new Quick.Protocol.Packages.CommandRequestPackage(),
-                    new Quick.Protocol.Packages.CommandResponsePackage()
-                },
-                SupportCommands = new Quick.Protocol.Commands.ICommand[]
-                {
-                    new Quick.Protocol.Commands.WelcomeCommand(),
-                    new Quick.Protocol.Commands.AuthenticateCommand()
-                }
+                ReceiveTimeout = 5000
             });
             client.ConnectAsync().ContinueWith(t =>
             {
