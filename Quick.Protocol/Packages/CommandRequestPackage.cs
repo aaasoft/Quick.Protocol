@@ -39,5 +39,10 @@ namespace Quick.Protocol.Packages
                 cmd.ContentT = JsonConvert.DeserializeObject<TRequestContent>(Content);
             return cmd;
         }
+
+        public override string ToString()
+        {
+            return $"CommandRequestPackage[Id:{Id},Action:{Action},Content:{Content}]";
+        }
     }
 }

@@ -12,7 +12,10 @@ namespace Quick.Protocol.Packages
         public IPackage Parse(byte[] buffer, int index, int count)
         {
             using (var ms = new MemoryStream(buffer, index, count))
-                return (IPackage)ProtoBuf.Serializer.Deserialize(this.GetType(), ms);
+            {
+                var ret = (IPackage)ProtoBuf.Serializer.Deserialize(this.GetType(), ms);
+                return ret;
+            }
         }
 
         public byte[] Output()

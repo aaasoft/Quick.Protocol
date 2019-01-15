@@ -1,4 +1,6 @@
-﻿using Quick.Protocol.Packages;
+﻿using Microsoft.Extensions.Logging;
+using Quick.Protocol.Packages;
+using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +14,7 @@ namespace Quick.Protocol
 {
     public abstract class QpPackageHandler
     {
+        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private byte[] buffer = new byte[1 * 1024 * 1024];
         private byte[] encryptBuffer = new byte[1 * 1024 * 1024];
 
@@ -45,6 +48,7 @@ namespace Quick.Protocol
         {
             if (package is null)
                 return;
+            logger.LogTrace("[Recv-Package]{0}", package.ToString());
             //触发收到数据包事件
             PackageReceived?.Invoke(this, package);
         }
@@ -54,8 +58,10 @@ namespace Quick.Protocol
             var stream = QpPackageHandler_Stream;
             if (stream == null)
                 throw new ArgumentNullException(nameof(QpPackageHandler_Stream));
+            logger.LogTrace("[Send-Package]{0}", package.ToString());
             var requestBuffer = package.Output();
             stream.Write(requestBuffer, 0, requestBuffer.Length);
+            stream.Flush();
         }
 
         /// <summary>
@@ -76,6 +82,8 @@ namespace Quick.Protocol
                 throw new IOException($"包头读取错误！读取数据长度：{ret}");
 
             var packageLength = BitConverter.ToInt32(buffer, 0);
+            if (packageLength > buffer.Length)
+                throw new IOException($"数据包长度：{packageLength}，缓存大小：{buffer.Length}");
             var packageType = buffer[4];
             //读取包体
             ret = await stream.ReadAsync(buffer, 0, packageLength);
@@ -113,13 +121,29 @@ namespace Quick.Protocol
                 return;
             ReadPackageAsync(token).ContinueWith(t =>
              {
-                 //如果已经取消
-                 if (t.IsCanceled)
+                 if (QpPackageHandler_Stream == null)
                      return;
+                 //如果已经取消
+                 if (t.IsCanceled || token.IsCancellationRequested)
+                 {
+                     OnReadError(t.Exception.InnerException);
+                     return;
+                 }
 
                  //如果读取出错
                  if (t.IsFaulted)
                  {
+                     logger.LogTrace("[ReadError]{0}", t.Exception.InnerException.Message);
+                     try
+                     {
+                         if (QpPackageHandler_Stream.CanWrite)
+                             SendPackage(new CommandResponsePackage()
+                             {
+                                 Code = -1,
+                                 Message = t.Exception.InnerException.Message
+                             });
+                     }
+                     catch { }
                      OnReadError(t.Exception.InnerException);
                      return;
                  }

@@ -15,6 +15,23 @@ namespace Quick.Protocol
         /// 端口
         /// </summary>
         public int Port { get; set; }
+        /// <summary>
+        /// 启用加密
+        /// </summary>
+        public bool EnableEncrypt { get; set; }
+        /// <summary>
+        /// 启用压缩
+        /// </summary>
+        public bool EnableCompress{ get; set; }
+
+        /// <summary>
+        /// 当认证通过时
+        /// </summary>
+        public void OnAuthPassed()
+        {
+            Compress = EnableCompress;
+            Encrypt = EnableEncrypt;
+        }
 
         /// <summary>
         /// 需要支持的指令集

@@ -31,7 +31,15 @@ namespace Quick.Protocol.Commands
         public TRequestContent ContentT { get; set; }
 
         private CommandResponse<TResponseData> response;
-        public Task<CommandResponse<TResponseData>> ResponseTask => new Task<CommandResponse<TResponseData>>(() => response);
+
+        private Task<CommandResponse<TResponseData>> _ResponseTask;
+        public Task<CommandResponse<TResponseData>> ResponseTask => _ResponseTask;
+
+        public AbstractCommand()
+        {
+            _ResponseTask = new Task<CommandResponse<TResponseData>>(() => response);
+        }
+
         /// <summary>
         /// 设置响应
         /// </summary>
@@ -53,7 +61,7 @@ namespace Quick.Protocol.Commands
 
             if (cmd.Action != Action)
                 throw new IOException($"Action not match.Package's Action is '{Action}' and Command's Action is '{cmd.Action}'");
-            cmd.Id = Id;
+            cmd.Id = package.Id;
             if (!string.IsNullOrEmpty(package.Content))
                 cmd.Content = JsonConvert.DeserializeObject<TRequestContent>(package.Content);
             return cmd;

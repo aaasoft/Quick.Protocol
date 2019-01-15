@@ -55,7 +55,7 @@ namespace Quick.Protocol
             tcpClient.SendTimeout = options.SendTimeout;
             tcpClient.ReceiveTimeout = options.ReceiveTimeout;
             await tcpClient.ConnectAsync(options.Host, options.Port);
-            
+
             //初始化网络
             InitQpPackageHandler_Stream(tcpClient.GetStream());
 
@@ -84,16 +84,22 @@ namespace Quick.Protocol
 
             //开始读取其他数据包
             BeginReadPackage(token);
-            
+
             //开始认证
             var authenticateResult = await SendCommand(new AuthenticateCommand(new AuthenticateCommand.CommandContent()
             {
-                Compress = options.Compress,
-                Encrypt = options.Encrypt,
-                Answer = Utils.CryptographyUtils.DesEncrypt(welcomeCommand.Id, options.Password)
+                Compress = options.EnableCompress,
+                Encrypt = options.EnableEncrypt,
+                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + options.Password)
             }));
+
             if (authenticateResult.Code != 0)
-                throw new IOException(authenticateResult.Message);
+            {
+                var exception = new IOException(authenticateResult.Message);
+                OnReadError(exception);
+                throw exception;
+            }
+            options.OnAuthPassed();
         }
 
         protected override void OnReadError(Exception exception)

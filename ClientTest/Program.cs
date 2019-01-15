@@ -12,8 +12,8 @@ namespace ClientTest
                 Host = "127.0.0.1",
                 Port = 3011,
                 Password = "HelloQP",
-                Compress = true,
-                Encrypt = true,
+                EnableCompress = true,
+                EnableEncrypt = true,
                 NeededInstructionSet = new[] { "Quick.Protocol.Base" },
                 SendTimeout = 5000,
                 ReceiveTimeout = 5000

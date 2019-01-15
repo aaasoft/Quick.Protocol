@@ -21,13 +21,13 @@ namespace Quick.Protocol
         /// </summary>
         public string Password { get; set; }
         /// <summary>
-        /// 是否压缩
+        /// 是否压缩(此参数仅客户端使用有效)
         /// </summary>
-        public bool Compress { get; set; }
+        internal virtual bool Compress { get; set; } = false;
         /// <summary>
-        /// 是否加密
+        /// 是否加密(此参数仅客户端使用有效)
         /// </summary>
-        public bool Encrypt { get; set; }
+        internal virtual bool Encrypt { get; set; } = false;
 
         private Dictionary<byte, IPackage> packageDict = new Dictionary<byte, IPackage>();
         /// <summary>

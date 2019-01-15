@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Quick.Protocol.Commands;
 using Quick.Protocol.Packages;
+using Quick.Protocol.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,10 +14,11 @@ namespace Quick.Protocol
     public abstract class QpCommandHandler : QpPackageHandler
     {
         private ConcurrentDictionary<string, AbstractCommand> commandDict = new ConcurrentDictionary<string, AbstractCommand>();
-
-        protected QpCommandHandler(QpPackageHandlerOptions packageHandlerOptions)
-            : base(packageHandlerOptions)
+        private QpCommandHandlerOptions options;
+        protected QpCommandHandler(QpCommandHandlerOptions options)
+            : base(options)
         {
+            this.options = options;
         }
 
         /// <summary>
@@ -29,7 +32,9 @@ namespace Quick.Protocol
             //如果是指令请求包
             if (package is CommandRequestPackage)
             {
-                CommandReceived?.Invoke(this, null);
+                var requestPackage = (CommandRequestPackage)package;
+                var requestCmd = options.ParseCommand(requestPackage);
+                CommandReceived?.Invoke(this, requestCmd);
             }
             //如果是指令响应包
             else if (package is CommandResponsePackage)
@@ -40,6 +45,8 @@ namespace Quick.Protocol
         }
         protected virtual void OnReceivedCommandResponse(CommandResponsePackage package)
         {
+            if (string.IsNullOrEmpty(package.Id))
+                return;
             AbstractCommand cmd = null;
             if (!commandDict.TryGetValue(package.Id, out cmd))
                 return;
@@ -56,8 +63,10 @@ namespace Quick.Protocol
         /// <returns></returns>
         public Task<CommandResponse<TResponseData>> SendCommand<TRequestContent, TResponseData>(AbstractCommand<TRequestContent, TResponseData> command)
         {
+            commandDict.TryAdd(command.Id, command);
             var request = new CommandRequestPackage()
             {
+                Id = command.Id,
                 Action = command.Action,
                 Content = JsonConvert.SerializeObject(command.Content)
             };

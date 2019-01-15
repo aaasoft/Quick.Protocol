@@ -12,8 +12,13 @@ namespace Quick.Protocol.Commands
         {
             public string ProtocolVersion { get; set; }
             public string ServerProgram { get; set; }
-            public string Question { get; set; }
             public Instruction[] InstructionSet { get; set; }
+        }
+
+        public WelcomeCommand() { }
+        public WelcomeCommand(CommandContent content)
+        {
+            ContentT = content;
         }
     }
 }

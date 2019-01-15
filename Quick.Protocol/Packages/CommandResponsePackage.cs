@@ -25,5 +25,10 @@ namespace Quick.Protocol.Packages
         {
             this.Id = id;
         }
+
+        public override string ToString()
+        {
+            return $"CommandResponsePackage[Id:{Id},Code:{Code},Message:{Message},Content:{Content}]";
+        }
     }
 }
