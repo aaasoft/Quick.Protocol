@@ -20,13 +20,6 @@ namespace Quick.Protocol.Utils
             return md5.ComputeHash(data);
         }
 
-        public static byte[] DesEncrypt(byte[] data, byte[] password)
-        {
-            var des = DES.Create();
-            var enc = des.CreateEncryptor(password, password);
-            return enc.TransformFinalBlock(data, 0, data.Length);
-        }
-
         private static byte[] GetDesPassword(String password)
         {
             var pwdMd5 = ComputeMD5Hash(Encoding.UTF8.GetBytes(password));
@@ -34,11 +27,23 @@ namespace Quick.Protocol.Utils
             return pwdBuffer;
         }
 
-        public static String DesEncrypt(String data, String password)
+        public static byte[] DesEncrypt(byte[] password, byte[] data, int index, int count)
+        {
+            var des = DES.Create();
+            var enc = des.CreateEncryptor(password, password);
+            return enc.TransformFinalBlock(data, index, count);
+        }
+
+        public static byte[] DesEncrypt(string password, byte[] data, int index, int count)
+        {
+            return DesEncrypt(GetDesPassword(password), data, index, count);
+        }
+
+        public static String DesEncrypt(string password, string data)
         {
             var dataBuffer = Encoding.UTF8.GetBytes(data);
             var pwdBuffer = GetDesPassword(password);
-            return BitConverter.ToString(DesEncrypt(dataBuffer, pwdBuffer)).Replace("-", "");
+            return BitConverter.ToString(DesEncrypt(pwdBuffer, dataBuffer, 0, dataBuffer.Length)).Replace("-", "");
         }
 
 

@@ -7,6 +7,14 @@ namespace ClientTest
     {
         static void Main(string[] args)
         {
+            /*
+欢迎包测试结果             
+加密  压缩  大小
+true  true  144
+true  false 128
+false true  135
+false false 122
+             */
             var client = new QpClient(new QpClientOptions()
             {
                 Host = "127.0.0.1",
@@ -18,6 +26,10 @@ namespace ClientTest
                 SendTimeout = 5000,
                 ReceiveTimeout = 5000
             });
+            client.Disconnected += (sender, e) =>
+              {
+                  Console.WriteLine("连接已断开");
+              };
             client.ConnectAsync().ContinueWith(t =>
             {
                 if (t.IsCanceled)
@@ -31,6 +43,11 @@ namespace ClientTest
                     return;
                 }
                 Console.WriteLine("连接成功");
+                client.SendCommand(new Quick.Protocol.Commands.WelcomeCommand(new Quick.Protocol.Commands.WelcomeCommand.CommandContent()
+                {
+                    ProtocolVersion = "1.1",
+                    ServerProgram = nameof(ClientTest)
+                }));
             });
             Console.ReadLine();
         }

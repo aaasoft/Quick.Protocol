@@ -16,14 +16,14 @@ namespace Quick.Protocol
     {
         private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private byte[] buffer = new byte[1 * 1024 * 1024];
-        private byte[] encryptBuffer = new byte[1 * 1024 * 1024];
+        private byte[] buffer2 = new byte[1 * 1024 * 1024];
 
         private Stream QpPackageHandler_Stream;
-        private QpPackageHandlerOptions packageHandlerOptions;
+        private QpPackageHandlerOptions options;
 
         public QpPackageHandler(QpPackageHandlerOptions packageHandlerOptions)
         {
-            this.packageHandlerOptions = packageHandlerOptions;
+            this.options = packageHandlerOptions;
         }
 
         protected void InitQpPackageHandler_Stream(Stream stream)
@@ -48,7 +48,6 @@ namespace Quick.Protocol
         {
             if (package is null)
                 return;
-            logger.LogTrace("[Recv-Package]{0}", package.ToString());
             //触发收到数据包事件
             PackageReceived?.Invoke(this, package);
         }
@@ -59,8 +58,47 @@ namespace Quick.Protocol
             if (stream == null)
                 throw new ArgumentNullException(nameof(QpPackageHandler_Stream));
             logger.LogTrace("[Send-Package]{0}", package.ToString());
-            var requestBuffer = package.Output();
-            stream.Write(requestBuffer, 0, requestBuffer.Length);
+            var srcBuffer = package.Output();
+            //如果不压缩也不加密
+            if (!options.Compress && !options.Encrypt)
+            {
+                stream.Write(srcBuffer, 0, srcBuffer.Length);
+                stream.Flush();
+                return;
+            }
+
+            byte[] tmpBuffer = srcBuffer;
+            int bodyLength = srcBuffer.Length - 5;
+
+            //压缩
+            if (options.Compress)
+            {
+                using (var sourceStream = new MemoryStream(tmpBuffer, 5, tmpBuffer.Length - 5))
+                using (var compressStream = new MemoryStream())
+                {
+                    compressStream.Write(tmpBuffer, 0, 5);
+                    using (var gzStream = new GZipStream(compressStream, CompressionMode.Compress))
+                    {
+                        sourceStream.CopyTo(gzStream);
+                    }
+                    tmpBuffer = compressStream.ToArray();
+                    bodyLength = tmpBuffer.Length - 5;
+                }
+            }
+            //加密
+            if (options.Encrypt)
+            {
+                var ms = new MemoryStream(tmpBuffer.Length);
+                ms.Write(tmpBuffer, 0, 5);
+                var encryptBuffer = CryptographyUtils.DesEncrypt(options.Password, tmpBuffer, 5, bodyLength);
+                ms.Write(encryptBuffer, 0, encryptBuffer.Length);
+                tmpBuffer = ms.ToArray();
+                bodyLength = encryptBuffer.Length;
+            }
+            var packageLengthBytes = BitConverter.GetBytes(bodyLength);
+            packageLengthBytes.CopyTo(tmpBuffer, 0);
+            tmpBuffer[4] = srcBuffer[4];
+            stream.Write(tmpBuffer, 0, bodyLength + 5);
             stream.Flush();
         }
 
@@ -94,24 +132,27 @@ namespace Quick.Protocol
             var tmpPackageLength = packageLength;
 
             //解密
-            if (packageHandlerOptions.Encrypt)
+            if (options.Encrypt)
             {
-                tmpBuffer = Utils.CryptographyUtils.DesDecrypt(packageHandlerOptions.Password, buffer, 0, packageLength);
-                tmpPackageLength = tmpBuffer.Length;
+                var decrptyBuffer = CryptographyUtils.DesDecrypt(options.Password, tmpBuffer, 0, tmpPackageLength);
+                decrptyBuffer.CopyTo(buffer, 0);
+                tmpBuffer = buffer;
+                tmpPackageLength = decrptyBuffer.Length;
             }
             //解压
-            if (packageHandlerOptions.Compress)
+            if (options.Compress)
             {
-                using (var mStream = new MemoryStream(encryptBuffer))
-                using (var gzStream = new GZipStream(new MemoryStream(buffer, 0, packageLength), CompressionMode.Decompress))
+                using (var mStream = new MemoryStream(buffer2))
+                using (var gzStream = new GZipStream(new MemoryStream(tmpBuffer, 0, tmpPackageLength), CompressionMode.Decompress))
                 {
                     gzStream.CopyTo(mStream);
-                    tmpBuffer = encryptBuffer;
-                    tmpPackageLength = (int)mStream.Length;
+                    tmpBuffer = buffer2;
+                    tmpPackageLength = (int)mStream.Position;
                 }
             }
             //解析包
-            var package = packageHandlerOptions.ParsePackage(packageType, tmpBuffer, 0, tmpPackageLength);
+            var package = options.ParsePackage(packageType, tmpBuffer, 0, tmpPackageLength);
+            logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
             return package;
         }
 
@@ -149,7 +190,6 @@ namespace Quick.Protocol
                  }
                  //读取下一个数据包
                  BeginReadPackage(token);
-
                  var package = t.Result;
                  OnPackageReceived(package);
              });
