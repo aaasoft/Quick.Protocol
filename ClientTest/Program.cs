@@ -8,12 +8,21 @@ namespace ClientTest
         static void Main(string[] args)
         {
             /*
-欢迎包测试结果             
-加密  压缩  大小
+小数据量测试
+------------------
+加密  压缩  数据包大小
 true  true  144
 true  false 128
 false true  135
 false false 122
+
+大数据量测试
+------------------
+加密  压缩  数据包大小
+true  true  2880
+true  false 5560
+false true  2876
+false false 5557
              */
             var client = new QpClient(new QpClientOptions()
             {
