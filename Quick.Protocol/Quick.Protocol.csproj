@@ -6,6 +6,7 @@
     <PackageLicenseUrl>https://github.com/aaasoft/Quick.Protocol/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>aaaSoft</Authors>
   </PropertyGroup>
 
   <ItemGroup>
