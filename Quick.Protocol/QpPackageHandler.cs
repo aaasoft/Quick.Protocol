@@ -102,7 +102,7 @@ namespace Quick.Protocol
             stream.Flush();
         }
 
-        private static async Task<int> readData(Stream stream, byte[] buffer, int startIndex, int totalCount, CancellationToken cancellationToken)
+        private async Task<int> readData(Stream stream, byte[] buffer, int startIndex, int totalCount, CancellationToken cancellationToken)
         {
             if (totalCount > buffer.Length - startIndex)
                 throw new IOException("要接收的数据大小超出了缓存的大小！");
@@ -110,8 +110,9 @@ namespace Quick.Protocol
             var count = 0;
             while (count < totalCount)
             {
-                ret = await stream.ReadAsync(buffer, count, totalCount - count, cancellationToken);
-                if (cancellationToken.IsCancellationRequested)
+                var readTask = stream.ReadAsync(buffer, count, totalCount - count, cancellationToken);
+                ret = await await TaskUtils.TaskWait(readTask, options.ReceiveTimeout);
+                if (readTask.IsCanceled)
                     return count;
                 if (ret <= 0)
                     throw new IOException("从网络流中读取错误！");
@@ -182,7 +183,8 @@ namespace Quick.Protocol
         {
             if (token.IsCancellationRequested)
                 return;
-            ReadPackageAsync(token).ContinueWith(t =>
+            var readPackageTask = ReadPackageAsync(token);
+            readPackageTask.ContinueWith(t =>
              {
                  if (QpPackageHandler_Stream == null)
                      return;

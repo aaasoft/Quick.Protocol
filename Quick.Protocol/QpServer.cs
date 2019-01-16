@@ -16,6 +16,18 @@ namespace Quick.Protocol
         private QpServerOptions options;
         private TcpListener tcpListener;
         private List<QpServerChannel> channelList = new List<QpServerChannel>();
+        /// <summary>
+        /// 通道连接上时
+        /// </summary>
+        public event EventHandler<QpServerChannel> ChannelConnected;
+        /// <summary>
+        /// 通道通过认证
+        /// </summary>
+        public event EventHandler<QpServerChannel> ChannelAuchenticated;
+        /// <summary>
+        /// 通道连接断开时
+        /// </summary>
+        public event EventHandler<QpServerChannel> ChannelDisconnected;
 
         public QpServer(QpServerOptions options)
         {
@@ -50,6 +62,7 @@ namespace Quick.Protocol
                     var remoteEndPointStr = tcpClient.Client.RemoteEndPoint.ToString();
                     logger.LogTrace("[Connection]{0} connected.", remoteEndPointStr);
                     var channel = new QpServerChannel(tcpClient, token, (QpServerOptions)options.Clone());
+                    ChannelConnected?.Invoke(this, channel);
                     lock (channelList)
                         channelList.Add(channel);
                     channel.Disconnected += (sender, e) =>
@@ -60,8 +73,10 @@ namespace Quick.Protocol
                                 channelList.Remove(channel);
                         try { tcpClient.Close(); }
                         catch { }
+                        ChannelDisconnected?.Invoke(this, channel);
                     };
                     channel.Start();
+                    ChannelAuchenticated?.Invoke(this, channel);
                 }
                 catch
                 {

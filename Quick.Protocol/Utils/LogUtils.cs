@@ -28,7 +28,9 @@ namespace Quick.Protocol.Utils
             if (loggerFactory == null)
             {
                 loggerFactory = new LoggerFactory();
+#if DEBUG
                 loggerFactory.AddConsole(LogLevel.Trace);
+#endif
             }
             return loggerFactory.CreateLogger(new StackTrace(1).GetFrame(0).GetMethod().DeclaringType);
         }

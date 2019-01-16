@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -14,6 +15,8 @@ namespace Quick.Protocol
         private TcpClient tcpClient;
         private QpServerOptions options;
         private string question;
+        private bool isAuthSuccess = false;
+        public EndPoint EndPoint { get; private set; }
 
         /// <summary>
         /// 连接断开时
@@ -24,6 +27,8 @@ namespace Quick.Protocol
         {
             this.tcpClient = tcpClient;
             this.options = options;
+            this.EndPoint = tcpClient.Client.RemoteEndPoint;
+
             tcpClient.ReceiveTimeout = options.ReceiveTimeout;
             tcpClient.SendTimeout = options.SendTimeout;
 
@@ -49,12 +54,20 @@ namespace Quick.Protocol
             if (ret.Code != 0)
                 throw new IOException(ret.Message);
         }
-
+        
         private void QpServerChannel_CommandReceived(object sender, Commands.ICommand e)
         {
+            if (e == null)
+                return;          
             var authCmd = e as Commands.AuthenticateCommand;
             if (authCmd == null)
+            {
+                if (!isAuthSuccess)
+                {
+                    OnReadError(new IOException("No authenticated"));
+                }
                 return;
+            }
 
             var authCmdContent = authCmd.ContentT;
             if (Utils.CryptographyUtils.ComputeMD5Hash(question + options.Password) != authCmdContent.Answer)
@@ -77,6 +90,7 @@ namespace Quick.Protocol
                 Code = 0,
                 Message = "认证通过！"
             });
+            isAuthSuccess = true;
             options.Compress = authCmdContent.Compress;
             options.Encrypt = authCmdContent.Encrypt;
         }
