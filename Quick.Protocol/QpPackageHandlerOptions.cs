@@ -62,5 +62,15 @@ namespace Quick.Protocol
                 new CommandResponsePackage()
             };
         }
+
+        public virtual void Check()
+        {
+            if (HeartBeatInterval > ReceiveTimeout / 2)
+                throw new ArgumentException("HeartBeatInterval must smaller than (ReceiveTimeout/2)", nameof(HeartBeatInterval));
+            if (HeartBeatInterval > SendTimeout / 2)
+                throw new ArgumentException("HeartBeatInterval must smaller than (SendTimeout/2)", nameof(HeartBeatInterval));
+            if (Password == null)
+                throw new ArgumentNullException(nameof(Password));
+        }
     }
 }

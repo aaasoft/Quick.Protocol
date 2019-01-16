@@ -16,6 +16,18 @@ namespace Quick.Protocol
         private QpServerOptions options;
         private TcpListener tcpListener;
         private List<QpServerChannel> channelList = new List<QpServerChannel>();
+
+        /// <summary>
+        /// 获取全部的通道
+        /// </summary>
+        public QpServerChannel[] Channels
+        {
+            get
+            {
+                lock (channelList)
+                    return channelList.ToArray();
+            }
+        }
         /// <summary>
         /// 通道连接上时
         /// </summary>
@@ -31,6 +43,7 @@ namespace Quick.Protocol
 
         public QpServer(QpServerOptions options)
         {
+            options.Check();
             this.options = options;
         }
 

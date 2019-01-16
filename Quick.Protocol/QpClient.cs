@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Quick.Protocol.Commands;
 using Quick.Protocol.Packages;
+using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -54,7 +55,7 @@ namespace Quick.Protocol
             tcpClient = new TcpClient();
             tcpClient.SendTimeout = options.SendTimeout;
             tcpClient.ReceiveTimeout = options.ReceiveTimeout;
-            await tcpClient.ConnectAsync(options.Host, options.Port);
+            await TaskUtils.TaskWait(tcpClient.ConnectAsync(options.Host, options.Port), options.ConnectionTimeout);
 
             //初始化网络
             InitQpPackageHandler_Stream(tcpClient.GetStream());

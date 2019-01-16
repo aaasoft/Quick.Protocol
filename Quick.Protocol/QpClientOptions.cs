@@ -8,6 +8,10 @@ namespace Quick.Protocol
     public class QpClientOptions : QpCommandHandlerOptions
     {
         /// <summary>
+        /// 连接超时时间(默认为5秒)
+        /// </summary>
+        public int ConnectionTimeout { get; set; } = 5 * 1000;
+        /// <summary>
         /// 主机
         /// </summary>
         public string Host { get; set; }
@@ -22,7 +26,7 @@ namespace Quick.Protocol
         /// <summary>
         /// 启用压缩
         /// </summary>
-        public bool EnableCompress{ get; set; }
+        public bool EnableCompress { get; set; }
 
         /// <summary>
         /// 当认证通过时
@@ -38,13 +42,13 @@ namespace Quick.Protocol
         /// </summary>
         public string[] NeededInstructionSet { get; set; }
 
-        /// <summary>
-        /// 检查配置是否正确
-        /// </summary>
-        public void Check()
+        public override void Check()
         {
+            base.Check();
             if (string.IsNullOrEmpty(Host))
                 throw new ArgumentNullException(nameof(Host));
+            if (Port < 0 || Port > 65535)
+                throw new ArgumentException("Port must between 0 and 65535", nameof(Port));
         }
     }
 }
