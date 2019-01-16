@@ -52,7 +52,7 @@ namespace Quick.Protocol
             PackageReceived?.Invoke(this, package);
         }
 
-        public void SendPackage(IPackage package)
+        public async Task SendPackage(IPackage package)
         {
             var stream = QpPackageHandler_Stream;
             if (stream == null)
@@ -98,8 +98,12 @@ namespace Quick.Protocol
             var packageLengthBytes = BitConverter.GetBytes(bodyLength);
             packageLengthBytes.CopyTo(tmpBuffer, 0);
             tmpBuffer[4] = srcBuffer[4];
-            stream.Write(tmpBuffer, 0, bodyLength + 5);
-            stream.Flush();
+
+            await TaskUtils.TaskWait(Task.Run(() =>
+            {
+                stream.Write(tmpBuffer, 0, bodyLength + 5);
+                stream.Flush();
+            }), options.SendTimeout);
         }
 
         private async Task<int> readData(Stream stream, byte[] buffer, int startIndex, int totalCount, CancellationToken cancellationToken)
@@ -206,7 +210,7 @@ namespace Quick.Protocol
                              {
                                  Code = -1,
                                  Message = t.Exception.InnerException.Message
-                             });
+                             }).ContinueWith(task => { });
                      }
                      catch { }
                      OnReadError(t.Exception.InnerException);

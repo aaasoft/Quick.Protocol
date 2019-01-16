@@ -54,11 +54,11 @@ namespace Quick.Protocol
             if (ret.Code != 0)
                 throw new IOException(ret.Message);
         }
-        
+
         private void QpServerChannel_CommandReceived(object sender, Commands.ICommand e)
         {
             if (e == null)
-                return;          
+                return;
             var authCmd = e as Commands.AuthenticateCommand;
             if (authCmd == null)
             {
@@ -76,9 +76,7 @@ namespace Quick.Protocol
                 {
                     Code = -1,
                     Message = "认证失败！"
-                });
-                //延迟1秒断开连接
-                Task.Delay(TimeSpan.FromSeconds(1)).ContinueWith(t =>
+                }).ContinueWith(t =>
                 {
                     if (tcpClient.Connected)
                         OnReadError(new IOException("认证失败！"));
@@ -89,10 +87,12 @@ namespace Quick.Protocol
             {
                 Code = 0,
                 Message = "认证通过！"
+            }).ContinueWith(t =>
+            {
+                isAuthSuccess = true;
+                options.Compress = authCmdContent.Compress;
+                options.Encrypt = authCmdContent.Encrypt;
             });
-            isAuthSuccess = true;
-            options.Compress = authCmdContent.Compress;
-            options.Encrypt = authCmdContent.Encrypt;
         }
 
         protected override void OnReadError(Exception exception)

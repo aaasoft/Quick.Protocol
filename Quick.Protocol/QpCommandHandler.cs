@@ -70,7 +70,7 @@ namespace Quick.Protocol
                 Action = command.Action,
                 Content = JsonConvert.SerializeObject(command.Content)
             };
-            SendPackage(request);
+            SendPackage(request).Wait();
             return command.ResponseTask;
         }
     }

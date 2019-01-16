@@ -8,6 +8,15 @@ namespace Quick.Protocol.Utils
 {
     public class TaskUtils
     {
+        public static async Task<Task> TaskWait(Task task, int timeout)
+        {
+            var timeoutTask = Task.Delay(timeout);
+            var retTask = await Task.WhenAny(task, timeoutTask);
+            if (retTask == timeoutTask)
+                throw new TimeoutException();
+            return retTask;
+        }
+
         /// <summary>
         /// 任务等待
         /// </summary>
