@@ -23,16 +23,24 @@ namespace Quick.Protocol.Utils
             }
         }
 
-        public static ILogger GetCurrentClassLogger()
+        /// <summary>
+        /// 增加控制台输出
+        /// </summary>
+        public static void AddConsole()
+        {
+            GetLoggerFactory().AddConsole(LogLevel.Trace);
+        }
+
+        private static LoggerFactory GetLoggerFactory()
         {
             if (loggerFactory == null)
-            {
                 loggerFactory = new LoggerFactory();
-#if DEBUG
-                loggerFactory.AddConsole(LogLevel.Trace);
-#endif
-            }
-            return loggerFactory.CreateLogger(new StackTrace(1).GetFrame(0).GetMethod().DeclaringType);
+            return loggerFactory;
+        }
+
+        public static ILogger GetCurrentClassLogger()
+        {
+            return GetLoggerFactory().CreateLogger(new StackTrace(1).GetFrame(0).GetMethod().DeclaringType);
         }
     }
 }
