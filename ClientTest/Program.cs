@@ -7,6 +7,7 @@ namespace ClientTest
     {
         static void Main(string[] args)
         {
+            Quick.Protocol.Utils.LogUtils.AddConsole();
             var client = new QpClient(new QpClientOptions()
             {
                 Host = "127.0.0.1",

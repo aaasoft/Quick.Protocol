@@ -18,7 +18,6 @@ namespace Quick.Protocol
         private byte[] buffer;
         private byte[] buffer2;
 
-        private CancellationTokenSource cts = null;
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
         private DateTime lastSendPackageTime = DateTime.MinValue;

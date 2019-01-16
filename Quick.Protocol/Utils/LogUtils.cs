@@ -10,16 +10,39 @@ namespace Quick.Protocol.Utils
     {
         private static LoggerFactory loggerFactory;
 
+        private class ConsoleLogger : ILogger
+        {
+            private string categoryName;
+            public ConsoleLogger(string categoryName)
+            {
+                this.categoryName = categoryName;
+            }
+
+            public IDisposable BeginScope<TState>(TState state)
+            {
+                return null;
+            }
+
+            public bool IsEnabled(LogLevel logLevel)
+            {
+                return true;
+            }
+
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+            {
+                Console.WriteLine($"[{categoryName}][{logLevel}]{formatter(state, exception)}");
+            }
+        }
+
         private class ConsoleProvider : ILoggerProvider
         {
             public ILogger CreateLogger(string categoryName)
             {
-                throw new NotImplementedException();
+                return new ConsoleLogger(categoryName);
             }
 
             public void Dispose()
             {
-                throw new NotImplementedException();
             }
         }
 
@@ -28,10 +51,10 @@ namespace Quick.Protocol.Utils
         /// </summary>
         public static void AddConsole()
         {
-            GetLoggerFactory().AddConsole(LogLevel.Trace);
+            GetLoggerFactory().AddProvider(new ConsoleProvider());
         }
 
-        private static LoggerFactory GetLoggerFactory()
+        public static LoggerFactory GetLoggerFactory()
         {
             if (loggerFactory == null)
                 loggerFactory = new LoggerFactory();
