@@ -15,6 +15,7 @@ namespace ServerTest
                 Password = "HelloQP",
                 SendTimeout = 5000,
                 ReceiveTimeout = 5000,
+                HeartBeatInterval = 2000,
                 ServerProgram = nameof(ServerTest) + " 1.0"
             });
             server.ChannelConnected += Server_ChannelConnected;

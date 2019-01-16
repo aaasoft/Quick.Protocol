@@ -17,6 +17,10 @@ namespace Quick.Protocol
         /// </summary>
         public int ReceiveTimeout { get; set; } = 5 * 1000;
         /// <summary>
+        /// 心跳间隔
+        /// </summary>
+        public int HeartBeatInterval { get; set; } = 2 * 1000;
+        /// <summary>
         /// 密码
         /// </summary>
         public string Password { get; set; }

@@ -18,8 +18,10 @@ namespace Quick.Protocol
         private byte[] buffer = new byte[1 * 1024 * 1024];
         private byte[] buffer2 = new byte[1 * 1024 * 1024];
 
+        private CancellationTokenSource cts = null;
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
+        private DateTime lastSendPackageTime = DateTime.MinValue;
 
         public QpPackageHandler(QpPackageHandlerOptions packageHandlerOptions)
         {
@@ -27,8 +29,8 @@ namespace Quick.Protocol
         }
 
         protected void InitQpPackageHandler_Stream(Stream stream)
-        {
-            QpPackageHandler_Stream = stream;
+        {   
+            QpPackageHandler_Stream = stream;            
         }
 
         /// <summary>
@@ -101,9 +103,14 @@ namespace Quick.Protocol
 
             await TaskUtils.TaskWait(Task.Run(() =>
             {
-                stream.Write(tmpBuffer, 0, bodyLength + 5);
-                stream.Flush();
+                try
+                {
+                    stream.Write(tmpBuffer, 0, bodyLength + 5);
+                    stream.Flush();
+                }
+                catch { }
             }), options.SendTimeout);
+            lastSendPackageTime = DateTime.Now;
         }
 
         private async Task<int> readData(Stream stream, byte[] buffer, int startIndex, int totalCount, CancellationToken cancellationToken)
@@ -181,6 +188,29 @@ namespace Quick.Protocol
             var package = options.ParsePackage(packageType, tmpBuffer, 0, tmpPackageLength);
             logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
             return package;
+        }
+
+        protected void BeginHeartBeat(CancellationToken cancellationToken)
+        {
+            if (QpPackageHandler_Stream == null)
+                return;
+
+            Task.Delay(options.HeartBeatInterval, cancellationToken).ContinueWith(t =>
+            {
+                if (t.IsCanceled)
+                    return;
+                if (QpPackageHandler_Stream == null)
+                    return;
+
+                var lastSendPackageToNowSeconds = (DateTime.Now - lastSendPackageTime).TotalMilliseconds;
+
+                //如果离最后一次发送数据包的时间大于心跳间隔，则发送心跳包
+                if (lastSendPackageToNowSeconds > options.HeartBeatInterval)
+                {
+                    SendPackage(HeartBeatPackage.Instance).ContinueWith(t2 => { });
+                }
+                BeginHeartBeat(cancellationToken);
+            });
         }
 
         protected void BeginReadPackage(CancellationToken token)

@@ -13,6 +13,7 @@ namespace Quick.Protocol
     public class QpServerChannel : QpCommandHandler
     {
         private TcpClient tcpClient;
+        private CancellationToken cancellationToken;
         private QpServerOptions options;
         private string question;
         private bool isAuthSuccess = false;
@@ -23,9 +24,10 @@ namespace Quick.Protocol
         /// </summary>
         public event EventHandler Disconnected;
 
-        public QpServerChannel(TcpClient tcpClient, CancellationToken token, QpServerOptions options) : base(options)
+        public QpServerChannel(TcpClient tcpClient, CancellationToken cancellationToken, QpServerOptions options) : base(options)
         {
             this.tcpClient = tcpClient;
+            this.cancellationToken = cancellationToken;
             this.options = options;
             this.EndPoint = tcpClient.Client.RemoteEndPoint;
 
@@ -35,7 +37,8 @@ namespace Quick.Protocol
             this.CommandReceived += QpServerChannel_CommandReceived;
 
             InitQpPackageHandler_Stream(tcpClient.GetStream());
-            BeginReadPackage(token);
+            //开始读取其他数据包
+            BeginReadPackage(cancellationToken);
         }
 
         public void Start()
@@ -93,6 +96,8 @@ namespace Quick.Protocol
                 options.Compress = authCmdContent.Compress;
                 options.Encrypt = authCmdContent.Encrypt;
             });
+            //开始心跳
+            BeginHeartBeat(cancellationToken);
         }
 
         protected override void OnReadError(Exception exception)

@@ -100,6 +100,8 @@ namespace Quick.Protocol
                 throw exception;
             }
             options.OnAuthPassed();
+            //开始心跳
+            BeginHeartBeat(token);
         }
 
         protected override void OnReadError(Exception exception)

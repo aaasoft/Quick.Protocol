@@ -33,7 +33,8 @@ false false 5557
                 EnableEncrypt = true,
                 NeededInstructionSet = new[] { "Quick.Protocol.Base" },
                 SendTimeout = 5000,
-                ReceiveTimeout = 5000
+                ReceiveTimeout = 5000,
+                HeartBeatInterval = 2000
             });
             client.Disconnected += (sender, e) =>
               {
@@ -52,11 +53,6 @@ false false 5557
                     return;
                 }
                 Console.WriteLine("连接成功");
-                client.SendCommand(new Quick.Protocol.Commands.WelcomeCommand(new Quick.Protocol.Commands.WelcomeCommand.CommandContent()
-                {
-                    ProtocolVersion = "1.1",
-                    ServerProgram = nameof(ClientTest)
-                }));
             });
             Console.ReadLine();
         }
