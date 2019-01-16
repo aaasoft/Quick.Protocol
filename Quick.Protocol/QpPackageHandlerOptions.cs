@@ -9,15 +9,19 @@ namespace Quick.Protocol
     public abstract class QpPackageHandlerOptions
     {
         /// <summary>
-        /// 发送超时
+        /// 缓存大小(默认1MB)
+        /// </summary>
+        public int BufferSize = 1 * 1024 * 1024;
+        /// <summary>
+        /// 发送超时(默认5秒)
         /// </summary>
         public int SendTimeout { get; set; } = 5 * 1000;
         /// <summary>
-        /// 发送超时
+        /// 发送超时(默认5秒)
         /// </summary>
         public int ReceiveTimeout { get; set; } = 5 * 1000;
         /// <summary>
-        /// 心跳间隔
+        /// 心跳间隔(默认2秒)
         /// </summary>
         public int HeartBeatInterval { get; set; } = 2 * 1000;
         /// <summary>
@@ -25,11 +29,11 @@ namespace Quick.Protocol
         /// </summary>
         public string Password { get; set; }
         /// <summary>
-        /// 是否压缩(此参数仅客户端使用有效)
+        /// 是否压缩
         /// </summary>
         internal virtual bool Compress { get; set; } = false;
         /// <summary>
-        /// 是否加密(此参数仅客户端使用有效)
+        /// 是否加密
         /// </summary>
         internal virtual bool Encrypt { get; set; } = false;
 

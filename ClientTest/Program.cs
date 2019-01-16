@@ -7,34 +7,14 @@ namespace ClientTest
     {
         static void Main(string[] args)
         {
-            /*
-小数据量测试
-------------------
-加密  压缩  数据包大小
-true  true  144
-true  false 128
-false true  135
-false false 122
-
-大数据量测试
-------------------
-加密  压缩  数据包大小
-true  true  2880
-true  false 5560
-false true  2876
-false false 5557
-             */
             var client = new QpClient(new QpClientOptions()
             {
                 Host = "127.0.0.1",
                 Port = 3011,
                 Password = "HelloQP",
-                EnableCompress = true,
-                EnableEncrypt = true,
-                NeededInstructionSet = new[] { "Quick.Protocol.Base" },
-                SendTimeout = 5000,
-                ReceiveTimeout = 5000,
-                HeartBeatInterval = 2000
+                //EnableCompress = true,
+                //EnableEncrypt = true,
+                NeededInstructionSet = new[] { "Quick.Protocol.Base" }
             });
             client.Disconnected += (sender, e) =>
               {

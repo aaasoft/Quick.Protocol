@@ -15,17 +15,19 @@ namespace Quick.Protocol
     public abstract class QpPackageHandler
     {
         private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
-        private byte[] buffer = new byte[1 * 1024 * 1024];
-        private byte[] buffer2 = new byte[1 * 1024 * 1024];
+        private byte[] buffer;
+        private byte[] buffer2;
 
         private CancellationTokenSource cts = null;
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
         private DateTime lastSendPackageTime = DateTime.MinValue;
 
-        public QpPackageHandler(QpPackageHandlerOptions packageHandlerOptions)
+        public QpPackageHandler(QpPackageHandlerOptions options)
         {
-            this.options = packageHandlerOptions;
+            this.options = options;
+            buffer = new byte[options.BufferSize];
+            buffer2 = new byte[options.BufferSize];
         }
 
         protected void InitQpPackageHandler_Stream(Stream stream)

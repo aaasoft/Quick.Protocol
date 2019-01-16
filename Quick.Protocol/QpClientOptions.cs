@@ -20,11 +20,11 @@ namespace Quick.Protocol
         /// </summary>
         public int Port { get; set; }
         /// <summary>
-        /// 启用加密
+        /// 启用加密(默认为false)
         /// </summary>
         public bool EnableEncrypt { get; set; }
         /// <summary>
-        /// 启用压缩
+        /// 启用压缩(默认为false)
         /// </summary>
         public bool EnableCompress { get; set; }
 
