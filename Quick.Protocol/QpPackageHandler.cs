@@ -102,6 +102,24 @@ namespace Quick.Protocol
             stream.Flush();
         }
 
+        private static async Task<int> readData(Stream stream, byte[] buffer, int startIndex, int totalCount, CancellationToken cancellationToken)
+        {
+            if (totalCount > buffer.Length - startIndex)
+                throw new IOException("要接收的数据大小超出了缓存的大小！");
+            var ret = 0;
+            var count = 0;
+            while (count < totalCount)
+            {
+                ret = await stream.ReadAsync(buffer, count, totalCount - count, cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                    return count;
+                if (ret <= 0)
+                    throw new IOException("从网络流中读取错误！");
+                count += ret;
+            }
+            return count;
+        }
+
         /// <summary>
         /// 读取一个数据包
         /// </summary>
@@ -115,7 +133,9 @@ namespace Quick.Protocol
 
             int ret = 0;
             //读取包头
-            ret = await stream.ReadAsync(buffer, 0, 5, token);
+            ret = await readData(stream, buffer, 0, 5, token);
+            if (token.IsCancellationRequested)
+                return null;
             if (ret < 5)
                 throw new IOException($"包头读取错误！读取数据长度：{ret}");
 
@@ -124,7 +144,9 @@ namespace Quick.Protocol
                 throw new IOException($"数据包长度：{packageLength}，缓存大小：{buffer.Length}");
             var packageType = buffer[4];
             //读取包体
-            ret = await stream.ReadAsync(buffer, 0, packageLength);
+            ret = await readData(stream, buffer, 0, packageLength, token);
+            if (token.IsCancellationRequested)
+                return null;
             if (ret < packageLength)
                 throw new IOException($"包体读取错误！包长度：{packageLength}，包类型：{packageType}，读取数据长度：{ret}");
 

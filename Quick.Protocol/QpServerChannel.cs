@@ -24,6 +24,9 @@ namespace Quick.Protocol
         {
             this.tcpClient = tcpClient;
             this.options = options;
+            tcpClient.ReceiveTimeout = options.ReceiveTimeout;
+            tcpClient.SendTimeout = options.SendTimeout;
+
             this.CommandReceived += QpServerChannel_CommandReceived;
 
             InitQpPackageHandler_Stream(tcpClient.GetStream());
