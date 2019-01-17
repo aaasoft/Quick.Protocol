@@ -6,7 +6,7 @@ namespace Quick.Protocol.Commands
 {
     public class WelcomeCommand : AbstractCommand<WelcomeCommand.CommandContent, object>
     {
-        public override string Action { get; internal set; } = "/Welcome";
+        public override string Action => "/Welcome";
 
         public class CommandContent
         {
@@ -16,9 +16,6 @@ namespace Quick.Protocol.Commands
         }
 
         public WelcomeCommand() { }
-        public WelcomeCommand(CommandContent content)
-        {
-            ContentT = content;
-        }
+        public WelcomeCommand(CommandContent content) : base(content) { }
     }
 }

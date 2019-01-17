@@ -6,7 +6,7 @@ namespace Quick.Protocol.Commands
 {
     public class AuthenticateCommand : AbstractCommand<AuthenticateCommand.CommandContent, object>
     {
-        public override string Action { get; internal set; } = "/Authenticate";
+        public override string Action => "/Authenticate";
 
         public class CommandContent
         {
@@ -24,9 +24,6 @@ namespace Quick.Protocol.Commands
             public string Answer { get; set; }
         }
         public AuthenticateCommand() { }
-        public AuthenticateCommand(CommandContent content)
-        {
-            ContentT = content;
-        }
+        public AuthenticateCommand(CommandContent content) : base(content) { }
     }
 }

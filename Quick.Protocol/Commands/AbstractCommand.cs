@@ -11,7 +11,7 @@ namespace Quick.Protocol.Commands
     public abstract class AbstractCommand : ICommand
     {
         public string Id { get; set; } = Guid.NewGuid().ToString("N");
-        public abstract string Action { get; internal set; }
+        public abstract string Action { get; }
         public abstract object Content { get; set; }
 
         public abstract ICommand Parse(CommandRequestPackage package);
@@ -40,6 +40,12 @@ namespace Quick.Protocol.Commands
             _ResponseTask = new Task<CommandResponse<TResponseData>>(() => response);
         }
 
+        public AbstractCommand(TRequestContent content)
+            : this()
+        {
+            ContentT = content;
+        }
+
         /// <summary>
         /// 设置响应
         /// </summary>
@@ -58,7 +64,7 @@ namespace Quick.Protocol.Commands
         public override ICommand Parse(CommandRequestPackage package)
         {
             var cmd = Activator.CreateInstance(this.GetType()) as ICommand;
-
+            
             if (cmd.Action != Action)
                 throw new IOException($"Action not match.Package's Action is '{Action}' and Command's Action is '{cmd.Action}'");
             cmd.Id = package.Id;
