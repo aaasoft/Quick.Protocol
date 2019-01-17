@@ -46,6 +46,7 @@ namespace Quick.Protocol
         public QpCommandHandlerOptions()
         {
             InstructionSet = new[] { Quick.Protocol.Base.Instruction };
+            InstructionSet = new QpInstruction[0];
         }
     }
 }

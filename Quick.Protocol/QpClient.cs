@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Quick.Protocol.Commands;
+using Quick.Protocol.Exceptions;
 using Quick.Protocol.Packages;
 using Quick.Protocol.Utils;
 using System;
@@ -17,9 +18,9 @@ namespace Quick.Protocol
     public class QpClient : QpCommandHandler
     {
         private CancellationTokenSource cts = null;
-        private QpClientOptions options;
+        public QpClientOptions Options { get; private set; }
         private TcpClient tcpClient;
-        public EndPoint EndPoint { get; private set; }
+        private bool authPassed = false;
 
         /// <summary>
         /// 服务端欢迎信息
@@ -34,7 +35,7 @@ namespace Quick.Protocol
             : base(options)
         {
             options.Check();
-            this.options = options;
+            this.Options = options;
         }
 
         /// <summary>
@@ -51,20 +52,20 @@ namespace Quick.Protocol
                 Close();
             //开始连接
             tcpClient = new TcpClient();
-            tcpClient.SendTimeout = options.SendTimeout;
-            tcpClient.ReceiveTimeout = options.ReceiveTimeout;
-            await TaskUtils.TaskWait(tcpClient.ConnectAsync(options.Host, options.Port), options.ConnectionTimeout);
+            tcpClient.SendTimeout = Options.SendTimeout;
+            tcpClient.ReceiveTimeout = Options.ReceiveTimeout;
+            await TaskUtils.TaskWait(tcpClient.ConnectAsync(Options.Host, Options.Port), Options.ConnectionTimeout);
 
             if (!tcpClient.Connected)
-                throw new IOException($"Failed to connect to {options.Host}:{options.Port}.");
-            EndPoint = tcpClient.Client.RemoteEndPoint;
+                throw new IOException($"Failed to connect to {Options.Host}:{Options.Port}.");
+            
             //初始化网络
             InitQpPackageHandler_Stream(tcpClient.GetStream());
 
             //读取服务端发来的欢迎信息
             var welcomePackage = await ReadPackageAsync(token) as CommandRequestPackage;
             if (welcomePackage == null || string.IsNullOrEmpty(welcomePackage.Content))
-                throw new IOException("Could't read welcome command,protocol error.");
+                throw new InvalidDataException("Could't read welcome command,protocol error.");
 
             //验证指令集
             var welcomeCommand = welcomePackage.ToCommand<WelcomeCommand, WelcomeCommand.CommandContent, object>();
@@ -73,14 +74,14 @@ namespace Quick.Protocol
             {
                 var errorMessage = "WelcomContent is null,protocol error.";
                 SendResponsePackage(welcomePackage.Id, -1, errorMessage);
-                throw new IOException(errorMessage);
+                throw new InvalidDataException(errorMessage);
             }
-            var notSupportInstructionNames = options.InstructionSet.Select(t => t.Id).Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
+            var notSupportInstructionNames = Options.InstructionSet.Select(t => t.Id).Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
             if (notSupportInstructionNames.Length > 0)
             {
                 var errorMessage = $"Client need instruction[{string.Join(",", notSupportInstructionNames)}] not support by server.";
                 SendResponsePackage(welcomePackage.Id, -1, errorMessage);
-                throw new IOException(errorMessage);
+                throw new InstructionNotSupportException(errorMessage);
             }
             SendResponsePackage(welcomePackage.Id, 0, "OK");
 
@@ -90,18 +91,19 @@ namespace Quick.Protocol
             //开始认证
             var authenticateResult = await SendCommand(new AuthenticateCommand(new AuthenticateCommand.CommandContent()
             {
-                Compress = options.EnableCompress,
-                Encrypt = options.EnableEncrypt,
-                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + options.Password)
+                Compress = Options.EnableCompress,
+                Encrypt = Options.EnableEncrypt,
+                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password)
             }));
 
             if (authenticateResult.Code != 0)
             {
-                var exception = new IOException(authenticateResult.Message);
-                OnReadError(exception);
+                var exception = new AuthenticateFailedException(authenticateResult.Message);
+                Close();
                 throw exception;
             }
-            options.OnAuthPassed();
+            authPassed = true;
+            Options.OnAuthPassed();
             //开始心跳
             BeginHeartBeat(token);
         }
@@ -111,11 +113,13 @@ namespace Quick.Protocol
             base.OnReadError(exception);
             cancellAll();
             disconnect();
-            Disconnected?.Invoke(this, EventArgs.Empty);
+            if (authPassed)
+                Disconnected?.Invoke(this, EventArgs.Empty);
         }
 
         private void cancellAll()
         {
+            authPassed = false;
             if (cts != null)
             {
                 cts.Cancel();
@@ -142,7 +146,6 @@ namespace Quick.Protocol
         {
             cancellAll();
             disconnect();
-            EndPoint = null;
         }
 
         public void SendResponsePackage(string id, int code, string message) => SendResponsePackage(id, code, message, null);

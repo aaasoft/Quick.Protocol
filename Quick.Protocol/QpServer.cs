@@ -32,10 +32,7 @@ namespace Quick.Protocol
         /// 通道连接上时
         /// </summary>
         public event EventHandler<QpServerChannel> ChannelConnected;
-        /// <summary>
-        /// 通道通过认证
-        /// </summary>
-        public event EventHandler<QpServerChannel> ChannelAuchenticated;
+        
         /// <summary>
         /// 通道连接断开时
         /// </summary>
@@ -89,7 +86,6 @@ namespace Quick.Protocol
                         ChannelDisconnected?.Invoke(this, channel);
                     };
                     channel.Start();
-                    ChannelAuchenticated?.Invoke(this, channel);
                 }
                 catch(Exception ex)
                 {

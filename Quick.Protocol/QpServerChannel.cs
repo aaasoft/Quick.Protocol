@@ -20,6 +20,11 @@ namespace Quick.Protocol
         public EndPoint EndPoint { get; private set; }
 
         /// <summary>
+        /// 通过认证时
+        /// </summary>
+        public event EventHandler Auchenticated;
+
+        /// <summary>
         /// 连接断开时
         /// </summary>
         public event EventHandler Disconnected;
@@ -95,6 +100,7 @@ namespace Quick.Protocol
                 isAuthSuccess = true;
                 options.Compress = authCmdContent.Compress;
                 options.Encrypt = authCmdContent.Encrypt;
+                Auchenticated?.Invoke(this, EventArgs.Empty);
             });
             //开始心跳
             BeginHeartBeat(cancellationToken);
