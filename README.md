@@ -17,7 +17,6 @@ static void Main(string[] args)
         ServerProgram = nameof(ServerTest) + " 1.0"
     });
     //server.ChannelConnected += Server_ChannelConnected;
-    //server.ChannelAuchenticated += Server_ChannelAuchenticated;
     //server.ChannelDisconnected += Server_ChannelDisconnected;
     try
     {
@@ -46,8 +45,7 @@ static void Main(string[] args)
         Port = 3011,
         Password = "HelloQP",
         //EnableCompress = true,
-        //EnableEncrypt = true,
-        NeededInstructionSet = new[] { "Quick.Protocol.Base" }
+        //EnableEncrypt = true
     });
     client.Disconnected += (sender, e) =>
       {
