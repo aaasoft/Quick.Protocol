@@ -17,7 +17,6 @@ namespace ServerTest
                 ServerProgram = nameof(ServerTest) + " 1.0"
             });
             server.ChannelConnected += Server_ChannelConnected;
-            server.ChannelAuchenticated += Server_ChannelAuchenticated;
             server.ChannelDisconnected += Server_ChannelDisconnected;
             try
             {
@@ -35,11 +34,6 @@ namespace ServerTest
         private static void Server_ChannelConnected(object sender, QpServerChannel e)
         {
             Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.EndPoint}]已连接!");
-        }
-
-        private static void Server_ChannelAuchenticated(object sender, QpServerChannel e)
-        {
-            Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.EndPoint}]已通过认证!");
         }
 
         private static void Server_ChannelDisconnected(object sender, QpServerChannel e)
