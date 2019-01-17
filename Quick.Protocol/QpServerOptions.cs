@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Quick.Protocol
 {
-    public class QpServerOptions : QpCommandHandlerOptions, ICloneable
+    public class QpServerOptions : QpCommandHandlerOptions
     {
         /// <summary>
         /// IP地址
@@ -27,25 +27,6 @@ namespace Quick.Protocol
         internal new bool Compress { get => base.Compress; set => base.Compress = value; }
         internal new bool Encrypt { get => base.Encrypt; set => base.Encrypt = value; }
 
-        private Dictionary<string, Instruction> _dictInstruction = new Dictionary<string, Instruction>();
-        public Instruction[] InstructionSet
-        {
-            set
-            {
-                foreach (var item in value)
-                    _dictInstruction[item.Id] = item;
-            }
-        }
-        /// <summary>
-        /// 支持的指令集
-        /// </summary>
-        public Instruction[] SupportInstructionSet => _dictInstruction.Values.ToArray();
-
-        public QpServerOptions()
-        {
-            InstructionSet = new[] { Base.Instruction };
-        }
-
         public override void Check()
         {
             base.Check();
@@ -55,9 +36,10 @@ namespace Quick.Protocol
                 throw new ArgumentException("Port must between 0 and 65535", nameof(Port));
         }
 
-        public object Clone()
+        public QpServerOptions Clone()
         {
             var ret = JsonConvert.DeserializeObject<QpServerOptions>(JsonConvert.SerializeObject(this));
+            ret.InstructionSet = InstructionSet;
             ret.Address = Address;
             return ret;
         }

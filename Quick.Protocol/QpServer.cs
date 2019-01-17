@@ -74,7 +74,7 @@ namespace Quick.Protocol
                 {
                     var remoteEndPointStr = tcpClient.Client.RemoteEndPoint.ToString();
                     logger.LogTrace("[Connection]{0} connected.", remoteEndPointStr);
-                    var channel = new QpServerChannel(tcpClient, token, (QpServerOptions)options.Clone());
+                    var channel = new QpServerChannel(tcpClient, token, options.Clone());
                     ChannelConnected?.Invoke(this, channel);
                     lock (channelList)
                         channelList.Add(channel);
@@ -91,8 +91,9 @@ namespace Quick.Protocol
                     channel.Start();
                     ChannelAuchenticated?.Invoke(this, channel);
                 }
-                catch
+                catch(Exception ex)
                 {
+                    logger.LogDebug("[Connection]Init&Start Channel error,reason:", ex.ToString());
                     try { tcpClient.Close(); }
                     catch { }
                 }

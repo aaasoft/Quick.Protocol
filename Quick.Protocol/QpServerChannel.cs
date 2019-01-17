@@ -47,7 +47,7 @@ namespace Quick.Protocol
             {
                 ProtocolVersion = QpConsts.QUICK_PROTOCOL_VERSION,
                 ServerProgram = options.ServerProgram,
-                InstructionSet = options.SupportInstructionSet
+                InstructionSet = options.InstructionSet
             });
             question = welcomeCmd.Id;
 

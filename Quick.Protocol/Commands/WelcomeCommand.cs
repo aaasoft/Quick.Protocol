@@ -12,7 +12,7 @@ namespace Quick.Protocol.Commands
         {
             public string ProtocolVersion { get; set; }
             public string ServerProgram { get; set; }
-            public Instruction[] InstructionSet { get; set; }
+            public QpInstruction[] InstructionSet { get; set; }
         }
 
         public WelcomeCommand() { }

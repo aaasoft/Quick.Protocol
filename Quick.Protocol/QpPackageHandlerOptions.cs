@@ -38,16 +38,15 @@ namespace Quick.Protocol
         internal virtual bool Encrypt { get; set; } = false;
 
         private Dictionary<byte, IPackage> packageDict = new Dictionary<byte, IPackage>();
+
         /// <summary>
-        /// 支持的数据包
+        /// 添加支持的包
         /// </summary>
-        public IPackage[] SupportPackages
+        /// <param name="packages"></param>
+        public void AddSupportPackages(IPackage[] packages)
         {
-            set
-            {
-                foreach (var item in value)
-                    packageDict[item.PackageType] = item;
-            }
+            foreach (var item in packages)
+                packageDict[item.PackageType] = item;
         }
 
         public IPackage ParsePackage(byte packageType, byte[] buffer, int index, int count)
@@ -56,15 +55,6 @@ namespace Quick.Protocol
                 return null;
             var package = packageDict[packageType];
             return package.Parse(buffer, index, count);
-        }
-
-        public QpPackageHandlerOptions()
-        {
-            SupportPackages = new IPackage[]{
-                HeartBeatPackage.Instance,
-                new CommandRequestPackage(),
-                new CommandResponsePackage()
-            };
         }
 
         public virtual void Check()

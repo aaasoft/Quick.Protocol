@@ -14,8 +14,7 @@ namespace ClientTest
                 Port = 3011,
                 Password = "HelloQP",
                 //EnableCompress = true,
-                //EnableEncrypt = true,
-                NeededInstructionSet = new[] { "Quick.Protocol.Base" }
+                //EnableEncrypt = true
             });
             client.Disconnected += (sender, e) =>
               {

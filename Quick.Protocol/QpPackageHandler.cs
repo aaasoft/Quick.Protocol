@@ -187,7 +187,10 @@ namespace Quick.Protocol
             }
             //解析包
             var package = options.ParsePackage(packageType, tmpBuffer, 0, tmpPackageLength);
-            logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
+            if (package == null)
+                logger.LogWarning("[Recv-Package][UnknownPackageType]PackageLength:{0} PackageType:{1}", packageLength, packageType);
+            else
+                logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
             return package;
         }
 

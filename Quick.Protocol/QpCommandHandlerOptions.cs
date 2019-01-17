@@ -1,4 +1,5 @@
-﻿using Quick.Protocol.Commands;
+﻿using Newtonsoft.Json;
+using Quick.Protocol.Commands;
 using Quick.Protocol.Packages;
 using System;
 using System.Collections.Generic;
@@ -9,19 +10,30 @@ namespace Quick.Protocol
 {
     public abstract class QpCommandHandlerOptions : QpPackageHandlerOptions
     {
-        private Dictionary<string, ICommand> commandDict = new Dictionary<string, ICommand>();
-
-        /// <summary>
-        /// 支持的指令
-        /// </summary>
-        public ICommand[] SupportCommands
+        private QpInstruction[] _InstructionSet;
+        [JsonIgnore]
+        public QpInstruction[] InstructionSet
         {
+            get { return _InstructionSet; }
             set
             {
+                _InstructionSet = value;
                 foreach (var item in value)
-                    commandDict[item.Action] = item;
+                {
+                    AddSupportPackages(item.SupportPackages);
+                    AddSupportCommands(item.SupportCommands);
+                }
             }
         }
+
+        private Dictionary<string, ICommand> commandDict = new Dictionary<string, ICommand>();
+
+        public void AddSupportCommands(ICommand[] commands)
+        {
+            foreach (var item in commands)
+                commandDict[item.Action] = item;
+        }
+
 
         public ICommand ParseCommand(CommandRequestPackage package)
         {
@@ -33,11 +45,7 @@ namespace Quick.Protocol
 
         public QpCommandHandlerOptions()
         {
-            SupportCommands = new ICommand[]
-            {
-                new WelcomeCommand(),
-                new AuthenticateCommand()
-            };
+            InstructionSet = new[] { Quick.Protocol.Base.Instruction };
         }
     }
 }

@@ -8,6 +8,7 @@ namespace ServerTest
     {
         static void Main(string[] args)
         {
+            //Quick.Protocol.Utils.LogUtils.AddConsole();
             var server = new QpServer(new QpServerOptions()
             {
                 Address = IPAddress.Loopback,

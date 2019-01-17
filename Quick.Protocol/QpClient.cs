@@ -74,7 +74,7 @@ namespace Quick.Protocol
                 SendResponsePackage(welcomePackage.Id, -1, errorMessage);
                 throw new IOException(errorMessage);
             }
-            var notSupportInstructionNames = options.NeededInstructionSet.Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
+            var notSupportInstructionNames = options.InstructionSet.Select(t => t.Id).Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
             if (notSupportInstructionNames.Length > 0)
             {
                 var errorMessage = $"Client need instruction[{string.Join(",", notSupportInstructionNames)}] not support by server.";

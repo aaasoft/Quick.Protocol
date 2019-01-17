@@ -37,11 +37,6 @@ namespace Quick.Protocol
             Encrypt = EnableEncrypt;
         }
 
-        /// <summary>
-        /// 需要支持的指令集
-        /// </summary>
-        public string[] NeededInstructionSet { get; set; }
-
         public override void Check()
         {
             base.Check();
