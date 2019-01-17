@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -18,6 +19,7 @@ namespace Quick.Protocol
         private CancellationTokenSource cts = null;
         private QpClientOptions options;
         private TcpClient tcpClient;
+        public EndPoint EndPoint { get; private set; }
 
         /// <summary>
         /// 服务端欢迎信息
@@ -41,11 +43,7 @@ namespace Quick.Protocol
         public async Task ConnectAsync()
         {
             //清理
-            if (cts != null)
-            {
-                cts.Cancel();
-                cts = null;
-            }
+            Close();
             cts = new CancellationTokenSource();
             var token = cts.Token;
 
@@ -57,6 +55,9 @@ namespace Quick.Protocol
             tcpClient.ReceiveTimeout = options.ReceiveTimeout;
             await TaskUtils.TaskWait(tcpClient.ConnectAsync(options.Host, options.Port), options.ConnectionTimeout);
 
+            if (!tcpClient.Connected)
+                throw new IOException($"Failed to connect to {options.Host}:{options.Port}.");
+            EndPoint = tcpClient.Client.RemoteEndPoint;
             //初始化网络
             InitQpPackageHandler_Stream(tcpClient.GetStream());
 
@@ -141,6 +142,7 @@ namespace Quick.Protocol
         {
             cancellAll();
             disconnect();
+            EndPoint = null;
         }
 
         public void SendResponsePackage(string id, int code, string message) => SendResponsePackage(id, code, message, null);
