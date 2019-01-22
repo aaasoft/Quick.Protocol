@@ -89,7 +89,7 @@ namespace Quick.Protocol
                 }
                 catch(Exception ex)
                 {
-                    logger.LogDebug("[Connection]Init&Start Channel error,reason:", ex.ToString());
+                    logger.LogDebug("[Connection]Init&Start Channel error,reason:{0}", ex.ToString());
                     try { tcpClient.Close(); }
                     catch { }
                 }
