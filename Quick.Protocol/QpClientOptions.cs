@@ -36,6 +36,15 @@ namespace Quick.Protocol
             Compress = EnableCompress;
             Encrypt = EnableEncrypt;
         }
+        
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public void Init()
+        {
+            Compress = false;
+            Encrypt = false;
+        }
 
         public override void Check()
         {
