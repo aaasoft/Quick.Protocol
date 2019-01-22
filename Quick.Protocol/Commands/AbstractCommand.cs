@@ -58,7 +58,8 @@ namespace Quick.Protocol.Commands
                 Message = responsePackage.Message,
                 Data = string.IsNullOrEmpty(responsePackage.Content) ? default(TResponseData) : JsonConvert.DeserializeObject<TResponseData>(responsePackage.Content)
             };
-            ResponseTask.Start();
+            if (ResponseTask.Status == TaskStatus.Created)
+                ResponseTask.Start();
         }
 
         public override ICommand Parse(CommandRequestPackage package)

@@ -111,9 +111,10 @@ namespace Quick.Protocol
         protected override void OnReadError(Exception exception)
         {
             base.OnReadError(exception);
+            var tmpAuthPassed = authPassed;
             cancellAll();
             disconnect();
-            if (authPassed)
+            if (tmpAuthPassed)
                 Disconnected?.Invoke(this, EventArgs.Empty);
         }
 
