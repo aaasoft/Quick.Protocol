@@ -73,5 +73,48 @@ namespace Quick.Protocol
             SendPackage(request).Wait();
             return command.ResponseTask;
         }
+
+        /// <summary>
+        /// 发送指令响应
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="code"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public Task SendCommandResponse(ICommand cmd, int code, string message)
+        {
+            return SendCommandResponse(cmd.Id, code, message);
+        }
+
+        /// <summary>
+        /// 发送指令响应
+        /// </summary>
+        /// <param name="commandId"></param>
+        /// <param name="code"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public Task SendCommandResponse(string commandId, int code, string message)
+        {
+            return SendCommandResponse(commandId, code, message, null);
+        }
+
+        /// <summary>
+        /// 发送指令响应
+        /// </summary>
+        /// <param name="commandId"></param>
+        /// <param name="code"></param>
+        /// <param name="message"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public Task SendCommandResponse(string commandId, int code, string message, string content)
+        {
+            return SendPackage(new CommandResponsePackage()
+            {
+                Id = commandId,
+                Code = code,
+                Message = message,
+                Content = content
+            });
+        }
     }
 }

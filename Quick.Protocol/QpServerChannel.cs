@@ -80,22 +80,14 @@ namespace Quick.Protocol
             var authCmdContent = authCmd.ContentT;
             if (Utils.CryptographyUtils.ComputeMD5Hash(question + options.Password) != authCmdContent.Answer)
             {
-                SendPackage(new Packages.CommandResponsePackage(e.Id)
-                {
-                    Code = -1,
-                    Message = "认证失败！"
-                }).ContinueWith(t =>
-                {
-                    if (tcpClient.Connected)
-                        OnReadError(new IOException("认证失败！"));
-                });
+                SendCommandResponse(e, -1, "认证失败！").ContinueWith(t =>
+                 {
+                     if (tcpClient.Connected)
+                         OnReadError(new IOException("认证失败！"));
+                 });
                 return;
             }
-            SendPackage(new Packages.CommandResponsePackage(e.Id)
-            {
-                Code = 0,
-                Message = "认证通过！"
-            }).ContinueWith(t =>
+            SendCommandResponse(e, 0, "认证通过！").ContinueWith(t =>
             {
                 isAuthSuccess = true;
                 options.Compress = authCmdContent.Compress;

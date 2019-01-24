@@ -9,7 +9,7 @@ namespace Quick.Protocol.Packages
     public abstract class AbstractPackage : IPackage
     {
         public abstract byte PackageType { get; }
-        public IPackage Parse(byte[] buffer, int index, int count)
+        public virtual IPackage Parse(byte[] buffer, int index, int count)
         {
             using (var ms = new MemoryStream(buffer, index, count))
             {
@@ -18,7 +18,7 @@ namespace Quick.Protocol.Packages
             }
         }
 
-        public byte[] Output()
+        public virtual byte[] Output()
         {
             var ms = new MemoryStream();
             ProtoBuf.Serializer.Serialize(ms, this);

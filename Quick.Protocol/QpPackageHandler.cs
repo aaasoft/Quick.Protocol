@@ -30,8 +30,8 @@ namespace Quick.Protocol
         }
 
         protected void InitQpPackageHandler_Stream(Stream stream)
-        {   
-            QpPackageHandler_Stream = stream;            
+        {
+            QpPackageHandler_Stream = stream;
         }
 
         /// <summary>

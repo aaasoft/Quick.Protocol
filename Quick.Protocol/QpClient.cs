@@ -73,17 +73,17 @@ namespace Quick.Protocol
             if (WelcomeContent == null)
             {
                 var errorMessage = "WelcomContent is null,protocol error.";
-                SendResponsePackage(welcomePackage.Id, -1, errorMessage);
+                await SendCommandResponse(welcomeCommand, -1, errorMessage);
                 throw new InvalidDataException(errorMessage);
             }
             var notSupportInstructionNames = Options.InstructionSet.Select(t => t.Id).Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
             if (notSupportInstructionNames.Length > 0)
             {
                 var errorMessage = $"Client need instruction[{string.Join(",", notSupportInstructionNames)}] not support by server.";
-                SendResponsePackage(welcomePackage.Id, -1, errorMessage);
+                await SendCommandResponse(welcomeCommand, -1, errorMessage);
                 throw new InstructionNotSupportException(errorMessage);
             }
-            SendResponsePackage(welcomePackage.Id, 0, "OK");
+            await SendCommandResponse(welcomeCommand, 0, "OK");
 
             //开始读取其他数据包
             BeginReadPackage(token);
@@ -148,18 +148,6 @@ namespace Quick.Protocol
         {
             cancellAll();
             disconnect();
-        }
-
-        public void SendResponsePackage(string id, int code, string message) => SendResponsePackage(id, code, message, null);
-        public void SendResponsePackage(string id, int code, string message, string content)
-        {
-            SendPackage(new CommandResponsePackage()
-            {
-                Id = id,
-                Code = code,
-                Message = message,
-                Content = content
-            }).Wait();
         }
     }
 }
