@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Quick.Protocol.Commands
@@ -30,14 +31,25 @@ namespace Quick.Protocol.Commands
         }
         public TRequestContent ContentT { get; set; }
 
+        private bool isTimeout = false;
         private CommandResponse<TResponseData> response;
-
-        private Task<CommandResponse<TResponseData>> _ResponseTask;
-        public Task<CommandResponse<TResponseData>> ResponseTask => _ResponseTask;
+        public Task<CommandResponse<TResponseData>> ResponseTask { get; private set; }
 
         public AbstractCommand()
         {
-            _ResponseTask = new Task<CommandResponse<TResponseData>>(() => response);
+            ResponseTask = new Task<CommandResponse<TResponseData>>(() =>
+            {
+                if (isTimeout)
+                    throw new TimeoutException($"Command[{this.ToString()}] is timeout.");
+                return response;
+            });
+        }
+
+        public void Timeout()
+        {
+            isTimeout = true;
+            if (ResponseTask.Status == TaskStatus.Created)
+                ResponseTask.Start();
         }
 
         public AbstractCommand(TRequestContent content)
@@ -52,6 +64,8 @@ namespace Quick.Protocol.Commands
         /// <param name="response"></param>
         public override void SetResponse(CommandResponsePackage responsePackage)
         {
+            if (isTimeout)
+                return;
             this.response = new CommandResponse<TResponseData>()
             {
                 Code = responsePackage.Code,
@@ -65,7 +79,7 @@ namespace Quick.Protocol.Commands
         public override ICommand Parse(CommandRequestPackage package)
         {
             var cmd = Activator.CreateInstance(this.GetType()) as ICommand;
-            
+
             if (cmd.Action != Action)
                 throw new IOException($"Action not match.Package's Action is '{Action}' and Command's Action is '{cmd.Action}'");
             cmd.Id = package.Id;

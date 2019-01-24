@@ -55,13 +55,26 @@ namespace Quick.Protocol
         }
 
         /// <summary>
-        /// 发送指令
+        /// 发送指令，默认超时时间为30秒
         /// </summary>
         /// <typeparam name="TRequestContent"></typeparam>
         /// <typeparam name="TResponseData"></typeparam>
         /// <param name="command"></param>
         /// <returns></returns>
         public Task<CommandResponse<TResponseData>> SendCommand<TRequestContent, TResponseData>(AbstractCommand<TRequestContent, TResponseData> command)
+        {
+            return SendCommand(command, 30 * 1000);
+        }
+
+        /// <summary>
+        /// 发送指令
+        /// </summary>
+        /// <typeparam name="TRequestContent"></typeparam>
+        /// <typeparam name="TResponseData"></typeparam>
+        /// <param name="command"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public Task<CommandResponse<TResponseData>> SendCommand<TRequestContent, TResponseData>(AbstractCommand<TRequestContent, TResponseData> command, int timeout)
         {
             commandDict.TryAdd(command.Id, command);
             var request = new CommandRequestPackage()
@@ -70,8 +83,26 @@ namespace Quick.Protocol
                 Action = command.Action,
                 Content = JsonConvert.SerializeObject(command.Content)
             };
-            SendPackage(request).Wait();
-            return command.ResponseTask;
+
+            if (timeout <= 0)
+            {
+                SendPackage(request).Wait();
+                return command.ResponseTask;
+            }
+            //如果设置了超时
+            else
+            {
+                SendPackage(request).Wait(timeout);
+                Task.Delay(timeout).ContinueWith(t =>
+                 {
+                     if (command.ResponseTask.Status == TaskStatus.Created)
+                     {
+                         command.Timeout();
+                         commandDict.TryRemove(command.Id, out _);
+                     }
+                 });
+                return command.ResponseTask;
+            }
         }
 
         /// <summary>
