@@ -35,10 +35,6 @@ namespace Quick.Protocol
             this.cancellationToken = cancellationToken;
             this.options = options;
             this.EndPoint = tcpClient.Client.RemoteEndPoint;
-
-            tcpClient.ReceiveTimeout = options.ReceiveTimeout;
-            tcpClient.SendTimeout = options.SendTimeout;
-
             this.CommandReceived += QpServerChannel_CommandReceived;
 
             InitQpPackageHandler_Stream(tcpClient.GetStream());

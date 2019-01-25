@@ -52,8 +52,6 @@ namespace Quick.Protocol
                 Close();
             //开始连接
             tcpClient = new TcpClient();
-            tcpClient.SendTimeout = Options.SendTimeout;
-            tcpClient.ReceiveTimeout = Options.ReceiveTimeout;
             await TaskUtils.TaskWait(tcpClient.ConnectAsync(Options.Host, Options.Port), Options.ConnectionTimeout);
 
             if (!tcpClient.Connected)
