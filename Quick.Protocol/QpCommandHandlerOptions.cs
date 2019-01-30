@@ -30,6 +30,8 @@ namespace Quick.Protocol
 
         public void AddSupportCommands(ICommand[] commands)
         {
+            if (commands == null)
+                return;
             foreach (var item in commands)
                 commandDict[item.Action] = item;
         }

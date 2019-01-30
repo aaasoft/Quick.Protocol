@@ -45,6 +45,8 @@ namespace Quick.Protocol
         /// <param name="packages"></param>
         public void AddSupportPackages(IPackage[] packages)
         {
+            if (packages == null)
+                return;
             foreach (var item in packages)
                 packageDict[item.PackageType] = item;
         }
