@@ -21,7 +21,10 @@ namespace Quick.Protocol
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
         private DateTime lastSendPackageTime = DateTime.MinValue;
-
+        /// <summary>
+        /// 增加Tag属性，用于引用与处理器相关的对象
+        /// </summary>
+        public Object Tag { get; set; }
         public QpPackageHandler(QpPackageHandlerOptions options)
         {
             this.options = options;

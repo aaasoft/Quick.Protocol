@@ -16,6 +16,11 @@ namespace Quick.Protocol
         private QpServerOptions options;
         private TcpListener tcpListener;
         private List<QpServerChannel> channelList = new List<QpServerChannel>();
+        
+        /// <summary>
+        /// 增加Tag属性，用于引用与QpServer相关的对象
+        /// </summary>
+        public Object Tag { get; set; }
 
         /// <summary>
         /// 获取全部的通道
