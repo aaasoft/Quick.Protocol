@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SoftCloud.Connector.Protocol" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Quick.Protocol\Quick.Protocol.csproj" />
   </ItemGroup>
 

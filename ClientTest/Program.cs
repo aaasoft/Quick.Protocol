@@ -8,13 +8,13 @@ namespace ClientTest
         static void Main(string[] args)
         {
             //Quick.Protocol.Utils.LogUtils.AddConsole();
-            var client = new QpClient(new QpClientOptions()
+            var client = new QpTcpClient(new QpTcpClientOptions()
             {
                 Host = "127.0.0.1",
                 Port = 3011,
                 Password = "HelloQP",
-                //EnableCompress = true,
-                //EnableEncrypt = true
+                EnableCompress = true,
+                EnableEncrypt = true
             });
             client.Disconnected += (sender, e) =>
               {

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,12 +11,12 @@ namespace Quick.Protocol
 {
     public class QpServerChannel : QpCommandHandler
     {
-        private TcpClient tcpClient;
+        private Stream stream;
         private CancellationToken cancellationToken;
         private QpServerOptions options;
         private string question;
         private bool isAuthSuccess = false;
-        public EndPoint EndPoint { get; private set; }
+        public string ChannelName { get; private set; }
 
         /// <summary>
         /// 通过认证时
@@ -29,15 +28,15 @@ namespace Quick.Protocol
         /// </summary>
         public event EventHandler Disconnected;
 
-        public QpServerChannel(TcpClient tcpClient, CancellationToken cancellationToken, QpServerOptions options) : base(options)
+        public QpServerChannel(Stream stream,string channelName, CancellationToken cancellationToken, QpServerOptions options) : base(options)
         {
-            this.tcpClient = tcpClient;
+            this.stream = stream;
+            this.ChannelName = channelName;
             this.cancellationToken = cancellationToken;
             this.options = options;
-            this.EndPoint = tcpClient.Client.RemoteEndPoint;
             this.CommandReceived += QpServerChannel_CommandReceived;
 
-            InitQpPackageHandler_Stream(tcpClient.GetStream());
+            InitQpPackageHandler_Stream(stream);
             //开始读取其他数据包
             BeginReadPackage(cancellationToken);
         }
@@ -78,8 +77,8 @@ namespace Quick.Protocol
             {
                 SendCommandResponse(e, -1, "认证失败！").ContinueWith(t =>
                  {
-                     if (tcpClient.Connected)
-                         OnReadError(new IOException("认证失败！"));
+                     //if (tcpClient.Connected)
+                     OnReadError(new IOException("认证失败！"));
                  });
                 return;
             }

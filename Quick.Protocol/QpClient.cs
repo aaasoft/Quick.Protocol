@@ -15,11 +15,10 @@ using System.Threading.Tasks;
 
 namespace Quick.Protocol
 {
-    public class QpClient : QpCommandHandler
+    public abstract class QpClient : QpCommandHandler
     {
         private CancellationTokenSource cts = null;
         public QpClientOptions Options { get; private set; }
-        private TcpClient tcpClient;
         private bool authPassed = false;
 
         /// <summary>
@@ -38,6 +37,8 @@ namespace Quick.Protocol
             this.Options = options;
         }
 
+        protected abstract Task<Stream> InnerConnectAsync();
+
         /// <summary>
         /// 连接
         /// </summary>
@@ -48,17 +49,10 @@ namespace Quick.Protocol
             cts = new CancellationTokenSource();
             var token = cts.Token;
 
-            if (tcpClient != null)
-                Close();
-            //开始连接
-            tcpClient = new TcpClient();
-            await TaskUtils.TaskWait(tcpClient.ConnectAsync(Options.Host, Options.Port), Options.ConnectionTimeout);
-
-            if (!tcpClient.Connected)
-                throw new IOException($"Failed to connect to {Options.Host}:{Options.Port}.");
+            var stream = await InnerConnectAsync();
             
             //初始化网络
-            InitQpPackageHandler_Stream(tcpClient.GetStream());
+            InitQpPackageHandler_Stream(stream);
 
             //读取服务端发来的欢迎信息
             var welcomePackage = await ReadPackageAsync(token) as CommandRequestPackage;
@@ -112,7 +106,7 @@ namespace Quick.Protocol
             Options.Init();
             var tmpAuthPassed = authPassed;
             cancellAll();
-            disconnect();
+            Disconnect();
             if (tmpAuthPassed)
                 Disconnected?.Invoke(this, EventArgs.Empty);
         }
@@ -127,16 +121,8 @@ namespace Quick.Protocol
             }
         }
 
-        private void disconnect()
+        protected virtual void Disconnect()
         {
-            if (tcpClient != null)
-            {
-                tcpClient.Close();
-#if NETSTANDARD2_0
-                tcpClient.Dispose();
-#endif
-                tcpClient = null;
-            }
         }
 
         /// <summary>
@@ -145,7 +131,7 @@ namespace Quick.Protocol
         public void Close()
         {
             cancellAll();
-            disconnect();
+            Disconnect();
         }
     }
 }

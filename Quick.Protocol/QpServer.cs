@@ -2,19 +2,20 @@
 using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Quick.Protocol
 {
-    public class QpServer
+    public abstract class QpServer
     {
         private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private CancellationTokenSource cts;
         private QpServerOptions options;
-        private TcpListener tcpListener;
         private List<QpServerChannel> channelList = new List<QpServerChannel>();
         
         /// <summary>
@@ -49,64 +50,52 @@ namespace Quick.Protocol
             this.options = options;
         }
 
-        public void Start()
+        public virtual void Start()
         {
             cts = new CancellationTokenSource();
-            tcpListener = new TcpListener(options.Address, options.Port);
-            tcpListener.Start();
             beginAccept(cts.Token);
         }
+
+        protected void OnNewChannelConnected(Stream stream, string channelName, CancellationToken token)
+        {
+            var channel = new QpServerChannel(stream, channelName, token, options.Clone());
+            ChannelConnected?.Invoke(this, channel);
+            lock (channelList)
+                channelList.Add(channel);
+            channel.Disconnected += (sender, e) =>
+            {
+                logger.LogTrace("[Connection]{0} Disconnected.", channelName);
+                lock (channelList)
+                    if (channelList.Contains(channel))
+                        channelList.Remove(channel);
+                try { stream.Dispose(); }
+                catch { }
+                ChannelDisconnected?.Invoke(this, channel);
+            };
+            channel.Start();
+        }
+
+        protected abstract Task InnerAcceptAsync(CancellationToken token);
 
         private void beginAccept(CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return;
-            tcpListener?.AcceptTcpClientAsync().ContinueWith(task =>
+
+            InnerAcceptAsync(token).ContinueWith(task =>
             {
                 if (task.IsCanceled)
                     return;
                 if (task.IsFaulted)
                     return;
                 beginAccept(token);
-
-                var tcpClient = task.Result;
-                if (tcpClient == null)
-                    return;
-                try
-                {
-                    var remoteEndPointStr = tcpClient.Client.RemoteEndPoint.ToString();
-                    logger.LogTrace("[Connection]{0} connected.", remoteEndPointStr);
-                    var channel = new QpServerChannel(tcpClient, token, options.Clone());
-                    ChannelConnected?.Invoke(this, channel);
-                    lock (channelList)
-                        channelList.Add(channel);
-                    channel.Disconnected += (sender, e) =>
-                    {
-                        logger.LogTrace("[Connection]{0} Disconnected.", remoteEndPointStr);
-                        lock (channelList)
-                            if (channelList.Contains(channel))
-                                channelList.Remove(channel);
-                        try { tcpClient.Close(); }
-                        catch { }
-                        ChannelDisconnected?.Invoke(this, channel);
-                    };
-                    channel.Start();
-                }
-                catch(Exception ex)
-                {
-                    logger.LogDebug("[Connection]Init&Start Channel error,reason:{0}", ex.ToString());
-                    try { tcpClient.Close(); }
-                    catch { }
-                }
             });
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
             cts.Cancel();
             cts = null;
-            tcpListener.Stop();
-            tcpListener = null;
         }
     }
 }
