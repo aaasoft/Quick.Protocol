@@ -45,7 +45,7 @@ namespace Quick.Protocol.Tcp
                     return;
                 try
                 {
-                    var remoteEndPointStr = "TCP/" + tcpClient.Client.RemoteEndPoint.ToString();
+                    var remoteEndPointStr = "TCP:" + tcpClient.Client.RemoteEndPoint.ToString();
                     logger.LogTrace("[Connection]{0} connected.", remoteEndPointStr);
                     OnNewChannelConnected(tcpClient.GetStream(), remoteEndPointStr, token);
                 }

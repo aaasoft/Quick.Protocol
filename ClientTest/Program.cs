@@ -1,5 +1,4 @@
 ﻿using Quick.Protocol;
-using Quick.Protocol.Tcp;
 using System;
 
 namespace ClientTest
@@ -8,15 +7,25 @@ namespace ClientTest
     {
         static void Main(string[] args)
         {
-            //Quick.Protocol.Utils.LogUtils.AddConsole();
-            var client = new QpTcpClient(new QpTcpClientOptions()
+            Quick.Protocol.Utils.LogUtils.AddConsole();
+
+            //var client = new Quick.Protocol.Tcp.QpTcpClient(new Quick.Protocol.Tcp.QpTcpClientOptions()
+            //{
+            //    Host = "127.0.0.1",
+            //    Port = 3011,
+            //    Password = "HelloQP",
+            //    EnableCompress = true,
+            //    EnableEncrypt = true
+            //});
+
+            var client = new Quick.Protocol.Pipeline.QpPipelineClient(new Quick.Protocol.Pipeline.QpPipelineClientOptions()
             {
-                Host = "127.0.0.1",
-                Port = 3011,
+                PipeName = "Quick.Protocol",
                 Password = "HelloQP",
                 EnableCompress = true,
                 EnableEncrypt = true
             });
+
             client.Disconnected += (sender, e) =>
               {
                   Console.WriteLine("连接已断开");

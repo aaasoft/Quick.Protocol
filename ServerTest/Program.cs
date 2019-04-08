@@ -1,6 +1,5 @@
 ﻿using Quick.Protocol;
 using Quick.Protocol.Core;
-using Quick.Protocol.Tcp;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -12,11 +11,17 @@ namespace ServerTest
     {
         static void Main(string[] args)
         {
-            //Quick.Protocol.Utils.LogUtils.AddConsole();
-            var server = new QpTcpServer(new QpTcpServerOptions()
+            Quick.Protocol.Utils.LogUtils.AddConsole();
+            //var server = new Quick.Protocol.Tcp.QpTcpServer(new Quick.Protocol.Tcp.QpTcpServerOptions()
+            //{
+            //    Address = IPAddress.Loopback,
+            //    Port = 3011,
+            //    Password = "HelloQP",
+            //    ServerProgram = nameof(ServerTest) + " 1.0"
+            //});
+            var server = new Quick.Protocol.Pipeline.QpPipelineServer(new Quick.Protocol.Pipeline.QpPipelineServerOptions()
             {
-                Address = IPAddress.Loopback,
-                Port = 3011,
+                PipeName = "Quick.Protocol",
                 Password = "HelloQP",
                 ServerProgram = nameof(ServerTest) + " 1.0"
             });
