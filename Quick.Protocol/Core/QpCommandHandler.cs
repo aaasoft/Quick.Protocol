@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Core
 {
     public abstract class QpCommandHandler : QpPackageHandler
     {

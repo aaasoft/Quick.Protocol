@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Core
 {
     public class QpServerChannel : QpCommandHandler
     {

@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using Quick.Protocol.Core;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Text;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Tcp
 {
-    public class QpTcpServerOptions : QpServerOptions
+    public class QpTcpClientOptions : QpClientOptions
     {
         /// <summary>
-        /// IP地址
+        /// 主机
         /// </summary>
-        [JsonIgnore]
-        public IPAddress Address { get; set; }
+        public string Host { get; set; }
         /// <summary>
         /// 端口
         /// </summary>
@@ -21,8 +19,8 @@ namespace Quick.Protocol
         public override void Check()
         {
             base.Check();
-            if (Address == null)
-                throw new ArgumentNullException(nameof(Address));
+            if (string.IsNullOrEmpty(Host))
+                throw new ArgumentNullException(nameof(Host));
             if (Port < 0 || Port > 65535)
                 throw new ArgumentException("Port must between 0 and 65535", nameof(Port));
         }

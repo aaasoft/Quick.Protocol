@@ -1,4 +1,5 @@
-﻿using Quick.Protocol.Utils;
+﻿using Quick.Protocol.Core;
+using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Tcp
 {
     public class QpTcpClient : QpClient
     {

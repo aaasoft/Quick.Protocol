@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Core
 {
     public class QpServerOptions : QpCommandHandlerOptions
     {

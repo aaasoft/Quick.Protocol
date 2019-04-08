@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Quick.Protocol.Core;
 using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol
+namespace Quick.Protocol.Tcp
 {
     public class QpTcpServer : QpServer
     {

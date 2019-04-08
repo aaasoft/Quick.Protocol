@@ -1,4 +1,5 @@
 ﻿using Quick.Protocol;
+using Quick.Protocol.Tcp;
 using System;
 
 namespace ClientTest
