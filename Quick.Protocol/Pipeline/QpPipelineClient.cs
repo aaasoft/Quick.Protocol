@@ -1,4 +1,6 @@
-﻿using Quick.Protocol.Core;
+﻿using Microsoft.Extensions.Logging;
+using Quick.Protocol.Core;
+using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +12,7 @@ namespace Quick.Protocol.Pipeline
 {
     public class QpPipelineClient : QpClient
     {
+        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private QpPipelineClientOptions options;
 
         public QpPipelineClient(QpPipelineClientOptions options) : base(options)
@@ -26,6 +29,7 @@ namespace Quick.Protocol.Pipeline
             await Task.Run(() => pipeClientStream.Connect(options.ConnectionTimeout));
 #endif
             pipeClientStream.ReadMode = PipeTransmissionMode.Byte;
+            logger.LogTrace("服务管道数量：" + pipeClientStream.NumberOfServerInstances);
             return pipeClientStream;
         }
     }
