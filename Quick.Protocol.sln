@@ -1,13 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.271
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol", "Quick.Protocol\Quick.Protocol.csproj", "{6619CA9C-B91C-4343-AA7D-4EFE91BEC57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol", "Quick.Protocol\Quick.Protocol.csproj", "{6619CA9C-B91C-4343-AA7D-4EFE91BEC57E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerTest", "ServerTest\ServerTest.csproj", "{DB778708-2943-4C09-BC95-2392F9173365}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.Tcp", "Quick.Protocol.Tcp\Quick.Protocol.Tcp.csproj", "{D664193E-A22D-4CF6-A43E-635DBA1CFE81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest", "ClientTest\ClientTest.csproj", "{411BF246-6CE7-4E8A-85D2-CECC1832BF15}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{4D8B91B9-A589-478E-B579-185AE878E575}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tcp", "Tcp", "{73B65686-9267-4700-8103-B9253E63313A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{A1E3CB19-806D-41DF-B69C-60684B5442FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol.Pipeline", "Quick.Protocol.Pipeline\Quick.Protocol.Pipeline.csproj", "{B0BAC93B-DE2E-47EC-BEEA-604AD1AC7621}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelineServer", "Test\Pipeline\PipelineServer\PipelineServer.csproj", "{731BE575-F97E-4326-8F97-61791F548C2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelineClient", "Test\Pipeline\PipelineClient\PipelineClient.csproj", "{CB49EFEF-1545-42D1-9F24-1BB53872BD6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpServer", "Test\Tcp\TcpServer\TcpServer.csproj", "{72597688-2D08-4247-B129-385605A19E26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpClient", "Test\Tcp\TcpClient\TcpClient.csproj", "{D4C20C80-5392-4FAC-9C6F-890495F97DBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,17 +33,41 @@ Global
 		{6619CA9C-B91C-4343-AA7D-4EFE91BEC57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6619CA9C-B91C-4343-AA7D-4EFE91BEC57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6619CA9C-B91C-4343-AA7D-4EFE91BEC57E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB778708-2943-4C09-BC95-2392F9173365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB778708-2943-4C09-BC95-2392F9173365}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB778708-2943-4C09-BC95-2392F9173365}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB778708-2943-4C09-BC95-2392F9173365}.Release|Any CPU.Build.0 = Release|Any CPU
-		{411BF246-6CE7-4E8A-85D2-CECC1832BF15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{411BF246-6CE7-4E8A-85D2-CECC1832BF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{411BF246-6CE7-4E8A-85D2-CECC1832BF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{411BF246-6CE7-4E8A-85D2-CECC1832BF15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D664193E-A22D-4CF6-A43E-635DBA1CFE81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D664193E-A22D-4CF6-A43E-635DBA1CFE81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D664193E-A22D-4CF6-A43E-635DBA1CFE81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D664193E-A22D-4CF6-A43E-635DBA1CFE81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0BAC93B-DE2E-47EC-BEEA-604AD1AC7621}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0BAC93B-DE2E-47EC-BEEA-604AD1AC7621}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0BAC93B-DE2E-47EC-BEEA-604AD1AC7621}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0BAC93B-DE2E-47EC-BEEA-604AD1AC7621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{731BE575-F97E-4326-8F97-61791F548C2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{731BE575-F97E-4326-8F97-61791F548C2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{731BE575-F97E-4326-8F97-61791F548C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{731BE575-F97E-4326-8F97-61791F548C2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB49EFEF-1545-42D1-9F24-1BB53872BD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB49EFEF-1545-42D1-9F24-1BB53872BD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB49EFEF-1545-42D1-9F24-1BB53872BD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB49EFEF-1545-42D1-9F24-1BB53872BD6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72597688-2D08-4247-B129-385605A19E26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72597688-2D08-4247-B129-385605A19E26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72597688-2D08-4247-B129-385605A19E26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72597688-2D08-4247-B129-385605A19E26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4C20C80-5392-4FAC-9C6F-890495F97DBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4C20C80-5392-4FAC-9C6F-890495F97DBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4C20C80-5392-4FAC-9C6F-890495F97DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4C20C80-5392-4FAC-9C6F-890495F97DBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{73B65686-9267-4700-8103-B9253E63313A} = {4D8B91B9-A589-478E-B579-185AE878E575}
+		{A1E3CB19-806D-41DF-B69C-60684B5442FD} = {4D8B91B9-A589-478E-B579-185AE878E575}
+		{731BE575-F97E-4326-8F97-61791F548C2B} = {A1E3CB19-806D-41DF-B69C-60684B5442FD}
+		{CB49EFEF-1545-42D1-9F24-1BB53872BD6F} = {A1E3CB19-806D-41DF-B69C-60684B5442FD}
+		{72597688-2D08-4247-B129-385605A19E26} = {73B65686-9267-4700-8103-B9253E63313A}
+		{D4C20C80-5392-4FAC-9C6F-890495F97DBE} = {73B65686-9267-4700-8103-B9253E63313A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EBE52E31-F20D-4366-8517-584BCD5F79FF}

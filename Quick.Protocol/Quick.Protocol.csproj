@@ -1,15 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <PackageProjectUrl>https://github.com/aaasoft/Quick.Protocol</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/aaasoft/Quick.Protocol/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>scbeta</Authors>
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
     <Company />
-    <AssemblyVersion>1.0.9.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
