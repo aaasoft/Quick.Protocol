@@ -3,6 +3,7 @@ using Quick.Protocol.Core;
 using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace Quick.Protocol.SerialPort
                                                 options.Parity,
                                                 options.DataBits,
                                                 options.StopBits);
+            serialPort.WriteTimeout = options.SendTimeout;
             serialPort.Open();
             logger.LogTrace($"SerialPort[{options.PortName}] open success.");
             isAccepted = false;
@@ -62,7 +64,12 @@ namespace Quick.Protocol.SerialPort
             {
                 if (!serialPort.IsOpen)
                     serialPort.Open();
-                serialPort.ReadByte();
+                var line = serialPort.ReadLine();
+                if (QpConsts.QuickProtocolNameAndVersion != line)
+                {
+                    isAccepted = false;
+                    throw new IOException("Protocol not match.");
+                }
             }, token)
                 .ContinueWith(task =>
                 {
