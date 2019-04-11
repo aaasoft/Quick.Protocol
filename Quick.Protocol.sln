@@ -13,15 +13,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tcp", "Tcp", "{73B65686-926
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{A1E3CB19-806D-41DF-B69C-60684B5442FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol.Pipeline", "Quick.Protocol.Pipeline\Quick.Protocol.Pipeline.csproj", "{B0BAC93B-DE2E-47EC-BEEA-604AD1AC7621}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.Pipeline", "Quick.Protocol.Pipeline\Quick.Protocol.Pipeline.csproj", "{B0BAC93B-DE2E-47EC-BEEA-604AD1AC7621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelineServer", "Test\Pipeline\PipelineServer\PipelineServer.csproj", "{731BE575-F97E-4326-8F97-61791F548C2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipelineServer", "Test\Pipeline\PipelineServer\PipelineServer.csproj", "{731BE575-F97E-4326-8F97-61791F548C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelineClient", "Test\Pipeline\PipelineClient\PipelineClient.csproj", "{CB49EFEF-1545-42D1-9F24-1BB53872BD6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipelineClient", "Test\Pipeline\PipelineClient\PipelineClient.csproj", "{CB49EFEF-1545-42D1-9F24-1BB53872BD6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpServer", "Test\Tcp\TcpServer\TcpServer.csproj", "{72597688-2D08-4247-B129-385605A19E26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcpServer", "Test\Tcp\TcpServer\TcpServer.csproj", "{72597688-2D08-4247-B129-385605A19E26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpClient", "Test\Tcp\TcpClient\TcpClient.csproj", "{D4C20C80-5392-4FAC-9C6F-890495F97DBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcpClient", "Test\Tcp\TcpClient\TcpClient.csproj", "{D4C20C80-5392-4FAC-9C6F-890495F97DBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol.SerialPort", "Quick.Protocol.SerialPort\Quick.Protocol.SerialPort.csproj", "{2FF529DD-E1AD-4C72-8230-1AB8C1392AC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SerialPort", "SerialPort", "{6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortServer", "Test\SerialPort\SerialPortServer\SerialPortServer.csproj", "{2D62DE50-0210-4B3F-8970-862F2866223E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortClient", "Test\SerialPort\SerialPortClient\SerialPortClient.csproj", "{73C50152-A625-4106-8CAF-472D6FA64CD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +65,18 @@ Global
 		{D4C20C80-5392-4FAC-9C6F-890495F97DBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4C20C80-5392-4FAC-9C6F-890495F97DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4C20C80-5392-4FAC-9C6F-890495F97DBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FF529DD-E1AD-4C72-8230-1AB8C1392AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FF529DD-E1AD-4C72-8230-1AB8C1392AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FF529DD-E1AD-4C72-8230-1AB8C1392AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FF529DD-E1AD-4C72-8230-1AB8C1392AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D62DE50-0210-4B3F-8970-862F2866223E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D62DE50-0210-4B3F-8970-862F2866223E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D62DE50-0210-4B3F-8970-862F2866223E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D62DE50-0210-4B3F-8970-862F2866223E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +88,9 @@ Global
 		{CB49EFEF-1545-42D1-9F24-1BB53872BD6F} = {A1E3CB19-806D-41DF-B69C-60684B5442FD}
 		{72597688-2D08-4247-B129-385605A19E26} = {73B65686-9267-4700-8103-B9253E63313A}
 		{D4C20C80-5392-4FAC-9C6F-890495F97DBE} = {73B65686-9267-4700-8103-B9253E63313A}
+		{6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3} = {4D8B91B9-A589-478E-B579-185AE878E575}
+		{2D62DE50-0210-4B3F-8970-862F2866223E} = {6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3}
+		{73C50152-A625-4106-8CAF-472D6FA64CD1} = {6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EBE52E31-F20D-4366-8517-584BCD5F79FF}
