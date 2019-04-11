@@ -1,7 +1,7 @@
 Quick.Protocol
 =====
 
-A simple protocol for TCP.
+A simple protocol for TCP,Pipelin,SerialPort.
 The easiest way how to use Quick.Protocol is via the Quick.Protocol NuGet package. 
 
 Server Sample:
@@ -14,7 +14,7 @@ static void Main(string[] args)
         Address = IPAddress.Loopback,
         Port = 3011,
         Password = "HelloQP",
-        ServerProgram = nameof(ServerTest) + " 1.0"
+        ServerProgram = nameof(TcpServer) + " 1.0"
     });
     //server.ChannelConnected += Server_ChannelConnected;
     //server.ChannelDisconnected += Server_ChannelDisconnected;
