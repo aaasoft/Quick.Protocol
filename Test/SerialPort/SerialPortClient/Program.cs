@@ -10,7 +10,7 @@ namespace SerialPortClient
 
             var client = new Quick.Protocol.SerialPort.QpSerialPortClient(new Quick.Protocol.SerialPort.QpSerialPortClientOptions()
             {
-                PortName = "COM1",
+                PortName = "COM4",
                 Password = "HelloQP",
                 EnableCompress = true,
                 EnableEncrypt = true

@@ -23,6 +23,7 @@ namespace Quick.Protocol.SerialPort
 
         public override void Start()
         {
+            this.ChannelDisconnected += QpSerialPortServer_ChannelDisconnected;
             logger.LogTrace($"Opening SerialPort[{options.PortName}]...");
             serialPort = new System.IO.Ports.SerialPort(options.PortName,
                                                 options.BaudRate,
@@ -43,14 +44,26 @@ namespace Quick.Protocol.SerialPort
                 serialPort.Dispose();
                 serialPort = null;
             }
+            this.ChannelDisconnected -= QpSerialPortServer_ChannelDisconnected;
+        }
+
+        private void QpSerialPortServer_ChannelDisconnected(object sender, QpServerChannel e)
+        {
+            isAccepted = false;
         }
 
         protected override Task InnerAcceptAsync(CancellationToken token)
         {
             if (isAccepted)
-                return Task.Delay(TimeSpan.MaxValue, token);
+                return Task.Delay(1000, token);
             isAccepted = true;
-            return Task.Run(() => serialPort.ReadByte(), token)
+            
+            return Task.Run(() =>
+            {
+                if (!serialPort.IsOpen)
+                    serialPort.Open();
+                serialPort.ReadByte();
+            }, token)
                 .ContinueWith(task =>
                 {
                     if (task.IsCanceled)
