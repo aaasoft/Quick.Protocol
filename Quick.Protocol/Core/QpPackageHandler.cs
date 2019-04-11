@@ -94,12 +94,14 @@ namespace Quick.Protocol.Core
             //加密
             if (options.Encrypt)
             {
-                var ms = new MemoryStream(tmpBuffer.Length);
-                ms.Write(tmpBuffer, 0, 5);
-                var encryptBuffer = CryptographyUtils.DesEncrypt(options.Password, tmpBuffer, 5, bodyLength);
-                ms.Write(encryptBuffer, 0, encryptBuffer.Length);
-                tmpBuffer = ms.ToArray();
-                bodyLength = encryptBuffer.Length;
+                using (var ms = new MemoryStream(tmpBuffer.Length))
+                {
+                    ms.Write(tmpBuffer, 0, 5);
+                    var encryptBuffer = CryptographyUtils.DesEncrypt(options.Password, tmpBuffer, 5, bodyLength);
+                    ms.Write(encryptBuffer, 0, encryptBuffer.Length);
+                    tmpBuffer = ms.ToArray();
+                    bodyLength = encryptBuffer.Length;
+                }
             }
             var packageLengthBytes = BitConverter.GetBytes(bodyLength);
             packageLengthBytes.CopyTo(tmpBuffer, 0);
