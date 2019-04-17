@@ -20,6 +20,8 @@ namespace Quick.Protocol.Commands
     }
 
     public abstract class AbstractCommand<TRequestContent, TResponseData> : AbstractCommand
+        where TRequestContent : class
+        where TResponseData : class
     {
         public override object Content
         {
@@ -66,11 +68,21 @@ namespace Quick.Protocol.Commands
         {
             if (isTimeout)
                 return;
+            TResponseData responseData;
+            if (string.IsNullOrEmpty(responsePackage.Content))
+                responseData = default(TResponseData);
+            else
+            {
+                if (typeof(TResponseData) == typeof(string))
+                    responseData = responsePackage.Content as TResponseData;
+                else
+                    responseData = JsonConvert.DeserializeObject<TResponseData>(responsePackage.Content);
+            }
             this.response = new CommandResponse<TResponseData>()
             {
                 Code = responsePackage.Code,
                 Message = responsePackage.Message,
-                Data = string.IsNullOrEmpty(responsePackage.Content) ? default(TResponseData) : JsonConvert.DeserializeObject<TResponseData>(responsePackage.Content)
+                Data = responseData
             };
             if (ResponseTask.Status == TaskStatus.Created)
                 ResponseTask.Start();

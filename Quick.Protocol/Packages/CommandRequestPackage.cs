@@ -30,6 +30,8 @@ namespace Quick.Protocol.Packages
         /// <returns></returns>
         public T ToCommand<T, TRequestContent, TResponseData>()
             where T : AbstractCommand<TRequestContent, TResponseData>, new()
+            where TRequestContent : class
+            where TResponseData : class
         {
             var cmd = new T();
             if (cmd.Action != Action)

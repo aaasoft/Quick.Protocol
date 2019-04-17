@@ -62,6 +62,8 @@ namespace Quick.Protocol.Core
         /// <param name="command"></param>
         /// <returns></returns>
         public Task<CommandResponse<TResponseData>> SendCommand<TRequestContent, TResponseData>(AbstractCommand<TRequestContent, TResponseData> command)
+            where TRequestContent : class
+            where TResponseData : class
         {
             return SendCommand(command, 30 * 1000);
         }
@@ -74,7 +76,9 @@ namespace Quick.Protocol.Core
         /// <param name="command"></param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public Task<CommandResponse<TResponseData>> SendCommand<TRequestContent, TResponseData>(AbstractCommand<TRequestContent, TResponseData> command, int timeout)
+        public async Task<CommandResponse<TResponseData>> SendCommand<TRequestContent, TResponseData>(AbstractCommand<TRequestContent, TResponseData> command, int timeout)
+            where TRequestContent : class
+            where TResponseData : class
         {
             commandDict.TryAdd(command.Id, command);
             var request = new CommandRequestPackage()
@@ -86,22 +90,25 @@ namespace Quick.Protocol.Core
 
             if (timeout <= 0)
             {
-                SendPackage(request).Wait();
-                return command.ResponseTask;
+                await SendPackage(request);
+                return await command.ResponseTask;
             }
             //如果设置了超时
             else
             {
-                SendPackage(request).Wait(timeout);
-                Task.Delay(timeout).ContinueWith(t =>
-                 {
-                     if (command.ResponseTask.Status == TaskStatus.Created)
-                     {
-                         command.Timeout();
-                         commandDict.TryRemove(command.Id, out _);
-                     }
-                 });
-                return command.ResponseTask;
+                try
+                {
+                    await TaskUtils.TaskWait(SendPackage(request), timeout);
+                }
+                catch (TimeoutException)
+                {
+                    if (command.ResponseTask.Status == TaskStatus.Created)
+                    {
+                        command.Timeout();
+                        commandDict.TryRemove(command.Id, out _);
+                    }
+                }
+                return await command.ResponseTask;
             }
         }
 
@@ -145,6 +152,25 @@ namespace Quick.Protocol.Core
                 Code = code,
                 Message = message,
                 Content = content
+            });
+        }
+
+        /// <summary>
+        /// 发送指令响应
+        /// </summary>
+        /// <param name="commandId"></param>
+        /// <param name="code"></param>
+        /// <param name="message"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public Task SendCommandResponse(string commandId, int code, string message, object content)
+        {
+            return SendPackage(new CommandResponsePackage()
+            {
+                Id = commandId,
+                Code = code,
+                Message = message,
+                Content = JsonConvert.SerializeObject(content)
             });
         }
     }
