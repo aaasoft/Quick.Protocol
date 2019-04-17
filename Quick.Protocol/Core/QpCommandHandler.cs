@@ -100,7 +100,7 @@ namespace Quick.Protocol.Core
                 {
                     await TaskUtils.TaskWait(SendPackage(request), timeout);
                 }
-                catch (TimeoutException)
+                catch
                 {
                     if (command.ResponseTask.Status == TaskStatus.Created)
                     {
