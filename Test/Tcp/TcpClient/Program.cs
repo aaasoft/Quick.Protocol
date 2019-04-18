@@ -6,6 +6,7 @@ namespace TcpClient
     {
         static void Main(string[] args)
         {
+            Quick.Protocol.Utils.LogUtils.LogHeartbeat = false;
             Quick.Protocol.Utils.LogUtils.AddConsole();
 
             var client = new Quick.Protocol.Tcp.QpTcpClient(new Quick.Protocol.Tcp.QpTcpClientOptions()

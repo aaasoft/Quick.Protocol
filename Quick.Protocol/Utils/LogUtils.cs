@@ -47,6 +47,11 @@ namespace Quick.Protocol.Utils
         }
 
         /// <summary>
+        /// 是否记录心跳相关日志
+        /// </summary>
+        public static bool LogHeartbeat { get; set; } = true;
+
+        /// <summary>
         /// 增加控制台输出
         /// </summary>
         public static void AddConsole()

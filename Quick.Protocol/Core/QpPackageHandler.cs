@@ -63,7 +63,13 @@ namespace Quick.Protocol.Core
             var stream = QpPackageHandler_Stream;
             if (stream == null)
                 throw new ArgumentNullException(nameof(QpPackageHandler_Stream));
-            logger.LogTrace("[Send-Package]{0}", package.ToString());
+
+            bool shouldLog = true;
+            if (package is HeartBeatPackage && !LogUtils.LogHeartbeat)
+                shouldLog = false;
+            if (shouldLog)
+                logger.LogTrace("[Send-Package]{0}", package.ToString());
+
             var srcBuffer = package.Output();
             //如果不压缩也不加密
             if (!options.Compress && !options.Encrypt)
@@ -195,7 +201,13 @@ namespace Quick.Protocol.Core
             if (package == null)
                 logger.LogWarning("[Recv-Package][UnknownPackageType]PackageLength:{0} PackageType:{1}", packageLength, packageType);
             else
-                logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
+            {
+                bool shouldLog = true;
+                if (package is HeartBeatPackage && !LogUtils.LogHeartbeat)
+                    shouldLog = false;
+                if (shouldLog)
+                    logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
+            }
             return package;
         }
 
