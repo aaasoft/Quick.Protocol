@@ -15,6 +15,14 @@ namespace Quick.Protocol.Tcp
         /// 端口
         /// </summary>
         public int Port { get; set; }
+        /// <summary>
+        /// 本地主机
+        /// </summary>
+        public string LocalHost { get; set; }
+        /// <summary>
+        /// 本地端口
+        /// </summary>
+        public int LocalPort { get; set; } = 0;
 
         public override void Check()
         {

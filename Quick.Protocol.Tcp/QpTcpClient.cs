@@ -3,6 +3,7 @@ using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,10 @@ namespace Quick.Protocol.Tcp
             if (tcpClient != null)
                 Close();
             //开始连接
-            tcpClient = new TcpClient();
+            if (string.IsNullOrEmpty(options.LocalHost))
+                tcpClient = new TcpClient();
+            else
+                tcpClient = new TcpClient(new IPEndPoint(IPAddress.Parse(options.LocalHost), options.LocalPort));
             await TaskUtils.TaskWait(tcpClient.ConnectAsync(options.Host, options.Port), options.ConnectionTimeout);
 
             if (!tcpClient.Connected)
