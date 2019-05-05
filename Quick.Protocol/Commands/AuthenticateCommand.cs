@@ -6,8 +6,6 @@ namespace Quick.Protocol.Commands
 {
     public class AuthenticateCommand : AbstractCommand<AuthenticateCommand.CommandContent, object>
     {
-        public override string Action => "/Authenticate";
-
         public class CommandContent
         {
             /// <summary>

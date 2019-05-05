@@ -72,7 +72,10 @@ namespace Quick.Protocol.Core
                 catch { }
                 ChannelDisconnected?.Invoke(this, channel);
             };
-            channel.Start();
+            Task.Run(() =>
+            {
+                channel.Start();
+            });
         }
 
         protected abstract Task InnerAcceptAsync(CancellationToken token);

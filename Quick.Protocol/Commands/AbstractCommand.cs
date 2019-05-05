@@ -12,7 +12,7 @@ namespace Quick.Protocol.Commands
     public abstract class AbstractCommand : ICommand
     {
         public string Id { get; set; } = Guid.NewGuid().ToString("N");
-        public abstract string Action { get; }
+        public virtual string Action => this.GetType().FullName;
         public abstract object Content { get; set; }
 
         public abstract ICommand Parse(CommandRequestPackage package);

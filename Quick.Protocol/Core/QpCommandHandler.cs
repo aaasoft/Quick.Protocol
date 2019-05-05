@@ -136,6 +136,11 @@ namespace Quick.Protocol.Core
             return SendCommandResponse(commandId, code, message, null);
         }
 
+        public Task SendCommandResponse(ICommand cmd, int code, string message, string content)
+        {
+            return SendCommandResponse(cmd, code, message, content);
+        }
+
         /// <summary>
         /// 发送指令响应
         /// </summary>
@@ -153,6 +158,19 @@ namespace Quick.Protocol.Core
                 Message = message,
                 Content = content
             });
+        }
+
+        /// <summary>
+        /// 发送指令响应
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="code"></param>
+        /// <param name="message"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public Task SendCommandResponse(ICommand cmd, int code, string message, object content)
+        {
+            return SendCommandResponse(cmd.Id, code, message, content);
         }
 
         /// <summary>
