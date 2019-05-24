@@ -23,13 +23,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcpServer", "Test\Tcp\TcpSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TcpClient", "Test\Tcp\TcpClient\TcpClient.csproj", "{D4C20C80-5392-4FAC-9C6F-890495F97DBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol.SerialPort", "Quick.Protocol.SerialPort\Quick.Protocol.SerialPort.csproj", "{2FF529DD-E1AD-4C72-8230-1AB8C1392AC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.SerialPort", "Quick.Protocol.SerialPort\Quick.Protocol.SerialPort.csproj", "{2FF529DD-E1AD-4C72-8230-1AB8C1392AC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SerialPort", "SerialPort", "{6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortServer", "Test\SerialPort\SerialPortServer\SerialPortServer.csproj", "{2D62DE50-0210-4B3F-8970-862F2866223E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerialPortServer", "Test\SerialPort\SerialPortServer\SerialPortServer.csproj", "{2D62DE50-0210-4B3F-8970-862F2866223E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortClient", "Test\SerialPort\SerialPortClient\SerialPortClient.csproj", "{73C50152-A625-4106-8CAF-472D6FA64CD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerialPortClient", "Test\SerialPort\SerialPortClient\SerialPortClient.csproj", "{73C50152-A625-4106-8CAF-472D6FA64CD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.WebSocket", "Quick.Protocol.WebSocket\Quick.Protocol.WebSocket.csproj", "{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSocket", "WebSocket", "{434DDF1C-3D83-4B5B-856D-5608C40B58DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer", "Test\WebSocket\WebSocketServer\WebSocketServer.csproj", "{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +83,14 @@ Global
 		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +105,8 @@ Global
 		{6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3} = {4D8B91B9-A589-478E-B579-185AE878E575}
 		{2D62DE50-0210-4B3F-8970-862F2866223E} = {6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3}
 		{73C50152-A625-4106-8CAF-472D6FA64CD1} = {6EE0A7C9-1DF1-4499-975D-6276BEC3DFC3}
+		{434DDF1C-3D83-4B5B-856D-5608C40B58DA} = {4D8B91B9-A589-478E-B579-185AE878E575}
+		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C} = {434DDF1C-3D83-4B5B-856D-5608C40B58DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EBE52E31-F20D-4366-8517-584BCD5F79FF}
