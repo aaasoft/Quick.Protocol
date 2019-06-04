@@ -34,6 +34,8 @@ namespace Quick.Protocol.Core
             {
                 var requestPackage = (CommandRequestPackage)package;
                 var requestCmd = options.ParseCommand(requestPackage);
+                if (requestCmd == null)
+                    requestCmd = UnknownCommand.Instance.Parse(requestPackage);
                 CommandReceived?.Invoke(this, requestCmd);
             }
             //如果是指令响应包
