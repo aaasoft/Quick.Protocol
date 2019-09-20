@@ -49,7 +49,10 @@ namespace Quick.Protocol.Utils
         /// <summary>
         /// 是否记录心跳相关日志
         /// </summary>
-        public static bool LogHeartbeat { get; set; } = true;
+        public static bool LogHeartbeat { get; set; } = false;
+        public static bool LogPackage { get; set; } = false;
+        public static bool LogCommand { get; set; } = false;
+        public static bool LogCommandContent { get; set; } = false;
 
         /// <summary>
         /// 增加控制台输出

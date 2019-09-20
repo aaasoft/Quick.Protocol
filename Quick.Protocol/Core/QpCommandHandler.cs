@@ -13,6 +13,7 @@ namespace Quick.Protocol.Core
 {
     public abstract class QpCommandHandler : QpPackageHandler
     {
+        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private ConcurrentDictionary<string, AbstractCommand> commandDict = new ConcurrentDictionary<string, AbstractCommand>();
         private QpCommandHandlerOptions options;
         protected QpCommandHandler(QpCommandHandlerOptions options)
@@ -36,6 +37,8 @@ namespace Quick.Protocol.Core
                 var requestCmd = options.ParseCommand(requestPackage);
                 if (requestCmd == null)
                     requestCmd = UnknownCommand.Instance.Parse(requestPackage);
+                if (LogUtils.LogCommand)
+                    logger.LogTrace("[Recv-Command]Action:{0} Content:{1}", requestCmd.Action, LogUtils.LogCommandContent ? requestCmd.Content : "...,ContentType:" + requestCmd.Content.GetType().FullName);
                 CommandReceived?.Invoke(this, requestCmd);
             }
             //如果是指令响应包
@@ -43,6 +46,8 @@ namespace Quick.Protocol.Core
             {
                 var responsePackage = (CommandResponsePackage)package;
                 OnReceivedCommandResponse(responsePackage);
+                if (LogUtils.LogCommand)
+                    logger.LogTrace("[Recv-CommandResp]Id:{0} Code:{1} Content:{2}", responsePackage.Id, responsePackage.Code, LogUtils.LogCommandContent ? responsePackage.Content : "...,ContentType:" + responsePackage.Content.GetType().FullName);
             }
         }
         protected virtual void OnReceivedCommandResponse(CommandResponsePackage package)
@@ -82,6 +87,9 @@ namespace Quick.Protocol.Core
             where TRequestContent : class
             where TResponseData : class
         {
+            if (LogUtils.LogCommand)
+                logger.LogTrace("[Send-Command]Action:{0} Id:{1} Content:{2}", command.Action, command.Id, LogUtils.LogCommandContent ? command.Content : "...,ContentType:" + command.Content.GetType().FullName);
+
             commandDict.TryAdd(command.Id, command);
             var request = new CommandRequestPackage()
             {
@@ -104,6 +112,8 @@ namespace Quick.Protocol.Core
                 }
                 catch
                 {
+                    if (LogUtils.LogCommand)
+                        logger.LogTrace("[Send-Command-Timeout]Action:{0} Id:{1} Content:{2}", command.Action, command.Id, LogUtils.LogCommandContent ? command.Content : "...,ContentType:" + command.Content.GetType().FullName);
                     if (command.ResponseTask.Status == TaskStatus.Created)
                     {
                         command.Timeout();
@@ -153,6 +163,8 @@ namespace Quick.Protocol.Core
         /// <returns></returns>
         public Task SendCommandResponse(string commandId, int code, string message, string content)
         {
+            if (LogUtils.LogCommand)
+                logger.LogTrace("[Send-Command-Resp]Id:{0} Code:{1} Message:{2} Content:{3}", commandId, code, message, LogUtils.LogCommandContent ? content : $"...,ContentType:string {content?.Length}");
             return SendPackage(new CommandResponsePackage()
             {
                 Id = commandId,
@@ -185,6 +197,8 @@ namespace Quick.Protocol.Core
         /// <returns></returns>
         public Task SendCommandResponse(string commandId, int code, string message, object content)
         {
+            if (LogUtils.LogCommand)
+                logger.LogTrace("[Send-Command-Resp]Id:{0} Code:{1} Message:{2} Content:{3}", commandId, code, message, LogUtils.LogCommandContent ? content : $"...,ContentType {content.GetType().FullName}");
             return SendPackage(new CommandResponsePackage()
             {
                 Id = commandId,

@@ -17,7 +17,7 @@ namespace Quick.Protocol.Core
         /// </summary>
         public int SendTimeout { get; set; } = 5 * 1000;
         /// <summary>
-        /// 发送超时(默认5秒)
+        /// 接收超时(默认5秒)
         /// </summary>
         public int ReceiveTimeout { get; set; } = 5 * 1000;
         /// <summary>

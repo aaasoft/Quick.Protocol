@@ -67,6 +67,8 @@ namespace Quick.Protocol.Core
             bool shouldLog = true;
             if (package is HeartBeatPackage && !LogUtils.LogHeartbeat)
                 shouldLog = false;
+            if (!LogUtils.LogPackage)
+                shouldLog = false;
             if (shouldLog)
                 logger.LogTrace("[Send-Package]{0}", package.ToString());
 
@@ -129,15 +131,16 @@ namespace Quick.Protocol.Core
         {
             if (totalCount > buffer.Length - startIndex)
                 throw new IOException("要接收的数据大小超出了缓存的大小！");
-            var ret = 0;
+            int ret;
             var count = 0;
             while (count < totalCount)
             {
+                ret = 0;
                 var readTask = stream.ReadAsync(buffer, count, totalCount - count, cancellationToken);
                 ret = await await TaskUtils.TaskWait(readTask, options.ReceiveTimeout);
-                if (readTask.IsCanceled)
-                    return count;
-                if (ret <= 0)
+                if (readTask.IsCanceled || ret == 0)
+                    break;
+                if (ret < 0)
                     throw new IOException("从网络流中读取错误！");
                 count += ret;
             }
@@ -204,6 +207,8 @@ namespace Quick.Protocol.Core
             {
                 bool shouldLog = true;
                 if (package is HeartBeatPackage && !LogUtils.LogHeartbeat)
+                    shouldLog = false;
+                if (!LogUtils.LogPackage)
                     shouldLog = false;
                 if (shouldLog)
                     logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
