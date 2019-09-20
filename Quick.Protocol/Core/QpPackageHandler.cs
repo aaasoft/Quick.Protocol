@@ -14,7 +14,7 @@ namespace Quick.Protocol.Core
 {
     public abstract class QpPackageHandler
     {
-        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
+        private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private byte[] buffer;
         private byte[] buffer2;
 

@@ -13,7 +13,7 @@ namespace Quick.Protocol.Core
 {
     public abstract class QpCommandHandler : QpPackageHandler
     {
-        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
+        private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private ConcurrentDictionary<string, AbstractCommand> commandDict = new ConcurrentDictionary<string, AbstractCommand>();
         private QpCommandHandlerOptions options;
         protected QpCommandHandler(QpCommandHandlerOptions options)

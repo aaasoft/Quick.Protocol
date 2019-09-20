@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Quick.Protocol.Packages;
+using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -23,6 +26,8 @@ namespace Quick.Protocol.Commands
         where TRequestContent : class
         where TResponseData : class
     {
+        private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
+
         public override object Content
         {
             get { return ContentT; }
@@ -76,7 +81,20 @@ namespace Quick.Protocol.Commands
                 if (typeof(TResponseData) == typeof(string))
                     responseData = responsePackage.Content as TResponseData;
                 else
+                {
+                    Stopwatch stopwatch = null;
+                    if (LogUtils.LogCommand)
+                    {
+                        stopwatch = new Stopwatch();
+                        stopwatch.Start();
+                    }
                     responseData = JsonConvert.DeserializeObject<TResponseData>(responsePackage.Content);
+                    if (LogUtils.LogCommand)
+                    {
+                        stopwatch.Stop();
+                        logger.LogTrace("[Parse-CommandResp]Id:{0} Code:{1} Message:{2} UseTime:{3}", responsePackage.Id, responsePackage.Code, responsePackage.Message, stopwatch.Elapsed);
+                    }
+                }
             }
             this.response = new CommandResponse<TResponseData>()
             {
