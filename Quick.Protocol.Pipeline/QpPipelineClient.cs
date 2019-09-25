@@ -29,7 +29,6 @@ namespace Quick.Protocol.Pipeline
             await Task.Run(() => pipeClientStream.Connect(options.ConnectionTimeout));
 #endif
             pipeClientStream.ReadMode = PipeTransmissionMode.Byte;
-            logger.LogTrace("服务管道数量：" + pipeClientStream.NumberOfServerInstances);
             return pipeClientStream;
         }
     }

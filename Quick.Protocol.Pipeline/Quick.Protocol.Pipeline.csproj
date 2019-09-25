@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/aaasoft/Quick.Protocol</PackageProjectUrl>
-    <Version>1.2.0</Version>
+    <Version>1.2.3</Version>
     <Authors>scbeta</Authors>
     <Company />
     <Product>Quick.Protocol</Product>
