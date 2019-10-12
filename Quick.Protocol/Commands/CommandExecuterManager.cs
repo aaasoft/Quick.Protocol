@@ -7,30 +7,39 @@ namespace Quick.Protocol.Commands
 {
     public class CommandExecuterManager : ICommandExecuter
     {
-        public Type CommandType => null;
+        /// <summary>
+        /// 其他命令执行器
+        /// </summary>
+        public ICommandExecuter OtherCommandExecuter { get; set; }
+
         Dictionary<Type, ICommandExecuter> commandExecuterDict = new Dictionary<Type, ICommandExecuter>();
 
-        public void Add(ICommandExecuter executer)
+        public void Add(Type commandType, ICommandExecuter executer)
         {
-            commandExecuterDict[executer.CommandType] = executer;
+            commandExecuterDict[commandType] = executer;
         }
 
         public void Add<TCommandHandler>(params object[] args)
             where TCommandHandler : ICommandExecuter, new()
         {
-            var executer = (TCommandHandler)Activator.CreateInstance(typeof(TCommandHandler), args);
-            Add(executer);
+            var type = typeof(TCommandHandler);
+            var executer = (TCommandHandler)Activator.CreateInstance(type, args);
+            Add(type, executer);
         }
 
-        public void Execute(QpCommandHandler channel, ICommand cmd)
+        public void Execute(QpCommandHandler handler, ICommand cmd)
         {
             if (cmd == null)
                 return;
+
             var type = cmd.GetType();
-            if (!commandExecuterDict.ContainsKey(type))
+            if (commandExecuterDict.ContainsKey(type))
+            {
+                var executer = commandExecuterDict[type];
+                executer.Execute(handler, cmd);
                 return;
-            var executer = commandExecuterDict[type];
-            executer.Execute(channel, cmd);
+            }
+            OtherCommandExecuter?.Execute(handler, cmd);
         }
     }
 }
