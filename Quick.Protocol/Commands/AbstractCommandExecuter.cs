@@ -5,23 +5,10 @@ using System.Text;
 
 namespace Quick.Protocol.Commands
 {
-    public abstract class AbstractCommandExecuter : ICommandExecuter
-    {
-        public Type CommandType { get; private set; }
-        public AbstractCommandExecuter(Type commandType)
-        {
-            CommandType = commandType;
-        }
-        public abstract void Execute(QpCommandHandler channel, ICommand cmd);
-    }
-
-    public abstract class AbstractCommandExecuter<TCommand> : AbstractCommandExecuter
+    public abstract class AbstractCommandExecuter<TCommand> : ICommandExecuter
         where TCommand : ICommand
     {
-        public AbstractCommandExecuter() : base(typeof(TCommand))
-        {
-        }
-        public override void Execute(QpCommandHandler channel, ICommand cmd)
+        public void Execute(QpCommandHandler channel, ICommand cmd)
         {
             Execute(channel, (TCommand)cmd);
         }
