@@ -16,6 +16,10 @@ namespace Quick.Protocol.Core
         private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private ConcurrentDictionary<string, ICommand> commandDict = new ConcurrentDictionary<string, ICommand>();
         private QpCommandHandlerOptions options;
+        /// <summary>
+        /// 指令执行器
+        /// </summary>
+        public ICommandExecuter CommandExecuter { get; set; }
         protected QpCommandHandler(QpCommandHandlerOptions options)
             : base(options)
         {
@@ -39,6 +43,7 @@ namespace Quick.Protocol.Core
                     requestCmd = UnknownCommand.Instance.Parse(requestPackage);
                 if (LogUtils.LogCommand)
                     logger.LogTrace("[Recv-Command]Action:{0} Content:{1}", requestCmd.Action, LogUtils.LogCommandContent ? requestCmd.Content : "...,ContentType:" + requestCmd.Content.GetType().FullName);
+                CommandExecuter?.Execute(this, requestCmd);
                 CommandReceived?.Invoke(this, requestCmd);
             }
             //如果是指令响应包
