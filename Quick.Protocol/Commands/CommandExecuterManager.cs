@@ -19,12 +19,13 @@ namespace Quick.Protocol.Commands
             commandExecuterDict[commandType] = executer;
         }
 
-        public void Add<TCommandHandler>(params object[] args)
+        public void Add<TCommand, TCommandHandler>(params object[] args)
+            where TCommand : ICommand
             where TCommandHandler : ICommandExecuter, new()
         {
-            var type = typeof(TCommandHandler);
-            var executer = (TCommandHandler)Activator.CreateInstance(type, args);
-            Add(type, executer);
+            var executerType = typeof(TCommandHandler);
+            var executer = (TCommandHandler)Activator.CreateInstance(executerType, args);
+            Add(typeof(TCommand), executer);
         }
 
         public void Execute(QpCommandHandler handler, ICommand cmd)
