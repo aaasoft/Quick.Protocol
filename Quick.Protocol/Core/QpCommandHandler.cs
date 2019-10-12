@@ -14,7 +14,7 @@ namespace Quick.Protocol.Core
     public abstract class QpCommandHandler : QpPackageHandler
     {
         private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
-        private ConcurrentDictionary<string, AbstractCommand> commandDict = new ConcurrentDictionary<string, AbstractCommand>();
+        private ConcurrentDictionary<string, ICommand> commandDict = new ConcurrentDictionary<string, ICommand>();
         private QpCommandHandlerOptions options;
         protected QpCommandHandler(QpCommandHandlerOptions options)
             : base(options)
@@ -54,7 +54,7 @@ namespace Quick.Protocol.Core
         {
             if (string.IsNullOrEmpty(package.Id))
                 return;
-            AbstractCommand cmd = null;
+            ICommand cmd = null;
             if (!commandDict.TryGetValue(package.Id, out cmd))
                 return;
             cmd.SetResponse(package);
@@ -73,6 +73,50 @@ namespace Quick.Protocol.Core
             where TResponseData : class
         {
             return SendCommand(command, 30 * 1000);
+        }
+
+        public Task<CommandResponsePackage> SendCommand(ICommand command)
+        {
+            return SendCommand(command, 30 * 1000);
+        }
+
+        public async Task<CommandResponsePackage> SendCommand(ICommand command, int timeout)
+        {
+            if (LogUtils.LogCommand)
+                logger.LogTrace("[Send-Command]Action:{0} Id:{1} Content:{2}", command.Action, command.Id, LogUtils.LogCommandContent ? command.Content : "...,ContentType:" + command.Content.GetType().FullName);
+
+            commandDict.TryAdd(command.Id, command);
+            var request = new CommandRequestPackage()
+            {
+                Id = command.Id,
+                Action = command.Action,
+                Content = JsonConvert.SerializeObject(command.Content)
+            };
+
+            if (timeout <= 0)
+            {
+                await SendPackage(request);
+                return await command.ResponseTask;
+            }
+            //如果设置了超时
+            else
+            {
+                try
+                {
+                    await TaskUtils.TaskWait(SendPackage(request), timeout);
+                }
+                catch
+                {
+                    if (LogUtils.LogCommand)
+                        logger.LogTrace("[Send-Command-Timeout]Action:{0} Id:{1} Content:{2}", command.Action, command.Id, LogUtils.LogCommandContent ? command.Content : "...,ContentType:" + command.Content.GetType().FullName);
+                    if (command.ResponseTask.Status == TaskStatus.Created)
+                    {
+                        command.Timeout();
+                        commandDict.TryRemove(command.Id, out _);
+                    }
+                }
+                return await command.ResponseTask;
+            }
         }
 
         /// <summary>

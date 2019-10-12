@@ -18,8 +18,36 @@ namespace Quick.Protocol.Commands
         public virtual string Action => this.GetType().FullName;
         public abstract object Content { get; set; }
 
+        private bool isTimeout = false;
+        private CommandResponsePackage response;
+        public Task<CommandResponsePackage> ResponseTask { get; private set; }
+
         public abstract ICommand Parse(CommandRequestPackage package);
-        public abstract void SetResponse(CommandResponsePackage responsePackage);
+        public virtual void SetResponse(CommandResponsePackage responsePackage)
+        {
+            if (isTimeout)
+                return;
+            this.response = responsePackage;
+            if (ResponseTask.Status == TaskStatus.Created)
+                ResponseTask.Start();
+        }
+
+        public virtual void Timeout()
+        {
+            isTimeout = true;
+            if (ResponseTask.Status == TaskStatus.Created)
+                ResponseTask.Start();
+        }
+
+        public AbstractCommand()
+        {
+            ResponseTask = new Task<CommandResponsePackage>(() =>
+            {
+                if (isTimeout)
+                    throw new TimeoutException($"Command[{this.ToString()}] is timeout.");
+                return response;
+            });
+        }
     }
 
     public abstract class AbstractCommand<TRequestContent, TResponseData> : AbstractCommand
@@ -38,25 +66,47 @@ namespace Quick.Protocol.Commands
         }
         public TRequestContent ContentT { get; set; }
 
-        private bool isTimeout = false;
-        private CommandResponse<TResponseData> response;
-        public Task<CommandResponse<TResponseData>> ResponseTask { get; private set; }
+        public new Task<CommandResponse<TResponseData>> ResponseTask { get; private set; }
 
         public AbstractCommand()
         {
-            ResponseTask = new Task<CommandResponse<TResponseData>>(() =>
+            ResponseTask = base.ResponseTask.ContinueWith(task =>
             {
-                if (isTimeout)
-                    throw new TimeoutException($"Command[{this.ToString()}] is timeout.");
-                return response;
-            });
-        }
+                if (task.IsFaulted)
+                    throw task.Exception.InnerException;
 
-        public void Timeout()
-        {
-            isTimeout = true;
-            if (ResponseTask.Status == TaskStatus.Created)
-                ResponseTask.Start();
+                var responsePackage = task.Result;
+
+                TResponseData responseData;
+                if (string.IsNullOrEmpty(responsePackage.Content))
+                    responseData = default(TResponseData);
+                else
+                {
+                    if (typeof(TResponseData) == typeof(string))
+                        responseData = responsePackage.Content as TResponseData;
+                    else
+                    {
+                        Stopwatch stopwatch = null;
+                        if (LogUtils.LogCommand)
+                        {
+                            stopwatch = new Stopwatch();
+                            stopwatch.Start();
+                        }
+                        responseData = JsonConvert.DeserializeObject<TResponseData>(responsePackage.Content);
+                        if (LogUtils.LogCommand)
+                        {
+                            stopwatch.Stop();
+                            logger.LogTrace("[Parse-CommandResp]Id:{0} Code:{1} Message:{2} UseTime:{3}", responsePackage.Id, responsePackage.Code, responsePackage.Message, stopwatch.Elapsed);
+                        }
+                    }
+                }
+                return new CommandResponse<TResponseData>()
+                {
+                    Code = responsePackage.Code,
+                    Message = responsePackage.Message,
+                    Data = responseData
+                };
+            });
         }
 
         public AbstractCommand(TRequestContent content)
@@ -65,46 +115,6 @@ namespace Quick.Protocol.Commands
             ContentT = content;
         }
 
-        /// <summary>
-        /// 设置响应
-        /// </summary>
-        /// <param name="response"></param>
-        public override void SetResponse(CommandResponsePackage responsePackage)
-        {
-            if (isTimeout)
-                return;
-            TResponseData responseData;
-            if (string.IsNullOrEmpty(responsePackage.Content))
-                responseData = default(TResponseData);
-            else
-            {
-                if (typeof(TResponseData) == typeof(string))
-                    responseData = responsePackage.Content as TResponseData;
-                else
-                {
-                    Stopwatch stopwatch = null;
-                    if (LogUtils.LogCommand)
-                    {
-                        stopwatch = new Stopwatch();
-                        stopwatch.Start();
-                    }
-                    responseData = JsonConvert.DeserializeObject<TResponseData>(responsePackage.Content);
-                    if (LogUtils.LogCommand)
-                    {
-                        stopwatch.Stop();
-                        logger.LogTrace("[Parse-CommandResp]Id:{0} Code:{1} Message:{2} UseTime:{3}", responsePackage.Id, responsePackage.Code, responsePackage.Message, stopwatch.Elapsed);
-                    }
-                }
-            }
-            this.response = new CommandResponse<TResponseData>()
-            {
-                Code = responsePackage.Code,
-                Message = responsePackage.Message,
-                Data = responseData
-            };
-            if (ResponseTask.Status == TaskStatus.Created)
-                ResponseTask.Start();
-        }
 
         public override ICommand Parse(CommandRequestPackage package)
         {

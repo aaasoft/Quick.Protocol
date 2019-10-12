@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Quick.Protocol.Commands
 {
@@ -25,5 +26,9 @@ namespace Quick.Protocol.Commands
         /// <param name="package"></param>
         /// <returns></returns>
         ICommand Parse(CommandRequestPackage package);
+
+        Task<CommandResponsePackage> ResponseTask { get; }
+        void Timeout();
+        void SetResponse(CommandResponsePackage responsePackage);
     }
 }

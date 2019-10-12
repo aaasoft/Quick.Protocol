@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Quick.Protocol.Packages;
 
 namespace Quick.Protocol.Commands
@@ -16,6 +17,8 @@ namespace Quick.Protocol.Commands
         public string Id { get; set; }
         public object Content { get; set; }
 
+        public Task<CommandResponsePackage> ResponseTask => null;
+
         public ICommand Parse(CommandRequestPackage package)
         {
             return new UnknownCommand()
@@ -24,6 +27,14 @@ namespace Quick.Protocol.Commands
                 Id = package.Id,
                 Content = package.Content
             };
+        }
+
+        public void SetResponse(CommandResponsePackage responsePackage)
+        {
+        }
+
+        public void Timeout()
+        {
         }
     }
 }
