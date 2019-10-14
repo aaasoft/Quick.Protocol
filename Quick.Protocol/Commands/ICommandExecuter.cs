@@ -7,6 +7,6 @@ namespace Quick.Protocol.Commands
 {
     public interface ICommandExecuter
     {
-        void Execute(QpCommandHandler channel, ICommand cmd);
+        void Execute(QpCommandHandler handler, ICommand cmd);
     }
 }

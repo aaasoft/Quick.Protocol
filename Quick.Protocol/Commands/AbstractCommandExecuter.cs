@@ -8,10 +8,10 @@ namespace Quick.Protocol.Commands
     public abstract class AbstractCommandExecuter<TCommand> : ICommandExecuter
         where TCommand : ICommand
     {
-        public void Execute(QpCommandHandler channel, ICommand cmd)
+        public void Execute(QpCommandHandler handler, ICommand cmd)
         {
-            Execute(channel, (TCommand)cmd);
+            Execute(handler, (TCommand)cmd);
         }
-        public abstract void Execute(QpCommandHandler channel, TCommand cmd);
+        public abstract void Execute(QpCommandHandler handler, TCommand cmd);
     }
 }
