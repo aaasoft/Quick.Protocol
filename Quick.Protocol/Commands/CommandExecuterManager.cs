@@ -21,7 +21,7 @@ namespace Quick.Protocol.Commands
 
         public void Add<TCommand, TCommandHandler>(params object[] args)
             where TCommand : ICommand
-            where TCommandHandler : ICommandExecuter, new()
+            where TCommandHandler : ICommandExecuter
         {
             var executerType = typeof(TCommandHandler);
             var executer = (TCommandHandler)Activator.CreateInstance(executerType, args);
