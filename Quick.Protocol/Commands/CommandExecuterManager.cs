@@ -18,6 +18,11 @@ namespace Quick.Protocol.Commands
         {
             commandExecuterDict[commandType] = executer;
         }
+        public void Add<TCommand>(ICommandExecuter executer)
+            where TCommand : ICommand
+        {
+            Add(typeof(TCommand), executer);
+        }
 
         public void Add<TCommand, TCommandHandler>(params object[] args)
             where TCommand : ICommand
