@@ -13,6 +13,8 @@ namespace Quick.Protocol.Core
 {
     public abstract class QpCommandHandler : QpPackageHandler
     {
+        public const string RESPONSE_MESSAGE_OK = "OK";
+
         private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private ConcurrentDictionary<string, ICommand> commandDict = new ConcurrentDictionary<string, ICommand>();
         private QpCommandHandlerOptions options;
@@ -228,6 +230,18 @@ namespace Quick.Protocol.Core
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="code"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public Task SendCommandResponse(ICommand cmd, int code, object content)
+        {
+            return SendCommandResponse(cmd, code, RESPONSE_MESSAGE_OK, content);
+        }
+
+        /// <summary>
+        /// 发送指令响应
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="code"></param>
         /// <param name="message"></param>
         /// <param name="content"></param>
         /// <returns></returns>
@@ -253,7 +267,7 @@ namespace Quick.Protocol.Core
                 Id = commandId,
                 Code = code,
                 Message = message,
-                Content = JsonConvert.SerializeObject(content)
+                Content = content == null ? null : JsonConvert.SerializeObject(content)
             });
         }
     }
