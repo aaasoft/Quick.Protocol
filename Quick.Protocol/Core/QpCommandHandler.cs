@@ -120,7 +120,7 @@ namespace Quick.Protocol.Core
                         commandDict.TryRemove(command.Id, out _);
                     }
                 }
-                return await command.ResponseTask;
+                return await await TaskUtils.TaskWait(command.ResponseTask, timeout);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Quick.Protocol.Core
                         commandDict.TryRemove(command.Id, out _);
                     }
                 }
-                return await command.ResponseTask;
+                return await await TaskUtils.TaskWait(command.ResponseTask, timeout);
             }
         }
 

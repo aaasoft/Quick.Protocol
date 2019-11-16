@@ -22,7 +22,7 @@ namespace TcpClient
             {
                 Console.WriteLine("连接已断开");
             };
-            client.ConnectAsync().ContinueWith(t =>
+            client.ConnectAsync().ContinueWith(async t =>
             {
                 if (t.IsCanceled)
                 {
@@ -35,6 +35,18 @@ namespace TcpClient
                     return;
                 }
                 Console.WriteLine("连接成功");
+
+
+                Console.WriteLine("准备发送未知命令。。。");
+                try
+                {
+                    var rep = await client.SendCommand(Quick.Protocol.Commands.UnknownCommand.Instance, 5 * 1000);
+                    Console.WriteLine("发送未知命令成功！");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("发送未知命令出错，原因：" + ex.ToString());
+                }
             });
             Console.ReadLine();
         }

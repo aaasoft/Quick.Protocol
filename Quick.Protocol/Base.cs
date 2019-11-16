@@ -19,7 +19,8 @@ namespace Quick.Protocol
             SupportCommands = new Commands.ICommand[]
             {
                 new Commands.WelcomeCommand(),
-                new Commands.AuthenticateCommand()
+                new Commands.AuthenticateCommand(),
+                new Commands.UnknownCommand()
             }
         };
     }
