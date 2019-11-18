@@ -111,6 +111,9 @@ namespace Quick.Protocol.Core
                     bodyLength = encryptBuffer.Length;
                 }
             }
+            if (bodyLength > options.BufferSize)
+                throw new IOException("要发送的数据大小超出了缓存的大小！");
+            
             var packageLengthBytes = BitConverter.GetBytes(bodyLength);
             packageLengthBytes.CopyTo(tmpBuffer, 0);
             tmpBuffer[4] = srcBuffer[4];

@@ -9,9 +9,9 @@ namespace Quick.Protocol.Core
     public abstract class QpPackageHandlerOptions
     {
         /// <summary>
-        /// 缓存大小(默认1MB)
+        /// 缓存大小(默认10MB)
         /// </summary>
-        public int BufferSize = 1 * 1024 * 1024;
+        public int BufferSize = 10 * 1024 * 1024;
         /// <summary>
         /// 发送超时(默认5秒)
         /// </summary>
