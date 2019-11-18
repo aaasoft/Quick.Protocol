@@ -7,7 +7,7 @@
     <Copyright />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>scbeta</Authors>
-    <Version>1.2.10</Version>
+    <Version>1.2.11</Version>
     <Company />
   </PropertyGroup>
 
