@@ -60,6 +60,14 @@ namespace Quick.Protocol.Core
                 throw new IOException(ret.Message);
         }
 
+        /// <summary>
+        /// 停止
+        /// </summary>
+        public void Stop()
+        {
+            try { stream?.Close(); } catch { }
+        }
+
         private void QpServerChannel_CommandReceived(object sender, Commands.ICommand e)
         {
             if (e == null)
