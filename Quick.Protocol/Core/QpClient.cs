@@ -50,7 +50,7 @@ namespace Quick.Protocol.Core
             var token = cts.Token;
 
             var stream = await InnerConnectAsync();
-            
+
             //初始化网络
             InitQpPackageHandler_Stream(stream);
 
@@ -97,7 +97,8 @@ namespace Quick.Protocol.Core
             authPassed = true;
             Options.OnAuthPassed();
             //开始心跳
-            BeginHeartBeat(token);
+            if (Options.HeartBeatInterval > 0)
+                BeginHeartBeat(token);
         }
 
         protected override void OnReadError(Exception exception)

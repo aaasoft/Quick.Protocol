@@ -224,22 +224,23 @@ namespace Quick.Protocol.Core
             if (QpPackageHandler_Stream == null)
                 return;
 
-            Task.Delay(options.HeartBeatInterval, cancellationToken).ContinueWith(t =>
-            {
-                if (t.IsCanceled)
-                    return;
-                if (QpPackageHandler_Stream == null)
-                    return;
-
-                var lastSendPackageToNowSeconds = (DateTime.Now - lastSendPackageTime).TotalMilliseconds;
-
-                //如果离最后一次发送数据包的时间大于心跳间隔，则发送心跳包
-                if (lastSendPackageToNowSeconds > options.HeartBeatInterval)
+            if (options.HeartBeatInterval > 0)
+                Task.Delay(options.HeartBeatInterval, cancellationToken).ContinueWith(t =>
                 {
-                    SendPackage(HeartBeatPackage.Instance).ContinueWith(t2 => { });
-                }
-                BeginHeartBeat(cancellationToken);
-            });
+                    if (t.IsCanceled)
+                        return;
+                    if (QpPackageHandler_Stream == null)
+                        return;
+
+                    var lastSendPackageToNowSeconds = (DateTime.Now - lastSendPackageTime).TotalMilliseconds;
+
+                    //如果离最后一次发送数据包的时间大于心跳间隔，则发送心跳包
+                    if (lastSendPackageToNowSeconds > options.HeartBeatInterval)
+                    {
+                        SendPackage(HeartBeatPackage.Instance).ContinueWith(t2 => { });
+                    }
+                    BeginHeartBeat(cancellationToken);
+                });
         }
 
         protected void BeginReadPackage(CancellationToken token)

@@ -99,7 +99,8 @@ namespace Quick.Protocol.Core
                 Auchenticated?.Invoke(this, EventArgs.Empty);
             });
             //开始心跳
-            BeginHeartBeat(cancellationToken);
+            if (options.HeartBeatInterval > 0)
+                BeginHeartBeat(cancellationToken);
         }
 
         protected override void OnReadError(Exception exception)
