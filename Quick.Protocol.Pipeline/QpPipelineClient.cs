@@ -14,7 +14,7 @@ namespace Quick.Protocol.Pipeline
     {
         private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private QpPipelineClientOptions options;
-
+        private NamedPipeClientStream pipeClientStream;
         public QpPipelineClient(QpPipelineClientOptions options) : base(options)
         {
             this.options = options;
@@ -22,7 +22,7 @@ namespace Quick.Protocol.Pipeline
 
         protected override async Task<Stream> InnerConnectAsync()
         {
-            var pipeClientStream = new NamedPipeClientStream(options.ServerName, options.PipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+            pipeClientStream = new NamedPipeClientStream(options.ServerName, options.PipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
 #if NETSTANDARD2_0
             await pipeClientStream.ConnectAsync(options.ConnectionTimeout);
 #else
@@ -30,6 +30,17 @@ namespace Quick.Protocol.Pipeline
 #endif
             pipeClientStream.ReadMode = PipeTransmissionMode.Byte;
             return pipeClientStream;
+        }
+
+        protected override void Disconnect()
+        {
+            if (pipeClientStream != null)
+            {
+                pipeClientStream.Close();
+                pipeClientStream.Dispose();
+                pipeClientStream = null;
+            }
+            base.Disconnect();
         }
     }
 }
