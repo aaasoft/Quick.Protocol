@@ -113,19 +113,23 @@ namespace Quick.Protocol.Core
             }
             if (bodyLength > options.BufferSize)
                 throw new IOException("要发送的数据大小超出了缓存的大小！");
-            
+
             var packageLengthBytes = BitConverter.GetBytes(bodyLength);
             packageLengthBytes.CopyTo(tmpBuffer, 0);
             tmpBuffer[4] = srcBuffer[4];
 
             await TaskUtils.TaskWait(Task.Run(() =>
             {
-                try
+                //PipeStream的Write方法不是线程安全的，所以加锁
+                lock (stream)
                 {
-                    stream.Write(tmpBuffer, 0, bodyLength + 5);
-                    stream.Flush();
+                    try
+                    {
+                        stream.Write(tmpBuffer, 0, bodyLength + 5);
+                        stream.Flush();
+                    }
+                    catch { }
                 }
-                catch { }
             }), options.SendTimeout);
             lastSendPackageTime = DateTime.Now;
         }
