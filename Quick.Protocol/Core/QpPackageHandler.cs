@@ -76,8 +76,12 @@ namespace Quick.Protocol.Core
             //如果不压缩也不加密
             if (!options.Compress && !options.Encrypt)
             {
-                stream.Write(srcBuffer, 0, srcBuffer.Length);
-                stream.Flush();
+                //PipeStream的Write方法不是线程安全的，所以加锁
+                lock (stream)
+                {
+                    stream.Write(srcBuffer, 0, srcBuffer.Length);
+                    stream.Flush();
+                }
                 return;
             }
 
