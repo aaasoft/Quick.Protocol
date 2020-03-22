@@ -76,12 +76,15 @@ namespace Quick.Protocol.Core
             //如果不压缩也不加密
             if (!options.Compress && !options.Encrypt)
             {
-                //PipeStream的Write方法不是线程安全的，所以加锁
-                lock (stream)
+                await TaskUtils.TaskWait(Task.Run(() =>
                 {
-                    stream.Write(srcBuffer, 0, srcBuffer.Length);
-                    stream.Flush();
-                }
+                    try
+                    {
+                        stream.Write(srcBuffer, 0, srcBuffer.Length);
+                        stream.Flush();
+                    }
+                    catch { }
+                }), options.SendTimeout);
                 return;
             }
 
@@ -124,16 +127,12 @@ namespace Quick.Protocol.Core
 
             await TaskUtils.TaskWait(Task.Run(() =>
             {
-                //PipeStream的Write方法不是线程安全的，所以加锁
-                lock (stream)
+                try
                 {
-                    try
-                    {
-                        stream.Write(tmpBuffer, 0, bodyLength + 5);
-                        stream.Flush();
-                    }
-                    catch { }
+                    stream.Write(tmpBuffer, 0, bodyLength + 5);
+                    stream.Flush();
                 }
+                catch { }
             }), options.SendTimeout);
             lastSendPackageTime = DateTime.Now;
         }
