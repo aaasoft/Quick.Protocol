@@ -31,7 +31,7 @@ namespace Quick.Protocol.Pipeline
 
         protected override Task InnerAcceptAsync(CancellationToken token)
         {
-            var serverStream = new NamedPipeServerStream(options.PipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+            var serverStream = new NamedPipeServerStream(options.PipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
             Task waitForConnectionTask = null;
 #if NETSTANDARD2_0
             waitForConnectionTask = serverStream.WaitForConnectionAsync(token);
