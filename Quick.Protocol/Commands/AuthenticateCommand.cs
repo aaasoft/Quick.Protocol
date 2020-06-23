@@ -20,6 +20,10 @@ namespace Quick.Protocol.Commands
             /// 认证回答
             /// </summary>
             public string Answer { get; set; }
+            /// <summary>
+            /// 缓存大小
+            /// </summary>
+            public int BufferSize { get; set; }
         }
         public AuthenticateCommand() { }
         public AuthenticateCommand(CommandContent content) : base(content) { }

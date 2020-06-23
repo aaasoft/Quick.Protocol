@@ -49,6 +49,7 @@ namespace Quick.Protocol.Core
             {
                 ProtocolVersion = QpConsts.QUICK_PROTOCOL_VERSION,
                 ServerProgram = options.ServerProgram,
+                BufferSize = options.BufferSize,
                 InstructionSet = options.InstructionSet
             });
             question = welcomeCmd.Id;
@@ -91,6 +92,9 @@ namespace Quick.Protocol.Core
                  });
                 return;
             }
+
+            //设置对方缓存大小
+            OppositeBufferSize = authCmdContent.BufferSize;
             SendCommandResponse(e, 0, "认证通过！").ContinueWith(t =>
             {
                 isAuthSuccess = true;

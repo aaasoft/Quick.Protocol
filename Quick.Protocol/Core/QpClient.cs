@@ -59,7 +59,7 @@ namespace Quick.Protocol.Core
             if (welcomePackage == null || string.IsNullOrEmpty(welcomePackage.Content))
                 throw new InvalidDataException("Could't read welcome command,protocol error.");
 
-            //验证指令集
+            //转为欢迎指令
             var welcomeCommand = welcomePackage.ToCommand<WelcomeCommand, WelcomeCommand.CommandContent, object>();
             WelcomeContent = welcomeCommand.ContentT;
             if (WelcomeContent == null)
@@ -68,6 +68,11 @@ namespace Quick.Protocol.Core
                 await SendCommandResponse(welcomeCommand, -1, errorMessage);
                 throw new InvalidDataException(errorMessage);
             }
+
+            //设置对方缓存大小
+            OppositeBufferSize = WelcomeContent.BufferSize;
+
+            //验证指令集
             var notSupportInstructionNames = Options.InstructionSet.Select(t => t.Id).Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
             if (notSupportInstructionNames.Length > 0)
             {
@@ -85,7 +90,8 @@ namespace Quick.Protocol.Core
             {
                 Compress = Options.EnableCompress,
                 Encrypt = Options.EnableEncrypt,
-                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password)
+                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password),
+                BufferSize = Options.BufferSize
             }));
 
             if (authenticateResult.Code != 0)

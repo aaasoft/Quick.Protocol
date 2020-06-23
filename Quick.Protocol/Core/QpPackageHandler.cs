@@ -21,6 +21,12 @@ namespace Quick.Protocol.Core
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
         private DateTime lastSendPackageTime = DateTime.MinValue;
+
+        /// <summary>
+        /// 对方缓存大小
+        /// </summary>
+        protected int OppositeBufferSize { get; set; } = 0;
+
         /// <summary>
         /// 增加Tag属性，用于引用与处理器相关的对象
         /// </summary>
