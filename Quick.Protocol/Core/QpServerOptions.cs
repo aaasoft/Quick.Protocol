@@ -21,8 +21,6 @@ namespace Quick.Protocol.Core
         /// </summary>
         public string ServerProgram { get; set; }
 
-        internal new bool Compress { get => base.Compress; set => base.Compress = value; }
-        internal new bool Encrypt { get => base.Encrypt; set => base.Encrypt = value; }
         /// <summary>
         /// 协议错误处理器
         /// </summary>

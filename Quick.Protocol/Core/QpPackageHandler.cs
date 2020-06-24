@@ -94,94 +94,42 @@ namespace Quick.Protocol.Core
                 byte[] packageBuffer;
                 var packageTotalLength = package.Output(sendBuffer, out packageBuffer);
 
-                //如果不压缩也不加密
-                if (!options.Compress && !options.Encrypt)
-                {
-                    Task.Run(() =>
-                    {
-                        try
-                        {
-                            //如果包缓存是发送缓存
-                            if (packageBuffer == sendBuffer)
-                            {
-                                stream.Write(packageBuffer, 0, packageTotalLength);
-                                stream.Flush();
-                            }
-                            //否则，拆分为多个包发送
-                            else
-                            {
-                                //每个包内容的最大长度为对方缓存大小减5
-                                var maxTakeLength = BufferSize - 5;
-                                var currentIndex = 0;
-                                while (currentIndex < packageTotalLength)
-                                {
-                                    var restLength = packageTotalLength - currentIndex;
-                                    int takeLength = 0;
-                                    if (restLength >= maxTakeLength)
-                                        takeLength = maxTakeLength;
-                                    else
-                                        takeLength = restLength;
-
-                                    stream.Write(BitConverter.GetBytes(takeLength), 0, 4);
-                                    stream.WriteByte(SplitPackage.PACKAGE_TYPE);
-                                    stream.Write(packageBuffer, currentIndex, takeLength);
-                                    stream.Flush();
-                                    currentIndex += takeLength;
-                                }
-                            }
-                        }
-                        catch { }
-                    }).Wait(options.SendTimeout);
-                    return;
-                }
-
-                byte[] tmpBuffer = packageBuffer;
-                int bodyLength = packageBuffer.Length - 5;
-
-                ////压缩
-                //if (options.Compress)
-                //{
-                //    using (var sourceStream = new MemoryStream(tmpBuffer, 5, tmpBuffer.Length - 5))
-                //    using (var compressStream = new MemoryStream())
-                //    {
-                //        compressStream.Write(tmpBuffer, 0, 5);
-                //        using (var gzStream = new GZipStream(compressStream, CompressionMode.Compress))
-                //        {
-                //            sourceStream.CopyTo(gzStream);
-                //        }
-                //        tmpBuffer = compressStream.ToArray();
-                //        bodyLength = tmpBuffer.Length - 5;
-                //    }
-                //}
-                ////加密
-                //if (options.Encrypt)
-                //{
-                //    using (var ms = new MemoryStream(tmpBuffer.Length))
-                //    {
-                //        ms.Write(tmpBuffer, 0, 5);
-                //        var encryptBuffer = CryptographyUtils.DesEncrypt(options.Password, tmpBuffer, 5, bodyLength);
-                //        ms.Write(encryptBuffer, 0, encryptBuffer.Length);
-                //        tmpBuffer = ms.ToArray();
-                //        bodyLength = encryptBuffer.Length;
-                //    }
-                //}
-                if (bodyLength > BufferSize)
-                    throw new IOException("要发送的数据大小超出了缓存的大小！");
-
-                var packageLengthBytes = BitConverter.GetBytes(bodyLength);
-                packageLengthBytes.CopyTo(tmpBuffer, 0);
-                tmpBuffer[4] = packageBuffer[4];
 
                 Task.Run(() =>
                 {
                     try
                     {
-                        stream.Write(tmpBuffer, 0, bodyLength + 5);
-                        stream.Flush();
+                            //如果包缓存是发送缓存
+                            if (packageBuffer == sendBuffer)
+                        {
+                            stream.Write(packageBuffer, 0, packageTotalLength);
+                            stream.Flush();
+                        }
+                            //否则，拆分为多个包发送
+                            else
+                        {
+                                //每个包内容的最大长度为对方缓存大小减5
+                                var maxTakeLength = BufferSize - 5;
+                            var currentIndex = 0;
+                            while (currentIndex < packageTotalLength)
+                            {
+                                var restLength = packageTotalLength - currentIndex;
+                                int takeLength = 0;
+                                if (restLength >= maxTakeLength)
+                                    takeLength = maxTakeLength;
+                                else
+                                    takeLength = restLength;
+
+                                stream.Write(BitConverter.GetBytes(takeLength), 0, 4);
+                                stream.WriteByte(SplitPackage.PACKAGE_TYPE);
+                                stream.Write(packageBuffer, currentIndex, takeLength);
+                                stream.Flush();
+                                currentIndex += takeLength;
+                            }
+                        }
                     }
                     catch { }
                 }).Wait(options.SendTimeout);
-
                 lastSendPackageTime = DateTime.Now;
             }
         }
@@ -287,26 +235,6 @@ namespace Quick.Protocol.Core
                 break;
             }
 
-
-            ////解密
-            //if (options.Encrypt)
-            //{
-            //    var decrptyBuffer = CryptographyUtils.DesDecrypt(options.Password, tmpBuffer, 0, tmpPackageLength);
-            //    decrptyBuffer.CopyTo(recvBuffer, 0);
-            //    tmpBuffer = sendBuffer;
-            //    tmpPackageLength = decrptyBuffer.Length;
-            //}
-            ////解压
-            //if (options.Compress)
-            //{
-            //    using (var mStream = new MemoryStream(sendBuffer2))
-            //    using (var gzStream = new GZipStream(new MemoryStream(tmpBuffer, 0, tmpPackageLength), CompressionMode.Decompress))
-            //    {
-            //        gzStream.CopyTo(mStream);
-            //        tmpBuffer = sendBuffer2;
-            //        tmpPackageLength = (int)mStream.Position;
-            //    }
-            //}
             //解析包
             var package = options.ParsePackage(tmpPackageType, tmpBuffer, 0, tmpPackageBodyLength);
             if (package == null)

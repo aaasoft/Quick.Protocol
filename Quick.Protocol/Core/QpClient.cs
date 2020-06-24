@@ -88,8 +88,6 @@ namespace Quick.Protocol.Core
             //开始认证
             var authenticateResult = await SendCommand(new AuthenticateCommand(new AuthenticateCommand.CommandContent()
             {
-                Compress = Options.EnableCompress,
-                Encrypt = Options.EnableEncrypt,
                 Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password)
             }));
 

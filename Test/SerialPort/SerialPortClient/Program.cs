@@ -11,9 +11,7 @@ namespace SerialPortClient
             var client = new Quick.Protocol.SerialPort.QpSerialPortClient(new Quick.Protocol.SerialPort.QpSerialPortClientOptions()
             {
                 PortName = "COM3",
-                Password = "HelloQP",
-                EnableCompress = true,
-                EnableEncrypt = true
+                Password = "HelloQP"
             });
 
             client.Disconnected += (sender, e) =>

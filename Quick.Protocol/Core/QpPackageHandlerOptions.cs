@@ -25,14 +25,6 @@ namespace Quick.Protocol.Core
         /// </summary>
         public string Password { get; set; }
         /// <summary>
-        /// 是否压缩
-        /// </summary>
-        internal virtual bool Compress { get; set; } = false;
-        /// <summary>
-        /// 是否加密
-        /// </summary>
-        internal virtual bool Encrypt { get; set; } = false;
-        /// <summary>
         /// 最大包大小
         /// </summary>
         public int MaxPackageSize { get; set; } = 10 * 1024 * 1024;
