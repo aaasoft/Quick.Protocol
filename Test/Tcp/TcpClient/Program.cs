@@ -14,8 +14,8 @@ namespace TcpClient
                 Host = "127.0.0.1",
                 Port = 3011,
                 Password = "HelloQP",
-                EnableCompress = true,
-                EnableEncrypt = true
+                EnableCompress = false,
+                EnableEncrypt = false
             });
 
             client.Disconnected += (sender, e) =>

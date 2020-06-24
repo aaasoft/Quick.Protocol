@@ -14,8 +14,10 @@ namespace Quick.Protocol.Packages
         /// <summary>
         /// 输出Protobuf序列化结果
         /// </summary>
+        /// <param name="targetBuffer"></param>
+        /// <param name="outBuffer"></param>
         /// <returns></returns>
-        byte[] Output();
+        int Output(byte[] targetBuffer,out byte[] outBuffer);
         /// <summary>
         /// 解析包
         /// </summary>

@@ -102,7 +102,7 @@ namespace Quick.Protocol.Core
 
             if (timeout <= 0)
             {
-                await SendPackage(request);
+                SendPackage(request);
                 return await command.ResponseTask;
             }
             //如果设置了超时
@@ -110,7 +110,7 @@ namespace Quick.Protocol.Core
             {
                 try
                 {
-                    await TaskUtils.TaskWait(SendPackage(request), timeout);
+                    await TaskUtils.TaskWait(Task.Run(() => SendPackage(request)), timeout);
                 }
                 catch
                 {
@@ -151,7 +151,7 @@ namespace Quick.Protocol.Core
 
             if (timeout <= 0)
             {
-                await SendPackage(request);
+                SendPackage(request);
                 return await command.ResponseTask;
             }
             //如果设置了超时
@@ -159,7 +159,7 @@ namespace Quick.Protocol.Core
             {
                 try
                 {
-                    await TaskUtils.TaskWait(SendPackage(request), timeout);
+                    await TaskUtils.TaskWait(Task.Run(() => SendPackage(request)), timeout);
                 }
                 catch
                 {
@@ -216,13 +216,13 @@ namespace Quick.Protocol.Core
         {
             if (LogUtils.LogCommand)
                 logger.LogTrace("[Send-Command-Resp]Id:{0} Code:{1} Message:{2} Content:{3}", commandId, code, message, LogUtils.LogCommandContent ? content : $"...,ContentType:string {content?.Length}");
-            return SendPackage(new CommandResponsePackage()
+            return Task.Run(() => SendPackage(new CommandResponsePackage()
             {
                 Id = commandId,
                 Code = code,
                 Message = message,
                 Content = content
-            });
+            }));
         }
 
         /// <summary>
@@ -262,13 +262,13 @@ namespace Quick.Protocol.Core
         {
             if (LogUtils.LogCommand)
                 logger.LogTrace("[Send-Command-Resp]Id:{0} Code:{1} Message:{2} Content:{3}", commandId, code, message, LogUtils.LogCommandContent ? content : $"...,ContentType {content.GetType().FullName}");
-            return SendPackage(new CommandResponsePackage()
+            return Task.Run(() => SendPackage(new CommandResponsePackage()
             {
                 Id = commandId,
                 Code = code,
                 Message = message,
                 Content = content == null ? null : JsonConvert.SerializeObject(content)
-            });
+            }));
         }
     }
 }

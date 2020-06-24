@@ -12,8 +12,8 @@ namespace PipelineClient
             {
                 PipeName = "Quick.Protocol",
                 Password = "HelloQP",
-                EnableCompress = true,
-                EnableEncrypt = true
+                EnableCompress = false,
+                EnableEncrypt = false
             });
 
             client.Disconnected += (sender, e) =>
