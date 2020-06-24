@@ -38,6 +38,9 @@ namespace Quick.Protocol.Core
             this.options = options;
             this.CommandReceived += QpServerChannel_CommandReceived;
 
+            //修改缓存大小
+            ChangeBufferSize(options.BufferSize);
+
             InitQpPackageHandler_Stream(stream);
             //开始读取其他数据包
             BeginReadPackage(cancellationToken);
@@ -94,7 +97,7 @@ namespace Quick.Protocol.Core
             }
 
             //设置对方缓存大小
-            OppositeBufferSize = authCmdContent.BufferSize;
+            BufferSize = authCmdContent.BufferSize;
             SendCommandResponse(e, 0, "认证通过！").ContinueWith(t =>
             {
                 isAuthSuccess = true;

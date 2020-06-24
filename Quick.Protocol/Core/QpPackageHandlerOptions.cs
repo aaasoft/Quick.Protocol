@@ -9,10 +9,6 @@ namespace Quick.Protocol.Core
     public abstract class QpPackageHandlerOptions
     {
         /// <summary>
-        /// 缓存大小(默认1MB)
-        /// </summary>
-        public int BufferSize = 1 * 1024 * 1024;
-        /// <summary>
         /// 发送超时(默认5秒)
         /// </summary>
         public int SendTimeout { get; set; } = 5 * 1000;
@@ -36,6 +32,10 @@ namespace Quick.Protocol.Core
         /// 是否加密
         /// </summary>
         internal virtual bool Encrypt { get; set; } = false;
+        /// <summary>
+        /// 最大包大小
+        /// </summary>
+        public int MaxPackageSize { get; set; } = 10 * 1024 * 1024;
 
         private Dictionary<byte, IPackage> packageDict = new Dictionary<byte, IPackage>();
 

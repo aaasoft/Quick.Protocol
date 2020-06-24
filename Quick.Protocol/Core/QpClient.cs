@@ -69,8 +69,8 @@ namespace Quick.Protocol.Core
                 throw new InvalidDataException(errorMessage);
             }
 
-            //设置对方缓存大小
-            OppositeBufferSize = WelcomeContent.BufferSize;
+            //设置缓存大小为与服务端同样的大小
+            ChangeBufferSize(WelcomeContent.BufferSize);
 
             //验证指令集
             var notSupportInstructionNames = Options.InstructionSet.Select(t => t.Id).Except(WelcomeContent.InstructionSet.Select(t => t.Id)).ToArray();
@@ -90,8 +90,7 @@ namespace Quick.Protocol.Core
             {
                 Compress = Options.EnableCompress,
                 Encrypt = Options.EnableEncrypt,
-                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password),
-                BufferSize = Options.BufferSize
+                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password)
             }));
 
             if (authenticateResult.Code != 0)

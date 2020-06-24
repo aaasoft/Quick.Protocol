@@ -9,8 +9,14 @@ namespace Quick.Protocol.Commands
     /// <summary>
     /// 未知命令
     /// </summary>
-    public class UnknownCommand : AbstractCommand<object,object>
+    public class UnknownCommand : AbstractCommand<UnknownCommand.CommandContent, object>
     {
-        public static UnknownCommand Instance = new UnknownCommand();
+        public class CommandContent
+        {
+            public string Message { get; set; }
+        }
+
+        public UnknownCommand() { }
+        public UnknownCommand(CommandContent content) : base(content) { }
     }
 }

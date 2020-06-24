@@ -42,7 +42,7 @@ namespace Quick.Protocol.Core
                 var requestPackage = (CommandRequestPackage)package;
                 var requestCmd = options.ParseCommand(requestPackage);
                 if (requestCmd == null)
-                    requestCmd = UnknownCommand.Instance.Parse(requestPackage);
+                    requestCmd = new UnknownCommand(new UnknownCommand.CommandContent() { Message = $"Id:{requestPackage.Id}, Action:{requestPackage.Action}, Content:{requestPackage.Content}" });
                 if (LogUtils.LogCommand)
                     logger.LogTrace("[Recv-Command]Action:{0} Content:{1}", requestCmd.Action, LogUtils.LogCommandContent ? requestCmd.Content : "...,ContentType:" + requestCmd.Content.GetType().FullName);
                 CommandExecuter?.Execute(this, requestCmd);

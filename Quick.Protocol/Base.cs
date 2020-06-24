@@ -14,7 +14,6 @@ namespace Quick.Protocol
             {
                 new Packages.CommandRequestPackage(),
                 new Packages.CommandResponsePackage(),
-                new Packages.SplitPackage(),
                 Packages.HeartBeatPackage.Instance
             },
             SupportCommands = new Commands.ICommand[]

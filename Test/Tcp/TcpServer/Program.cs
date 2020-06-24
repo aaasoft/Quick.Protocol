@@ -9,12 +9,14 @@ namespace TcpServer
         static void Main(string[] args)
         {
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = false;
+            Quick.Protocol.Utils.LogUtils.LogPackage = true;
             Quick.Protocol.Utils.LogUtils.AddConsole();
             var server = new Quick.Protocol.Tcp.QpTcpServer(new Quick.Protocol.Tcp.QpTcpServerOptions()
             {
                 Address = IPAddress.Loopback,
                 Port = 3011,
                 Password = "HelloQP",
+                BufferSize = 1024,
                 ServerProgram = nameof(TcpServer) + " 1.0"
             });
             server.ChannelConnected += Server_ChannelConnected;

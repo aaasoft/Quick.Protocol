@@ -28,10 +28,16 @@ namespace Quick.Protocol.Core
         private DateTime lastSendPackageTime = DateTime.MinValue;
 
         /// <summary>
-        /// 对方缓存大小
+        /// 缓存大小，初始大小为1KB
         /// </summary>
-        protected int OppositeBufferSize { get; set; } = 0;
+        protected int BufferSize { get; set; } = 1 * 1024;
 
+        protected void ChangeBufferSize(int bufferSize)
+        {
+            BufferSize = bufferSize;
+            recvBuffer = new byte[bufferSize];
+            sendBuffer = new byte[bufferSize];
+        }
         /// <summary>
         /// 增加Tag属性，用于引用与处理器相关的对象
         /// </summary>
@@ -39,9 +45,7 @@ namespace Quick.Protocol.Core
         public QpPackageHandler(QpPackageHandlerOptions options)
         {
             this.options = options;
-            recvBuffer = new byte[options.BufferSize];
-            sendBuffer = new byte[options.BufferSize];
-
+            ChangeBufferSize(BufferSize);
             //sendBuffer2 = new byte[options.BufferSize];
         }
 
@@ -106,13 +110,23 @@ namespace Quick.Protocol.Core
                             //否则，拆分为多个包发送
                             else
                             {
-                                SplitPackage[] packages = SplitPackage.Split(packageBuffer, packageTotalLength, OppositeBufferSize);
-                                foreach (var pakcage in packages)
+                                //每个包内容的最大长度为对方缓存大小减5
+                                var maxTakeLength = BufferSize - 5;
+                                var currentIndex = 0;
+                                while (currentIndex < packageTotalLength)
                                 {
-                                    byte[] outBuffer;
-                                    var ret = package.Output(sendBuffer, out outBuffer);
-                                    stream.Write(outBuffer, 0, ret);
+                                    var restLength = packageTotalLength - currentIndex;
+                                    int takeLength = 0;
+                                    if (restLength >= maxTakeLength)
+                                        takeLength = maxTakeLength;
+                                    else
+                                        takeLength = restLength;
+
+                                    stream.Write(BitConverter.GetBytes(takeLength), 0, 4);
+                                    stream.WriteByte(SplitPackage.PACKAGE_TYPE);
+                                    stream.Write(packageBuffer, currentIndex, takeLength);
                                     stream.Flush();
+                                    currentIndex += takeLength;
                                 }
                             }
                         }
@@ -151,7 +165,7 @@ namespace Quick.Protocol.Core
                 //        bodyLength = encryptBuffer.Length;
                 //    }
                 //}
-                if (bodyLength > options.BufferSize)
+                if (bodyLength > BufferSize)
                     throw new IOException("要发送的数据大小超出了缓存的大小！");
 
                 var packageLengthBytes = BitConverter.GetBytes(bodyLength);
@@ -203,27 +217,76 @@ namespace Quick.Protocol.Core
             if (stream == null)
                 throw new ArgumentNullException(nameof(QpPackageHandler_Stream));
 
-            int ret = 0;
-            //读取包头
-            ret = await readData(stream, recvBuffer, 0, 5, token);
-            if (token.IsCancellationRequested)
-                return null;
-            if (ret < 5)
-                throw new IOException($"包头读取错误！读取数据长度：{ret}");
+            byte[] tmpBuffer = null;
+            byte tmpPackageType = 0;
+            int tmpPackageBodyLength = 0;
 
-            var packageLength = BitConverter.ToInt32(recvBuffer, 0);
-            if (packageLength > recvBuffer.Length)
-                throw new IOException($"数据包长度：{packageLength}，缓存大小：{recvBuffer.Length}");
-            var packageType = recvBuffer[4];
-            //读取包体
-            ret = await readData(stream, recvBuffer, 0, packageLength, token);
-            if (token.IsCancellationRequested)
-                return null;
-            if (ret < packageLength)
-                throw new IOException($"包体读取错误！包长度：{packageLength}，包类型：{packageType}，读取数据长度：{ret}");
+            //是否正在读取拆分包
+            bool isReadingSplitPackage = false;
+            int splitMsCapacity = 0;
+            MemoryStream splitMs = null;
+            while (true)
+            {
+                int ret = 0;
+                //读取包头
+                ret = await readData(stream, recvBuffer, 0, 5, token);
+                if (token.IsCancellationRequested)
+                    return null;
+                if (ret < 5)
+                    throw new IOException($"包头读取错误！读取数据长度：{ret}");
 
-            var tmpBuffer = recvBuffer;
-            var tmpPackageLength = packageLength;
+                var packageBodyLength = BitConverter.ToInt32(recvBuffer, 0);
+                var packageTotalLength = packageBodyLength + 5;
+                if (packageTotalLength > recvBuffer.Length)
+                    throw new IOException($"数据包总长度[{packageTotalLength}]大于缓存大小[{recvBuffer.Length}]");
+
+                var packageType = recvBuffer[4];
+                //读取包体
+                ret = await readData(stream, recvBuffer, 0, packageBodyLength, token);
+                if (token.IsCancellationRequested)
+                    return null;
+                if (ret < packageBodyLength)
+                    throw new IOException($"包体读取错误！包体长度：{packageBodyLength}，包类型：{packageType}，读取数据长度：{ret}");
+
+                //如果当前包是拆分包
+                if (packageType == SplitPackage.PACKAGE_TYPE)
+                {
+                    if (!isReadingSplitPackage)
+                    {
+                        tmpPackageBodyLength = BitConverter.ToInt32(recvBuffer, 0);
+                        tmpPackageType = recvBuffer[4];
+
+                        splitMsCapacity = tmpPackageBodyLength;
+                        if (splitMsCapacity > options.MaxPackageSize)
+                            throw new IOException($"拆分包中包长度[{splitMsCapacity}]大于最大包大小[{options.MaxPackageSize}]");
+                        splitMs = new MemoryStream(splitMsCapacity);
+                        isReadingSplitPackage = true;
+                        //包头的5个字节就不写入了
+                        splitMs.Write(recvBuffer, 5, packageBodyLength - 5);
+                    }
+                    else
+                    {
+                        splitMs.Write(recvBuffer, 0, packageBodyLength);
+                    }
+                    //如果拆分包已经读取完成
+                    if (splitMs.Position >= splitMsCapacity)
+                    {
+                        tmpBuffer = splitMs.ToArray();
+                        isReadingSplitPackage = false;
+                        splitMs.Dispose();
+                        break;
+                    }
+                }
+                //如果是正在读取拆分包
+                if (isReadingSplitPackage)
+                    continue;
+
+                tmpBuffer = recvBuffer;
+                tmpPackageType = packageType;
+                tmpPackageBodyLength = packageBodyLength;
+                break;
+            }
+
 
             ////解密
             //if (options.Encrypt)
@@ -245,9 +308,9 @@ namespace Quick.Protocol.Core
             //    }
             //}
             //解析包
-            var package = options.ParsePackage(packageType, tmpBuffer, 0, tmpPackageLength);
+            var package = options.ParsePackage(tmpPackageType, tmpBuffer, 0, tmpPackageBodyLength);
             if (package == null)
-                logger.LogWarning("[Recv-Package][UnknownPackageType]PackageLength:{0} PackageType:{1}", packageLength, packageType);
+                logger.LogWarning("[Recv-Package][UnknownPackageType]PackageBodyLength:{0} PackageType:{1}", tmpPackageBodyLength, tmpPackageType);
             else
             {
                 bool shouldLog = true;
@@ -256,7 +319,7 @@ namespace Quick.Protocol.Core
                 if (!LogUtils.LogPackage)
                     shouldLog = false;
                 if (shouldLog)
-                    logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", packageLength, package.ToString());
+                    logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", tmpPackageBodyLength, package.ToString());
             }
             return package;
         }
