@@ -20,9 +20,7 @@ namespace Quick.Protocol.Core
         private byte[] recvBuffer;
         //发送缓存
         private byte[] sendBuffer;
-        //发送缓存2，用于压缩、加密
-        //private byte[] sendBuffer2;
-
+        
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
         private DateTime lastSendPackageTime = DateTime.MinValue;
@@ -46,11 +44,15 @@ namespace Quick.Protocol.Core
         {
             this.options = options;
             ChangeBufferSize(BufferSize);
-            //sendBuffer2 = new byte[options.BufferSize];
         }
 
         protected void InitQpPackageHandler_Stream(Stream stream)
         {
+            if (stream != null && stream.CanTimeout)
+            {
+                stream.WriteTimeout = options.SendTimeout;
+                stream.ReadTimeout = options.ReceiveTimeout;
+            }
             QpPackageHandler_Stream = stream;
         }
 
@@ -94,42 +96,38 @@ namespace Quick.Protocol.Core
                 byte[] packageBuffer;
                 var packageTotalLength = package.Output(sendBuffer, out packageBuffer);
 
-
-                Task.Run(() =>
+                try
                 {
-                    try
+                    //如果包缓存是发送缓存
+                    if (packageBuffer == sendBuffer)
                     {
-                            //如果包缓存是发送缓存
-                            if (packageBuffer == sendBuffer)
+                        stream.Write(packageBuffer, 0, packageTotalLength);
+                        stream.Flush();
+                    }
+                    //否则，拆分为多个包发送
+                    else
+                    {
+                        //每个包内容的最大长度为对方缓存大小减5
+                        var maxTakeLength = BufferSize - 5;
+                        var currentIndex = 0;
+                        while (currentIndex < packageTotalLength)
                         {
-                            stream.Write(packageBuffer, 0, packageTotalLength);
-                            stream.Flush();
-                        }
-                            //否则，拆分为多个包发送
+                            var restLength = packageTotalLength - currentIndex;
+                            int takeLength = 0;
+                            if (restLength >= maxTakeLength)
+                                takeLength = maxTakeLength;
                             else
-                        {
-                                //每个包内容的最大长度为对方缓存大小减5
-                                var maxTakeLength = BufferSize - 5;
-                            var currentIndex = 0;
-                            while (currentIndex < packageTotalLength)
-                            {
-                                var restLength = packageTotalLength - currentIndex;
-                                int takeLength = 0;
-                                if (restLength >= maxTakeLength)
-                                    takeLength = maxTakeLength;
-                                else
-                                    takeLength = restLength;
+                                takeLength = restLength;
 
-                                stream.Write(BitConverter.GetBytes(takeLength), 0, 4);
-                                stream.WriteByte(SplitPackage.PACKAGE_TYPE);
-                                stream.Write(packageBuffer, currentIndex, takeLength);
-                                stream.Flush();
-                                currentIndex += takeLength;
-                            }
+                            stream.Write(BitConverter.GetBytes(takeLength), 0, 4);
+                            stream.WriteByte(SplitPackage.PACKAGE_TYPE);
+                            stream.Write(packageBuffer, currentIndex, takeLength);
+                            stream.Flush();
+                            currentIndex += takeLength;
                         }
                     }
-                    catch { }
-                }).Wait(options.SendTimeout);
+                }
+                catch { }
                 lastSendPackageTime = DateTime.Now;
             }
         }

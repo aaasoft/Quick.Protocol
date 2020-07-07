@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <RollForward>Major</RollForward>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 

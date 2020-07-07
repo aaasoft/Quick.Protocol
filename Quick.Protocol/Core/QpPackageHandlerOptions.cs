@@ -9,17 +9,18 @@ namespace Quick.Protocol.Core
     public abstract class QpPackageHandlerOptions
     {
         /// <summary>
-        /// 发送超时(默认5秒)
+        /// 发送超时(默认10秒)
         /// </summary>
-        public int SendTimeout { get; set; } = 5 * 1000;
+        public int SendTimeout { get; set; } = 10 * 1000;
         /// <summary>
-        /// 接收超时(默认5秒)
+        /// 接收超时(默认10秒)
         /// </summary>
-        public int ReceiveTimeout { get; set; } = 5 * 1000;
+        public int ReceiveTimeout { get; set; } = 10 * 1000;
         /// <summary>
-        /// 心跳间隔(默认2秒)
+        /// 心跳间隔，为发送或接收超时中小的值的一半
         /// </summary>
-        public int HeartBeatInterval { get; set; } = 2 * 1000;
+        public int HeartBeatInterval => Math.Min(SendTimeout, ReceiveTimeout) / 2;
+
         /// <summary>
         /// 密码
         /// </summary>
@@ -53,10 +54,10 @@ namespace Quick.Protocol.Core
 
         public virtual void Check()
         {
-            if (HeartBeatInterval > ReceiveTimeout / 2)
-                throw new ArgumentException("HeartBeatInterval must smaller than (ReceiveTimeout/2)", nameof(HeartBeatInterval));
-            if (HeartBeatInterval > SendTimeout / 2)
-                throw new ArgumentException("HeartBeatInterval must smaller than (SendTimeout/2)", nameof(HeartBeatInterval));
+            if (ReceiveTimeout <= 0)
+                throw new ArgumentException("ReceiveTimeout must larger than 0", nameof(ReceiveTimeout));
+            if (SendTimeout <= 0)
+                throw new ArgumentException("SendTimeout must larger than 0", nameof(SendTimeout));
             if (Password == null)
                 throw new ArgumentNullException(nameof(Password));
         }
