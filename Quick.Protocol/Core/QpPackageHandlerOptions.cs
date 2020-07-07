@@ -9,17 +9,17 @@ namespace Quick.Protocol.Core
     public abstract class QpPackageHandlerOptions
     {
         /// <summary>
-        /// 发送超时(默认10秒)
+        /// 发送超时(默认15秒)
         /// </summary>
-        public int SendTimeout { get; set; } = 10 * 1000;
+        public int SendTimeout { get; set; } = 15 * 1000;
         /// <summary>
-        /// 接收超时(默认10秒)
+        /// 接收超时(默认15秒)
         /// </summary>
-        public int ReceiveTimeout { get; set; } = 10 * 1000;
+        public int ReceiveTimeout { get; set; } = 15 * 1000;
         /// <summary>
-        /// 心跳间隔，为发送或接收超时中小的值的一半
+        /// 心跳间隔，为发送或接收超时中小的值的三分一
         /// </summary>
-        public int HeartBeatInterval => Math.Min(SendTimeout, ReceiveTimeout) / 2;
+        public int HeartBeatInterval => Math.Min(SendTimeout, ReceiveTimeout) / 3;
 
         /// <summary>
         /// 密码

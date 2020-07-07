@@ -20,7 +20,7 @@ namespace Quick.Protocol.Core
         private byte[] recvBuffer;
         //发送缓存
         private byte[] sendBuffer;
-        
+
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
         private DateTime lastSendPackageTime = DateTime.MinValue;
@@ -66,6 +66,7 @@ namespace Quick.Protocol.Core
         /// </summary>
         protected virtual void OnReadError(Exception exception)
         {
+            logger.LogTrace("[ReadError]{0}: {1}", DateTime.Now, ExceptionUtils.GetExceptionMessage(exception));
             InitQpPackageHandler_Stream(null);
         }
 
@@ -79,19 +80,19 @@ namespace Quick.Protocol.Core
 
         public void SendPackage(IPackage package)
         {
+            var stream = QpPackageHandler_Stream;
+            if (stream == null)
+                return;
+            bool shouldLog = true;
+            if (package is HeartBeatPackage && !LogUtils.LogHeartbeat)
+                shouldLog = false;
+            if (!LogUtils.LogPackage)
+                shouldLog = false;
+
             lock (this)
             {
-                var stream = QpPackageHandler_Stream;
-                if (stream == null)
-                    throw new ArgumentNullException(nameof(QpPackageHandler_Stream));
-
-                bool shouldLog = true;
-                if (package is HeartBeatPackage && !LogUtils.LogHeartbeat)
-                    shouldLog = false;
-                if (!LogUtils.LogPackage)
-                    shouldLog = false;
                 if (shouldLog)
-                    logger.LogTrace("[Send-Package]{0}", package.ToString());
+                    logger.LogTrace("[Send-Package]{0}: {1}", DateTime.Now, package);
 
                 byte[] packageBuffer;
                 var packageTotalLength = package.Output(sendBuffer, out packageBuffer);
@@ -126,9 +127,9 @@ namespace Quick.Protocol.Core
                             currentIndex += takeLength;
                         }
                     }
+                    lastSendPackageTime = DateTime.Now;
                 }
                 catch { }
-                lastSendPackageTime = DateTime.Now;
             }
         }
 
@@ -236,7 +237,7 @@ namespace Quick.Protocol.Core
             //解析包
             var package = options.ParsePackage(tmpPackageType, tmpBuffer, 0, tmpPackageBodyLength);
             if (package == null)
-                logger.LogWarning("[Recv-Package][UnknownPackageType]PackageBodyLength:{0} PackageType:{1}", tmpPackageBodyLength, tmpPackageType);
+                logger.LogWarning("[Recv-Package][UnknownPackageType]{0}: PackageBodyLength:{1} PackageType:{2}", DateTime.Now, tmpPackageBodyLength, tmpPackageType);
             else
             {
                 bool shouldLog = true;
@@ -245,7 +246,7 @@ namespace Quick.Protocol.Core
                 if (!LogUtils.LogPackage)
                     shouldLog = false;
                 if (shouldLog)
-                    logger.LogTrace("[Recv-Package]PackageLength:{0} Package:{1}", tmpPackageBodyLength, package.ToString());
+                    logger.LogTrace("[Recv-Package]{0}: PackageLength:{1} Package:{2}", DateTime.Now, tmpPackageBodyLength, package);
             }
             return package;
         }
@@ -286,25 +287,24 @@ namespace Quick.Protocol.Core
                  //如果已经取消
                  if (t.IsCanceled || token.IsCancellationRequested)
                  {
-                     OnReadError(t.Exception.InnerException);
+                     OnReadError(new TaskCanceledException());
                      return;
                  }
 
                  //如果读取出错
                  if (t.IsFaulted)
                  {
-                     logger.LogTrace("[ReadError]{0}", t.Exception.InnerException.Message);
                      try
                      {
                          if (QpPackageHandler_Stream.CanWrite)
                              SendPackage(new CommandResponsePackage()
                              {
                                  Code = -1,
-                                 Message = t.Exception.InnerException.Message
+                                 Message = ExceptionUtils.GetExceptionMessage(t.Exception)
                              });
                      }
                      catch { }
-                     OnReadError(t.Exception.InnerException);
+                     OnReadError(t.Exception);
                      return;
                  }
                  //读取下一个数据包
