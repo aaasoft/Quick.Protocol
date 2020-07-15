@@ -32,10 +32,14 @@ namespace Quick.Protocol.Core
 
         protected void ChangeBufferSize(int bufferSize)
         {
+            //缓存大小最小为1KB
+            if (bufferSize < 1 * 1024)
+                bufferSize = 1 * 1024;
             BufferSize = bufferSize;
             recvBuffer = new byte[bufferSize];
             sendBuffer = new byte[bufferSize];
         }
+
         /// <summary>
         /// 增加Tag属性，用于引用与处理器相关的对象
         /// </summary>
@@ -183,6 +187,8 @@ namespace Quick.Protocol.Core
                     throw new IOException($"包头读取错误！读取数据长度：{ret}");
 
                 var packageBodyLength = BitConverter.ToInt32(recvBuffer, 0);
+                if (packageBodyLength <= 0)
+                    throw new IOException($"包体长度[{splitMsCapacity}]必须为正数！");
                 var packageTotalLength = packageBodyLength + 5;
                 if (packageTotalLength > recvBuffer.Length)
                     throw new IOException($"数据包总长度[{packageTotalLength}]大于缓存大小[{recvBuffer.Length}]");
@@ -204,6 +210,8 @@ namespace Quick.Protocol.Core
                         tmpPackageType = recvBuffer[4];
 
                         splitMsCapacity = tmpPackageBodyLength;
+                        if (splitMsCapacity <= 0)
+                            throw new IOException($"拆分包中包长度[{splitMsCapacity}]必须为正数！");
                         if (splitMsCapacity > options.MaxPackageSize)
                             throw new IOException($"拆分包中包长度[{splitMsCapacity}]大于最大包大小[{options.MaxPackageSize}]");
                         splitMs = new MemoryStream(splitMsCapacity);

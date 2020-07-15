@@ -96,8 +96,6 @@ namespace Quick.Protocol.Core
                 return;
             }
 
-            //设置对方缓存大小
-            BufferSize = authCmdContent.BufferSize;
             SendCommandResponse(e, 0, "认证通过！").ContinueWith(t =>
             {
                 isAuthSuccess = true;
