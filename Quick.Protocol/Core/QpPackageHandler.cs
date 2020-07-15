@@ -136,7 +136,7 @@ namespace Quick.Protocol.Core
         private async Task<int> readData(Stream stream, byte[] buffer, int startIndex, int totalCount, CancellationToken cancellationToken)
         {
             if (totalCount > buffer.Length - startIndex)
-                throw new IOException("要接收的数据大小超出了缓存的大小！");
+                throw new IOException($"要接收的数据大小[{totalCount}]超出了缓存的大小[{buffer.Length - startIndex}]！");
             int ret;
             var count = 0;
             while (count < totalCount)
