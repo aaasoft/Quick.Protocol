@@ -187,8 +187,8 @@ namespace Quick.Protocol.Core
                     throw new IOException($"包头读取错误！读取数据长度：{ret}");
 
                 var packageBodyLength = BitConverter.ToInt32(recvBuffer, 0);
-                if (packageBodyLength <= 0)
-                    throw new IOException($"包体长度[{splitMsCapacity}]必须为正数！");
+                if (packageBodyLength < 0)
+                    throw new IOException($"包体长度[{packageBodyLength}]必须为非负数！");
                 var packageTotalLength = packageBodyLength + 5;
                 if (packageTotalLength > recvBuffer.Length)
                     throw new IOException($"数据包总长度[{packageTotalLength}]大于缓存大小[{recvBuffer.Length}]");
