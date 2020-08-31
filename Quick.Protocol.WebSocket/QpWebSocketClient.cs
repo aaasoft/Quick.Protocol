@@ -21,7 +21,7 @@ namespace Quick.Protocol.WebSocket
         protected override async Task<Stream> InnerConnectAsync()
         {
             client = new System.Net.WebSockets.ClientWebSocket();
-            await client.ConnectAsync(new Uri($"ws://{options.Host}:{options.Port}"), CancellationToken.None);
+            await client.ConnectAsync(new Uri(options.Url), CancellationToken.None);
             return new WebSocketClientStream(client);
         }
     }

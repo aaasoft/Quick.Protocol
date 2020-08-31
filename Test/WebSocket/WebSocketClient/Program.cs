@@ -14,8 +14,7 @@ namespace WebSocketClient
 
             var client = new Quick.Protocol.WebSocket.QpWebSocketClient(new Quick.Protocol.WebSocket.QpWebSocketClientOptions()
             {
-                Host = "127.0.0.1",
-                Port = 3011,
+                Url = "ws://127.0.0.1:3011/qp_test",
                 Password = "HelloQP"
             });
 

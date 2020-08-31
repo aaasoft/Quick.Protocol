@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Quick.Protocol.WebSocket
 {
-    public class WebSocketClientStream : Stream
+    internal class WebSocketClientStream : Stream
     {
         public override bool CanRead => true;
         public override bool CanSeek => throw new NotImplementedException();
@@ -16,7 +16,7 @@ namespace Quick.Protocol.WebSocket
         public override long Length => stream.Length;
         
         private System.Net.WebSockets.ClientWebSocket client;
-        private byte[] buffer = new byte[100 * 1024];
+        private byte[] buffer = new byte[1024];
         private BufferedReadStream stream = new BufferedReadStream();
         private string closeReason = null;
 

@@ -10,10 +10,9 @@ namespace WebSocketServer
         {
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = false;
             Quick.Protocol.Utils.LogUtils.AddConsole();
-            var server = new Quick.Protocol.WebSocket.QpWebSocketServer(new Quick.Protocol.WebSocket.QpWebSocketServerOptions()
+            var server = new Quick.Protocol.WebSocket.QpFleckWebSocketServer(new Quick.Protocol.WebSocket.QpFlectWebSocketServerOptions()
             {
-                Address = IPAddress.Loopback,
-                Port = 3011,
+                Url = "ws://127.0.0.1:3011/qp_test",
                 Password = "HelloQP",
                 ServerProgram = nameof(WebSocketServer) + " 1.0"
             });

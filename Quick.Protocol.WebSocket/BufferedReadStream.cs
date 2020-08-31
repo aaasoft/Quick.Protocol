@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Quick.Protocol.WebSocket
 {
-    public class BufferedReadStream : Stream
+    internal class BufferedReadStream : Stream
     {
         private AutoResetEvent readAutoResetEvent;
         private Queue<byte[]> dataQueue = new Queue<byte[]>();

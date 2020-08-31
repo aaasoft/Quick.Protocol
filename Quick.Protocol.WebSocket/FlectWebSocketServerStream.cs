@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Quick.Protocol.WebSocket
 {
-    public class WebSocketStream : Stream
+    internal class FlectWebSocketServerStream : Stream
     {
         private IWebSocketConnection connection;
         private BufferedReadStream stream = new BufferedReadStream();
 
-        public WebSocketStream(IWebSocketConnection connection)
+        public FlectWebSocketServerStream(IWebSocketConnection connection)
         {
             this.connection = connection;
             connection.OnBinary = ret =>
