@@ -19,4 +19,10 @@
     <ProjectReference Include="..\Quick.Protocol\Quick.Protocol.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Net.WebSockets.Client">
+      <Version>4.3.2</Version>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>

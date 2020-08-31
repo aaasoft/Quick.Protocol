@@ -69,7 +69,7 @@ namespace Quick.Protocol.WebSocket
             else
             {
                 newItem = new byte[count];
-                buffer.CopyTo(newItem, offset);
+                Buffer.BlockCopy(buffer, offset, newItem, 0, count);
             }
             lock (dataQueue)
                 dataQueue.Enqueue(newItem);
