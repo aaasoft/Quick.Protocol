@@ -13,11 +13,10 @@ namespace Quick.Protocol.WebSocket.Client
         public override bool CanRead => true;
         public override bool CanSeek => throw new NotImplementedException();
         public override bool CanWrite => true;
-        public override long Length => stream.Length;
-        
+        public override long Length => throw new NotImplementedException();
+
         private System.Net.WebSockets.ClientWebSocket client;
         private byte[] buffer = new byte[1024];
-        private BufferedReadStream stream = new BufferedReadStream();
         private string closeReason = null;
 
         public override long Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -35,26 +34,6 @@ namespace Quick.Protocol.WebSocket.Client
         public WebSocketClientStream(System.Net.WebSockets.ClientWebSocket client)
         {
             this.client = client;
-            beginRead();
-        }
-
-        private async void beginRead()
-        {
-            try
-            {
-                var ret = await client.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                if (ret.CloseStatus.HasValue)
-                {
-                    closeReason = ret.CloseStatusDescription;
-                    return;
-                }
-                await stream.WriteAsync(buffer, 0, ret.Count);
-                await Task.Run(beginRead);
-            }
-            catch (Exception ex)
-            {
-                closeReason = ExceptionUtils.GetExceptionMessage(ex);
-            }
         }
 
         public override void Flush()
@@ -66,7 +45,8 @@ namespace Quick.Protocol.WebSocket.Client
         {
             if (closeReason != null)
                 throw new IOException(closeReason);
-            return stream.Read(buffer, offset, count);
+            var result = client.ReceiveAsync(new ArraySegment<byte>(buffer, offset, count), CancellationToken.None).Result;
+            return result.Count;
         }
 
         public override void Write(byte[] buffer, int offset, int count)
@@ -79,7 +59,6 @@ namespace Quick.Protocol.WebSocket.Client
         protected override void Dispose(bool disposing)
         {
             client.Dispose();
-            stream.Dispose();
             base.Dispose(disposing);
         }
     }

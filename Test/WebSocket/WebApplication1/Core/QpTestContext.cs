@@ -18,6 +18,7 @@ namespace WebApplication1.Core
             app.UseQuickProtocol(new Quick.Protocol.WebSocket.Server.AspNetCore.QpWebSocketServerOptions()
             {
                 Path = "qp_test",
+                BufferSize = 128,
                 Password = "HelloQP",
                 ServerProgram = nameof(WebApplication1) + " 1.0"
             }, out server);
@@ -30,6 +31,26 @@ namespace WebApplication1.Core
         {
             Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.ChannelName}]已连接!");
             e.CommandReceived += E_CommandReceived;
+            //e.Auchenticated += E_Auchenticated;
+        }
+
+        private static void E_Auchenticated(object sender, EventArgs e)
+        {
+            var channel = (QpServerChannel)sender;
+            Console.WriteLine("准备发送未知命令。。。");
+            try
+            {
+                channel.SendCommand(new Quick.Protocol.Commands.UnknownCommand(
+                    new Quick.Protocol.Commands.UnknownCommand.CommandContent()
+                    {
+                        Message = string.Empty.PadRight(5 * 1024 * 1024)
+                    }), 5 * 1000).Wait();
+                Console.WriteLine("发送未知命令成功！");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("发送未知命令出错，原因：" + ex.Message);
+            }
         }
 
         private static void E_CommandReceived(object sender, Quick.Protocol.Commands.ICommand e)

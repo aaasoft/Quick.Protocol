@@ -11,7 +11,6 @@ namespace Quick.Protocol.WebSocket.Server.AspNetCore
     internal class WebSocketServerStream : Stream
     {
         private System.Net.WebSockets.WebSocket webSocket;
-        private BufferedReadStream stream = new BufferedReadStream();
         private CancellationTokenSource cts = null;
         private const int ReadSize = 1024 * 4;
         private byte[] readBuffer = new byte[ReadSize];
@@ -20,32 +19,13 @@ namespace Quick.Protocol.WebSocket.Server.AspNetCore
         {
             this.webSocket = webSocket;
             this.cts = cts;
-            _ = beginRead(cts.Token);
-        }
-
-        private async Task beginRead(CancellationToken token)
-        {
-            if (token.IsCancellationRequested)
-                return;
-            try
-            {
-                var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(readBuffer), token);
-                stream.Write(readBuffer, 0, result.Count);
-
-                //进行下一次读取
-                _ = beginRead(token);
-            }
-            catch
-            {
-                cts.Cancel();
-            }
         }
 
         public override bool CanSeek => throw new NotImplementedException();
         public override long Seek(long offset, SeekOrigin origin) { throw new NotImplementedException(); }
         public override void SetLength(long value) { throw new NotImplementedException(); }
 
-        public override long Length => stream.Length;
+        public override long Length => throw new NotImplementedException();
         public override long Position { get; set; }
 
         public override bool CanRead => true;
@@ -55,7 +35,16 @@ namespace Quick.Protocol.WebSocket.Server.AspNetCore
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return stream.Read(buffer, offset, count);
+            try
+            {
+                var result = webSocket.ReceiveAsync(new ArraySegment<byte>(buffer, offset, count), cts.Token).Result;
+                return result.Count;
+            }
+            catch
+            {
+                cts.Cancel();
+                return 0;
+            }
         }
 
 

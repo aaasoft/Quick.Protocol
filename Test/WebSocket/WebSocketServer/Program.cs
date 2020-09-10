@@ -8,11 +8,14 @@ namespace WebSocketServer
     {
         static void Main(string[] args)
         {
-            Quick.Protocol.Utils.LogUtils.LogHeartbeat = false;
             Quick.Protocol.Utils.LogUtils.AddConsole();
+            Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
+
             var server = new Quick.Protocol.WebSocket.Server.Fleck.QpWebSocketServer(new Quick.Protocol.WebSocket.Server.Fleck.QpWebSocketServerOptions()
             {
                 Url = "ws://127.0.0.1:3011/qp_test",
+                BufferSize=1024,
                 Password = "HelloQP",
                 ServerProgram = nameof(WebSocketServer) + " 1.0"
             });

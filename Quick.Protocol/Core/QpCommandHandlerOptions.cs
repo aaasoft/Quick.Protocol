@@ -39,7 +39,8 @@ namespace Quick.Protocol.Core
 
         public ICommand ParseCommand(CommandRequestPackage package)
         {
-            if (!commandDict.ContainsKey(package.Action))
+            if (package.Action == null
+                || !commandDict.ContainsKey(package.Action))
                 return null;
             var srcCommand = commandDict[package.Action];
             return srcCommand.Parse(package);

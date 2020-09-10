@@ -26,7 +26,7 @@ namespace Quick.Protocol.Core
         /// </summary>
         public string Password { get; set; }
         /// <summary>
-        /// 最大包大小
+        /// 最大包大小(默认为：10MB)
         /// </summary>
         public int MaxPackageSize { get; set; } = 10 * 1024 * 1024;
 
