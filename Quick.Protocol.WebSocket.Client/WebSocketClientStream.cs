@@ -79,6 +79,7 @@ namespace Quick.Protocol.WebSocket.Client
         protected override void Dispose(bool disposing)
         {
             client.Dispose();
+            stream.Dispose();
             base.Dispose(disposing);
         }
     }

@@ -45,10 +45,10 @@ namespace Quick.Protocol.WebSocket.Server.Fleck
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (offset == 0 && count == buffer.Length)
-                connection.Send(buffer);
-            else
+            var toSendBuffer = buffer;
+            if (offset != 0 || count != buffer.Length)
                 connection.Send(buffer.Skip(offset).Take(count).ToArray());
+            connection.Send(toSendBuffer);
         }
 
         protected override void Dispose(bool disposing)

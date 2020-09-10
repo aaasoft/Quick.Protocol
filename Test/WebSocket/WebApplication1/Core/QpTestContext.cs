@@ -1,0 +1,46 @@
+﻿using Microsoft.AspNetCore.Builder;
+using Quick.Protocol.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace WebApplication1.Core
+{
+    public class QpTestContext
+    {
+        private Quick.Protocol.WebSocket.Server.AspNetCore.QpWebSocketServer server;
+
+        public QpTestContext(IApplicationBuilder app)
+        {
+            Quick.Protocol.Utils.LogUtils.LogHeartbeat = false;
+            Quick.Protocol.Utils.LogUtils.AddConsole();
+            app.UseQuickProtocol(new Quick.Protocol.WebSocket.Server.AspNetCore.QpWebSocketServerOptions()
+            {
+                Path = "qp_test",
+                Password = "HelloQP",
+                ServerProgram = nameof(WebApplication1) + " 1.0"
+            }, out server);
+
+            server.ChannelConnected += Server_ChannelConnected;
+            server.ChannelDisconnected += Server_ChannelDisconnected;
+        }
+
+        private static void Server_ChannelConnected(object sender, QpServerChannel e)
+        {
+            Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.ChannelName}]已连接!");
+            e.CommandReceived += E_CommandReceived;
+        }
+
+        private static void E_CommandReceived(object sender, Quick.Protocol.Commands.ICommand e)
+        {
+            QpServerChannel channel = (QpServerChannel)sender;
+            Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{channel.ChannelName}]收到指令[{e.GetType().FullName}]!");
+        }
+
+        private static void Server_ChannelDisconnected(object sender, QpServerChannel e)
+        {
+            Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.ChannelName}]已断开!");
+        }
+    }
+}
