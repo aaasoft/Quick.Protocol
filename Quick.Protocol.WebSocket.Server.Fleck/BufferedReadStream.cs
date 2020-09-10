@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace Quick.Protocol.WebSocket
+namespace Quick.Protocol.WebSocket.Server.Fleck
 {
     internal class BufferedReadStream : Stream
     {

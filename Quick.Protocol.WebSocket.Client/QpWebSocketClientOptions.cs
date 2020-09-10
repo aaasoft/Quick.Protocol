@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-using Quick.Protocol.Core;
+﻿using Quick.Protocol.Core;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Text;
 
-namespace Quick.Protocol.WebSocket
+namespace Quick.Protocol.WebSocket.Client
 {
-    public class QpFlectWebSocketServerOptions : QpServerOptions
+    public class QpWebSocketClientOptions : QpClientOptions
     {
         /// <summary>
         /// WebSocket的URL地址

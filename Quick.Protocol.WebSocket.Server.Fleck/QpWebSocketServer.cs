@@ -8,17 +8,17 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol.WebSocket
+namespace Quick.Protocol.WebSocket.Server.Fleck
 {
-    public class QpFleckWebSocketServer : QpServer
+    public class QpWebSocketServer : QpServer
     {
         private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
-        private QpFlectWebSocketServerOptions options;
+        private QpWebSocketServerOptions options;
         private IWebSocketServer server;
         private Queue<IWebSocketConnection> connectionQueue = new Queue<IWebSocketConnection>();
         private AutoResetEvent waitForConnectionAutoResetEvent;
 
-        public QpFleckWebSocketServer(QpFlectWebSocketServerOptions options) : base(options)
+        public QpWebSocketServer(QpWebSocketServerOptions options) : base(options)
         {
             this.options = options;
         }
@@ -65,7 +65,7 @@ namespace Quick.Protocol.WebSocket
                     {
                         var remoteEndPointStr = $"WebSocket:{connection.ConnectionInfo.ClientIpAddress}:{connection.ConnectionInfo.ClientPort}";
                         logger.LogTrace("[Connection]{0} connected.", remoteEndPointStr);
-                        OnNewChannelConnected(new FlectWebSocketServerStream(connection), remoteEndPointStr, token);
+                        OnNewChannelConnected(new WebSocketServerStream(connection), remoteEndPointStr, token);
                     }
                     catch (Exception ex)
                     {

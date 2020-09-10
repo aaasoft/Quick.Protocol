@@ -5,14 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Quick.Protocol.WebSocket
+namespace Quick.Protocol.WebSocket.Server.Fleck
 {
-    internal class FlectWebSocketServerStream : Stream
+    internal class WebSocketServerStream : Stream
     {
         private IWebSocketConnection connection;
         private BufferedReadStream stream = new BufferedReadStream();
 
-        public FlectWebSocketServerStream(IWebSocketConnection connection)
+        public WebSocketServerStream(IWebSocketConnection connection)
         {
             this.connection = connection;
             connection.OnBinary = ret =>

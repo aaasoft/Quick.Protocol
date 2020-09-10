@@ -12,7 +12,7 @@ namespace WebSocketClient
             Quick.Protocol.Utils.LogUtils.LogPackage = true;
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
 
-            var client = new Quick.Protocol.WebSocket.QpWebSocketClient(new Quick.Protocol.WebSocket.QpWebSocketClientOptions()
+            var client = new Quick.Protocol.WebSocket.Client.QpWebSocketClient(new Quick.Protocol.WebSocket.Client.QpWebSocketClientOptions()
             {
                 Url = "ws://127.0.0.1:3011/qp_test",
                 Password = "HelloQP"

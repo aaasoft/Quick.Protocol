@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Quick.Protocol.WebSocket\Quick.Protocol.WebSocket.csproj" />
-    <ProjectReference Include="..\..\..\Quick.Protocol\Quick.Protocol.csproj" />
+    <ProjectReference Include="..\..\..\Quick.Protocol.WebSocket.Server.Fleck\Quick.Protocol.WebSocket.Server.Fleck.csproj" />
   </ItemGroup>
 
 </Project>

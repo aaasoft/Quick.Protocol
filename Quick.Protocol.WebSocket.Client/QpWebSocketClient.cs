@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Quick.Protocol.WebSocket
+namespace Quick.Protocol.WebSocket.Client
 {
     public class QpWebSocketClient : QpClient
     {

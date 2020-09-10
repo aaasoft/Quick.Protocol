@@ -31,13 +31,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerialPortServer", "Test\Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SerialPortClient", "Test\SerialPort\SerialPortClient\SerialPortClient.csproj", "{73C50152-A625-4106-8CAF-472D6FA64CD1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.WebSocket", "Quick.Protocol.WebSocket\Quick.Protocol.WebSocket.csproj", "{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSocket", "WebSocket", "{434DDF1C-3D83-4B5B-856D-5608C40B58DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocketServer", "Test\WebSocket\WebSocketServer\WebSocketServer.csproj", "{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocketClient", "Test\WebSocket\WebSocketClient\WebSocketClient.csproj", "{FCAFBAC5-6C59-47EE-8200-615C967C0475}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol.WebSocket.Client", "Quick.Protocol.WebSocket.Client\Quick.Protocol.WebSocket.Client.csproj", "{3F8A2D9A-B8FA-46DD-8536-D659A5C96B47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol.WebSocket.Server.Fleck", "Quick.Protocol.WebSocket.Server.Fleck\Quick.Protocol.WebSocket.Server.Fleck.csproj", "{39620DE2-79B8-4A34-8A6C-73067385B6F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quick.Protocol.WebSocket.Server.AspNetCore", "Quick.Protocol.WebSocket.Server.AspNetCore\Quick.Protocol.WebSocket.Server.AspNetCore.csproj", "{87E8FE3B-18F2-4CF1-8642-BE3158C30734}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,10 +89,6 @@ Global
 		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73C50152-A625-4106-8CAF-472D6FA64CD1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74297D9D-9599-4C8E-B9BE-A4474F12EFD0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{030E8BCD-006C-4462-B2C4-7CFBBB964A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -97,6 +97,18 @@ Global
 		{FCAFBAC5-6C59-47EE-8200-615C967C0475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCAFBAC5-6C59-47EE-8200-615C967C0475}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCAFBAC5-6C59-47EE-8200-615C967C0475}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F8A2D9A-B8FA-46DD-8536-D659A5C96B47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F8A2D9A-B8FA-46DD-8536-D659A5C96B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F8A2D9A-B8FA-46DD-8536-D659A5C96B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F8A2D9A-B8FA-46DD-8536-D659A5C96B47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39620DE2-79B8-4A34-8A6C-73067385B6F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39620DE2-79B8-4A34-8A6C-73067385B6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39620DE2-79B8-4A34-8A6C-73067385B6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39620DE2-79B8-4A34-8A6C-73067385B6F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87E8FE3B-18F2-4CF1-8642-BE3158C30734}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87E8FE3B-18F2-4CF1-8642-BE3158C30734}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87E8FE3B-18F2-4CF1-8642-BE3158C30734}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87E8FE3B-18F2-4CF1-8642-BE3158C30734}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
