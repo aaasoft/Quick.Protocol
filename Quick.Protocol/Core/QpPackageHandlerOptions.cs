@@ -52,12 +52,13 @@ namespace Quick.Protocol.Core
                 packageDict[item.PackageType] = item;
         }
 
-        public IPackage ParsePackage(byte packageType, byte[] buffer, int index, int count)
+        public IPackage ParsePackage(byte[] buffer, int index, int count)
         {
+            var packageType = buffer[4 + index];
             if (!packageDict.ContainsKey(packageType))
                 return null;
             var package = packageDict[packageType];
-            return package.Parse(buffer, index, count);
+            return package.Parse(buffer, 5 + index, count - 5);
         }
 
         public virtual void Check()

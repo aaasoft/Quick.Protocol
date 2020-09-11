@@ -11,11 +11,18 @@ namespace Quick.Protocol.Packages
         public abstract byte PackageType { get; }
         public virtual IPackage Parse(byte[] buffer, int index, int count)
         {
-            using (var ms = new MemoryStream(buffer, index, count))
-            {
-                var ret = (IPackage)ProtoBuf.Serializer.Deserialize(this.GetType(), ms);
-                return ret;
-            }
+            //try
+            //{
+                using (var ms = new MemoryStream(buffer, index, count))
+                {
+                    var ret = (IPackage)ProtoBuf.Serializer.Deserialize(this.GetType(), ms);
+                    return ret;
+                }
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
         }
 
         private int serializeToStream(Stream ms)
