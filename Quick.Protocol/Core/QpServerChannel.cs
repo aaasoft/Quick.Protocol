@@ -99,6 +99,8 @@ namespace Quick.Protocol.Core
             SendCommandResponse(e, 0, "认证通过！").ContinueWith(t =>
             {
                 isAuthSuccess = true;
+                options.Compress = authCmdContent.Compress;
+                options.Encrypt = authCmdContent.Encrypt;
                 Auchenticated?.Invoke(this, EventArgs.Empty);
             });
             //开始心跳

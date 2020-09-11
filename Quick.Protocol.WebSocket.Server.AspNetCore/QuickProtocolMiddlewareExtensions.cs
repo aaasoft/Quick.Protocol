@@ -16,7 +16,6 @@ namespace Microsoft.AspNetCore.Builder
         {
             var innerServer = new QpWebSocketServer(options);
             server = innerServer;
-            server.Start();
             app.Use(async (context, next) =>
             {
                 if (context.Request.Path == options.Path)

@@ -17,7 +17,7 @@ namespace WebApplication1.Core
             Quick.Protocol.Utils.LogUtils.AddConsole();
             app.UseQuickProtocol(new Quick.Protocol.WebSocket.Server.AspNetCore.QpWebSocketServerOptions()
             {
-                Path = "qp_test",
+                Path = "/",
                 BufferSize = 128,
                 Password = "HelloQP",
                 ServerProgram = nameof(WebApplication1) + " 1.0"
@@ -25,6 +25,7 @@ namespace WebApplication1.Core
 
             server.ChannelConnected += Server_ChannelConnected;
             server.ChannelDisconnected += Server_ChannelDisconnected;
+            server.Start();
         }
 
         private static void Server_ChannelConnected(object sender, QpServerChannel e)

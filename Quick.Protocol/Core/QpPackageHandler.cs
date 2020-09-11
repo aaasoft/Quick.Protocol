@@ -18,8 +18,10 @@ namespace Quick.Protocol.Core
 
         //接收缓存
         private byte[] recvBuffer;
+        private byte[] recvBuffer2;
         //发送缓存
         private byte[] sendBuffer;
+        private byte[] sendBuffer2;
 
         private Stream QpPackageHandler_Stream;
         private QpPackageHandlerOptions options;
@@ -37,7 +39,9 @@ namespace Quick.Protocol.Core
                 bufferSize = 1 * 1024;
             BufferSize = bufferSize;
             recvBuffer = new byte[bufferSize];
+            recvBuffer2 = new byte[bufferSize];
             sendBuffer = new byte[bufferSize];
+            sendBuffer2 = new byte[bufferSize];
         }
 
         /// <summary>
@@ -106,8 +110,10 @@ namespace Quick.Protocol.Core
                     //如果包缓存是发送缓存
                     if (packageBuffer == sendBuffer)
                     {
-                        stream.Write(packageBuffer, 0, packageTotalLength);
-                        stream.Flush();
+                        sendPackageBuffer(stream,
+                            new ArraySegment<byte>(packageBuffer, 0, 5),
+                            new ArraySegment<byte>(packageBuffer, 5, packageTotalLength - 5)
+                            );
                     }
                     //否则，拆分为多个包发送
                     else
@@ -123,11 +129,15 @@ namespace Quick.Protocol.Core
                                 takeLength = maxTakeLength;
                             else
                                 takeLength = restLength;
-
-                            stream.Write(BitConverter.GetBytes(takeLength), 0, 4);
-                            stream.WriteByte(SplitPackage.PACKAGE_TYPE);
-                            stream.Write(packageBuffer, currentIndex, takeLength);
-                            stream.Flush();
+                            //构造包头
+                            BitConverter.GetBytes(takeLength).CopyTo(sendBuffer, 0);
+                            sendBuffer[4] = SplitPackage.PACKAGE_TYPE;
+                            //发送
+                            sendPackageBuffer(
+                                stream,
+                                new ArraySegment<byte>(sendBuffer, 0, 5),
+                                new ArraySegment<byte>(packageBuffer, currentIndex, takeLength)
+                                );
                             currentIndex += takeLength;
                         }
                     }
@@ -135,6 +145,33 @@ namespace Quick.Protocol.Core
                 }
                 catch { }
             }
+        }
+
+        private void sendPackageBuffer(Stream stream, ArraySegment<byte> head, ArraySegment<byte> body)
+        {
+            //如果不压缩也不加密
+            if (!options.Compress && !options.Encrypt)
+            {
+                //发送包头
+                stream.Write(head.Array, head.Offset, head.Count);
+                //发送包体
+                if (body.Count != 0)
+                    stream.Write(body.Array, body.Offset, body.Count);
+            }
+            else
+            {
+                //如果压缩
+                if (options.Compress)
+                {
+
+                }
+                //如果加密
+                if (options.Encrypt)
+                {
+
+                }
+            }
+            stream.Flush();
         }
 
         private async Task<int> readData(Stream stream, byte[] buffer, int startIndex, int totalCount, CancellationToken cancellationToken)
