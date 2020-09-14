@@ -232,7 +232,7 @@ namespace Quick.Protocol.Core
                 throw new ArgumentNullException(nameof(QpPackageHandler_Stream));
 
             //最终包缓存
-            ArraySegment<byte> finalPackageBuffer = new ArraySegment<byte>();
+            ArraySegment<byte> finalPackageBuffer;
 
             //是否正在读取拆分包
             bool isReadingSplitPackage = false;
@@ -240,10 +240,8 @@ namespace Quick.Protocol.Core
             MemoryStream splitMs = null;
             while (true)
             {
-                int ret = 0;
-
                 //读取包头
-                ret = await readData(stream, recvBuffer, 0, 5, token);
+                var ret = await readData(stream, recvBuffer, 0, 5, token);
                 if (token.IsCancellationRequested)
                     return null;
                 if (ret < 5)
@@ -297,8 +295,8 @@ namespace Quick.Protocol.Core
                 {
                     if (!isReadingSplitPackage)
                     {
-                        var tmpPackageBodyLength = BitConverter.ToInt32(currentPackageBuffer.Array, currentPackageBuffer.Offset);
-                        splitMsCapacity = 5 + tmpPackageBodyLength;
+                        var tmpPackageBodyLength = BitConverter.ToInt32(currentPackageBuffer.Array, currentPackageBuffer.Offset + 5);
+                        splitMsCapacity = tmpPackageBodyLength;
                         if (splitMsCapacity <= 0)
                             throw new IOException($"拆分包中包长度[{splitMsCapacity}]必须为正数！");
                         if (splitMsCapacity > options.MaxPackageSize)
@@ -306,7 +304,7 @@ namespace Quick.Protocol.Core
                         splitMs = new MemoryStream(splitMsCapacity);
                         isReadingSplitPackage = true;
                     }
-                    splitMs.Write(currentPackageBuffer.Array, currentPackageBuffer.Offset, packageBodyLength);
+                    splitMs.Write(currentPackageBuffer.Array, currentPackageBuffer.Offset + 5, currentPackageBuffer.Count - 5);
 
                     //如果拆分包已经读取完成
                     if (splitMs.Position >= splitMsCapacity)

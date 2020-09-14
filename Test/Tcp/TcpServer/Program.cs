@@ -15,6 +15,7 @@ namespace TcpServer
             {
                 Address = IPAddress.Loopback,
                 Port = 3011,
+                BufferSize = 128,
                 Password = "HelloQP",
                 ServerProgram = nameof(TcpServer) + " 1.0"
             });

@@ -14,6 +14,8 @@ namespace TcpClient
             {
                 Host = "127.0.0.1",
                 Port = 3011,
+                EnableCompress = true,
+                EnableEncrypt = true,
                 Password = "HelloQP"
             });
 
