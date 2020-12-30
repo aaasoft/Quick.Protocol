@@ -1,4 +1,5 @@
 ﻿
+using Quick.Protocol.Packages;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -99,13 +100,17 @@ namespace Quick.Protocol.Core
             SendCommandResponse(e, 0, "认证通过！").ContinueWith(t =>
             {
                 isAuthSuccess = true;
-                options.Compress = authCmdContent.Compress;
-                options.Encrypt = authCmdContent.Encrypt;
+                options.InternalCompress = authCmdContent.Compress;
+                options.InternalEncrypt = authCmdContent.Encrypt;
+                options.InternalTransportTimeout = authCmdContent.TransportTimeout;
                 Auchenticated?.Invoke(this, EventArgs.Empty);
+
+                //改变传输超时时间
+                ChangeTransportTimeout();
+                //开始心跳
+                if (options.HeartBeatInterval > 0)
+                    BeginHeartBeat(cancellationToken);
             });
-            //开始心跳
-            if (options.HeartBeatInterval > 0)
-                BeginHeartBeat(cancellationToken);
         }
 
         protected override void OnReadError(Exception exception)

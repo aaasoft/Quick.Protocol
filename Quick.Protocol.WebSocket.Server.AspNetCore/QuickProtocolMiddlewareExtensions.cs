@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Builder
         {
             var innerServer = new QpWebSocketServer(options);
             server = innerServer;
-            app.Use(async (context, next) =>
+            app.Use((Func<HttpContext, Func<System.Threading.Tasks.Task>, System.Threading.Tasks.Task>)(async (context, next) =>
             {
                 if (context.Request.Path == options.Path)
                 {
@@ -32,8 +32,8 @@ namespace Microsoft.AspNetCore.Builder
 ------------
 ServerProgram:{options.ServerProgram}
 InstructionSet: {string.Join(" | ", options.InstructionSet.Select(t => $"{t.Name}({t.Id})"))}
-SendTimeout:{options.SendTimeout}
-ReceiveTimeout:{options.ReceiveTimeout}
+SendTimeout:{options.TransportTimeout}
+ReceiveTimeout:{options.TransportTimeout}
 MaxPackageSize:{options.MaxPackageSize}
 BufferSize:{options.BufferSize}
 HeartBeatInterval:{options.HeartBeatInterval}
@@ -44,7 +44,7 @@ Path:{options.Path}");
                 {
                     await next();
                 }
-            });
+            }));
             return app;
         }
     }

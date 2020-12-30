@@ -29,7 +29,7 @@ namespace Quick.Protocol.SerialPort
                                                             options.StopBits);
             await Task.Run(() => serialPort.Open());
             logger.LogTrace($"SerialPort[{options.PortName}] open success.");
-            serialPort.WriteTimeout = options.SendTimeout;
+            serialPort.WriteTimeout = options.TransportTimeout;
             serialPort.WriteLine(QpConsts.QuickProtocolNameAndVersion);
             return serialPort.BaseStream;
         }

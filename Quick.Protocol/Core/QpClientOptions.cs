@@ -12,6 +12,15 @@ namespace Quick.Protocol.Core
         /// </summary>
         public int ConnectionTimeout { get; set; } = 5 * 1000;
         /// <summary>
+        /// 传输超时(默认15秒)
+        /// </summary>
+        public int TransportTimeout
+        {
+            get { return InternalTransportTimeout; }
+            set { InternalTransportTimeout = value; }
+        }
+
+        /// <summary>
         /// 启用加密(默认为false)
         /// </summary>
         public bool EnableEncrypt { get; set; }
@@ -25,17 +34,17 @@ namespace Quick.Protocol.Core
         /// </summary>
         public void OnAuthPassed()
         {
-            Compress = EnableCompress;
-            Encrypt = EnableEncrypt;
+            InternalCompress = EnableCompress;
+            InternalEncrypt = EnableEncrypt;
         }
-        
+
         /// <summary>
         /// 初始化
         /// </summary>
         public void Init()
         {
-            Compress = false;
-            Encrypt = false;
+            InternalCompress = false;
+            InternalEncrypt = false;
         }
     }
 }

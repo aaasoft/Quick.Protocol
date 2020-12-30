@@ -8,7 +8,7 @@ namespace TcpServer
     {
         static void Main(string[] args)
         {
-            Quick.Protocol.Utils.LogUtils.LogHeartbeat = false;
+            Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             Quick.Protocol.Utils.LogUtils.LogPackage = true;
             Quick.Protocol.Utils.LogUtils.AddConsole();
             var server = new Quick.Protocol.Tcp.QpTcpServer(new Quick.Protocol.Tcp.QpTcpServerOptions()

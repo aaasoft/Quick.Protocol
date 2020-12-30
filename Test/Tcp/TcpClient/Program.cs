@@ -16,6 +16,7 @@ namespace TcpClient
                 Port = 3011,
                 EnableCompress = true,
                 EnableEncrypt = true,
+                //TransportTimeout = 120 * 1000,
                 Password = "HelloQP"
             });
 

@@ -50,6 +50,16 @@ namespace Quick.Protocol.Core
             sendBuffer2 = new byte[bufferSize];
         }
 
+        protected void ChangeTransportTimeout()
+        {
+            var stream = QpPackageHandler_Stream;
+            if (stream != null && stream.CanTimeout)
+            {
+                stream.WriteTimeout = options.InternalTransportTimeout;
+                stream.ReadTimeout = options.InternalTransportTimeout;
+            }
+        }
+
         /// <summary>
         /// 增加Tag属性，用于引用与处理器相关的对象
         /// </summary>
@@ -65,12 +75,8 @@ namespace Quick.Protocol.Core
 
         protected void InitQpPackageHandler_Stream(Stream stream)
         {
-            if (stream != null && stream.CanTimeout)
-            {
-                stream.WriteTimeout = options.SendTimeout;
-                stream.ReadTimeout = options.ReceiveTimeout;
-            }
             QpPackageHandler_Stream = stream;
+            ChangeTransportTimeout();
         }
 
         /// <summary>
@@ -173,10 +179,10 @@ namespace Quick.Protocol.Core
         private void sendPackageBuffer(Stream stream, ArraySegment<byte> packageBuffer)
         {
             //如果压缩或者加密
-            if (options.Compress || options.Encrypt)
+            if (options.InternalCompress || options.InternalEncrypt)
             {
                 //如果压缩
-                if (options.Compress)
+                if (options.InternalCompress)
                 {
                     var currentBuffer = getFreeBuffer(packageBuffer.Array, sendBuffer, sendBuffer2);
                     using (var ms = new MemoryStream(currentBuffer))
@@ -187,7 +193,7 @@ namespace Quick.Protocol.Core
                     }
                 }
                 //如果加密
-                if (options.Encrypt)
+                if (options.InternalEncrypt)
                 {
                     var currentBuffer = enc.TransformFinalBlock(packageBuffer.Array, packageBuffer.Offset, packageBuffer.Count);
                     packageBuffer = new ArraySegment<byte>(currentBuffer, 0, currentBuffer.Length);
@@ -210,7 +216,7 @@ namespace Quick.Protocol.Core
             while (count < totalCount)
             {
                 var readTask = stream.ReadAsync(buffer, count + startIndex, totalCount - count, cancellationToken);
-                ret = await await TaskUtils.TaskWait(readTask, options.ReceiveTimeout);
+                ret = await await TaskUtils.TaskWait(readTask, options.InternalTransportTimeout);
                 if (readTask.IsCanceled || ret == 0)
                     break;
                 if (ret < 0)
@@ -264,18 +270,18 @@ namespace Quick.Protocol.Core
                 var currentPackageBuffer = new ArraySegment<byte>(recvBuffer, 0, packageTotalLength);
 
                 //如果设置了压缩或者加密
-                if (options.Compress || options.Encrypt)
+                if (options.InternalCompress || options.InternalEncrypt)
                 {
                     currentPackageBuffer = new ArraySegment<byte>(recvBuffer, 5, packageBodyLength);
 
                     //如果设置了加密，则先解密
-                    if (options.Encrypt)
+                    if (options.InternalEncrypt)
                     {
                         var currentBuffer = dec.TransformFinalBlock(currentPackageBuffer.Array, currentPackageBuffer.Offset, currentPackageBuffer.Count);
                         currentPackageBuffer = new ArraySegment<byte>(currentBuffer, 0, currentBuffer.Length);
                     }
                     //如果设置了压缩，则先解压
-                    if (options.Compress)
+                    if (options.InternalCompress)
                     {
                         var currentBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
                         var count = 0;

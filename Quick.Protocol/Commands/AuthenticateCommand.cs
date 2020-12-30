@@ -24,6 +24,10 @@ namespace Quick.Protocol.Commands
             /// 缓存大小
             /// </summary>
             public int BufferSize { get; set; }
+            /// <summary>
+            /// 传输超时时间(毫秒)
+            /// </summary>
+            public int TransportTimeout { get; set; } = 15000;
         }
         public AuthenticateCommand() { }
         public AuthenticateCommand(CommandContent content) : base(content) { }

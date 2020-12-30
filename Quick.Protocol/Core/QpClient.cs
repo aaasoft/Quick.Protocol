@@ -90,7 +90,8 @@ namespace Quick.Protocol.Core
             {
                 Compress = Options.EnableCompress,
                 Encrypt = Options.EnableEncrypt,
-                Answer = Utils.CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password)
+                TransportTimeout = Options.TransportTimeout,
+                Answer = CryptographyUtils.ComputeMD5Hash(welcomeCommand.Id + Options.Password)
             }));
 
             if (authenticateResult.Code != 0)
@@ -103,7 +104,12 @@ namespace Quick.Protocol.Core
             Options.OnAuthPassed();
             //开始心跳
             if (Options.HeartBeatInterval > 0)
+            {
+                //先发送一次心跳包
+                await Task.Run(() => SendPackage(HeartBeatPackage.Instance));
+                //再定时发送心跳包
                 BeginHeartBeat(token);
+            }
         }
 
         protected override void OnReadError(Exception exception)
