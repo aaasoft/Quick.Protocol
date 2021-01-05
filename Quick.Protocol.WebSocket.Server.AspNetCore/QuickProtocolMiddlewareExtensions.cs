@@ -32,8 +32,6 @@ namespace Microsoft.AspNetCore.Builder
 ------------
 ServerProgram:{options.ServerProgram}
 InstructionSet: {string.Join(" | ", options.InstructionSet.Select(t => $"{t.Name}({t.Id})"))}
-SendTimeout:{options.TransportTimeout}
-ReceiveTimeout:{options.TransportTimeout}
 MaxPackageSize:{options.MaxPackageSize}
 BufferSize:{options.BufferSize}
 HeartBeatInterval:{options.HeartBeatInterval}

@@ -31,7 +31,6 @@ namespace Quick.Protocol.SerialPort
                                                 options.Parity,
                                                 options.DataBits,
                                                 options.StopBits);
-            serialPort.WriteTimeout = options.TransportTimeout;
             serialPort.Open();
             logger.LogTrace($"SerialPort[{options.PortName}] open success.");
             isAccepted = false;
