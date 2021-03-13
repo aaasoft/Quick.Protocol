@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.WebSocket.Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.WebSocket.Server.AspNetCore", "Quick.Protocol.WebSocket.Server.AspNetCore\Quick.Protocol.WebSocket.Server.AspNetCore.csproj", "{87E8FE3B-18F2-4CF1-8642-BE3158C30734}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "Test\WebSocket\WebApplication1\WebApplication1.csproj", "{39497212-8529-4418-9D6E-ED9FC546699D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "Test\WebSocket\WebApplication1\WebApplication1.csproj", "{39497212-8529-4418-9D6E-ED9FC546699D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
