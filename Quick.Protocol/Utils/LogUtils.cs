@@ -50,7 +50,7 @@ namespace Quick.Protocol.Utils
         /// 是否记录心跳相关日志
         /// </summary>
         public static bool LogHeartbeat { get; set; } = false;
-        public static bool LogPackage { get; set; } = false;
+        public static bool LogNotice { get; set; } = false;
         public static bool LogCommand { get; set; } = false;
         public static bool LogCommandContent { get; set; } = false;
 

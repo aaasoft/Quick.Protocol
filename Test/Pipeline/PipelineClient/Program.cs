@@ -8,6 +8,7 @@ namespace PipelineClient
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
+            Quick.Protocol.Utils.LogUtils.LogNotice = true;
 
             var client = new Quick.Protocol.Pipeline.QpPipelineClient(new Quick.Protocol.Pipeline.QpPipelineClientOptions()
             {
@@ -32,6 +33,8 @@ namespace PipelineClient
                     return;
                 }
                 Console.WriteLine("连接成功");
+
+                client.SendNoticePackage(new Quick.Protocol.Notices.Ping() { Content = "Hello Quick.Protocol V2!" });
             });
             Console.ReadLine();
         }

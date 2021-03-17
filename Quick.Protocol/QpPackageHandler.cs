@@ -41,7 +41,6 @@ namespace Quick.Protocol
         private byte[] passwordMd5Buffer;
         private ICryptoTransform enc;
         private ICryptoTransform dec;
-        private JsonSerializer jsonSerializer = new JsonSerializer();
         private Encoding encoding = Encoding.UTF8;
 
         /// <summary>
@@ -135,6 +134,12 @@ namespace Quick.Protocol
                 var packageTotalLength = ret.Item1;
                 byte[] packageBuffer = ret.Item2;
 
+                //构造包头
+                BitConverter.GetBytes(packageTotalLength).CopyTo(packageBuffer, 0);
+                //如果是小端字节序，则交换
+                if (BitConverter.IsLittleEndian)
+                    Array.Reverse(packageBuffer, 0, sizeof(int));
+
                 try
                 {
                     //如果包缓存是发送缓存
@@ -205,21 +210,22 @@ namespace Quick.Protocol
                 //设置包类型
                 buffer[PACKAGE_HEAD_LENGTH - 1] = (byte)QpPackageType.Notice;
                 var typeName = package.GetType().FullName;
+                var jsonContent = JsonConvert.SerializeObject(package);
+
                 //写入类名
                 var typeNameByteLength = encoding.GetEncoder().GetBytes(typeName.ToCharArray(), 0, typeName.Length, buffer, PACKAGE_HEAD_LENGTH + 1, true);
                 //写入类名长度
                 buffer[PACKAGE_HEAD_LENGTH] = Convert.ToByte(typeNameByteLength);
 
-                var offset = PACKAGE_HEAD_LENGTH + 1 + typeNameByteLength;
-                int jsonContentLength = 0;
-                using (var ms = new MemoryStream(buffer, offset, buffer.Length - offset))
-                {
-                    using (var writer = new StreamWriter(ms, encoding))
-                        jsonSerializer.Serialize(writer, package);
-                    jsonContentLength = Convert.ToInt32(ms.Position);
-                }
+                var jsonContentOffset = PACKAGE_HEAD_LENGTH + 1 + typeNameByteLength;                
+                int jsonContentLength = encoding.GetEncoder().GetBytes(jsonContent.ToCharArray(), 0, jsonContent.Length, buffer, jsonContentOffset, true);
+
                 //包总长度
                 var packageTotalLength = PACKAGE_HEAD_LENGTH + 1 + typeNameByteLength + jsonContentLength;
+
+                if (LogUtils.LogNotice)
+                    logger.LogTrace("{0}: [Send-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, jsonContent);
+
                 return new Tuple<int, byte[]>(packageTotalLength, buffer);
             });
         }
@@ -552,20 +558,34 @@ namespace Quick.Protocol
                 if (package.Count == 0)
                     return;
 
-                var packageType = (QpPackageType)package.Array[package.Offset + 4];
+                var packageType = (QpPackageType)package.Array[package.Offset + PACKAGE_HEAD_LENGTH - 1];
                 switch (packageType)
                 {
                     case QpPackageType.Heartbeat:
-                        logger.LogTrace("[Recv-HeartbetaPackage]{0}", DateTime.Now);
+                        if (LogUtils.LogHeartbeat)
+                            logger.LogTrace("{0}: [Recv-HeartbetaPackage]", DateTime.Now);
                         HeartbeatPackageReceived?.Invoke(this, EventArgs.Empty);
                         break;
                     case QpPackageType.Notice:
+                        var typeNameLength = package.Array[package.Offset + PACKAGE_HEAD_LENGTH];
+                        var typeNameOffset = package.Offset + PACKAGE_HEAD_LENGTH + 1;
+                        var typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
+                        var contentOffset = typeNameOffset + 1 + typeNameLength;
+                        var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
+
+                        if (LogUtils.LogNotice)
+                            logger.LogTrace("{0}: [Recv-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, content);
+
                         NoticePackageReceived?.Invoke(this, EventArgs.Empty);
                         break;
                     case QpPackageType.CommandRequest:
+                        if(LogUtils.LogCommand)
+                            logger.LogTrace("{0}: [Recv-CommandRequestPackage]", DateTime.Now);
                         CommandRequestPackageReceived?.Invoke(this, EventArgs.Empty);
                         break;
                     case QpPackageType.CommandResponse:
+                        if (LogUtils.LogCommand)
+                            logger.LogTrace("{0}: [Recv-CommandResponsePackage]", DateTime.Now);
                         CommandResponsePackageReceived?.Invoke(this, EventArgs.Empty);
                         break;
                 }

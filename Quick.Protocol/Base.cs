@@ -10,7 +10,10 @@ namespace Quick.Protocol
         {
             Id = typeof(Base).FullName,
             Name = "基础指令集",
-            NoticeInfos = new NoticeInfo[] { },
+            NoticeInfos = new NoticeInfo[]
+            {
+                NoticeInfo.Create<Notices.Ping>()
+            },
             CommandInfos = new CommandInfo[]
             {
                 CommandInfo.Create<Commands.Connect.Request,Commands.Connect.Response>(),

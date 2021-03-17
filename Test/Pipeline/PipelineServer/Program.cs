@@ -9,6 +9,7 @@ namespace PipelineServer
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
+            Quick.Protocol.Utils.LogUtils.LogNotice = true;
 
             var server = new Quick.Protocol.Pipeline.QpPipelineServer(new Quick.Protocol.Pipeline.QpPipelineServerOptions()
             {
