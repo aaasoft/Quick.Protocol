@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Quick.Protocol.Core;
 using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;

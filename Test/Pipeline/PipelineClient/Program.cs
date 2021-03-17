@@ -7,6 +7,7 @@ namespace PipelineClient
         static void Main(string[] args)
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
+            Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
 
             var client = new Quick.Protocol.Pipeline.QpPipelineClient(new Quick.Protocol.Pipeline.QpPipelineClientOptions()
             {
