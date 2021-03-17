@@ -17,7 +17,14 @@ namespace Quick.Protocol.Utils
             //如果是小端字节序，则交换
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(buffer, startIndex, sizeof(int));
-            return BitConverter.ToInt32(buffer, startIndex);
+
+            var ret = BitConverter.ToInt32(buffer, startIndex);
+
+            //如果是小端字节序，则交换
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(buffer, startIndex, sizeof(int));
+
+            return ret;
         }
 
         /// <summary>
@@ -31,7 +38,14 @@ namespace Quick.Protocol.Utils
             //如果是大端字节序，则交换
             if (!BitConverter.IsLittleEndian)
                 Array.Reverse(buffer, startIndex, sizeof(int));
-            return BitConverter.ToInt32(buffer, startIndex);
+
+            var ret = BitConverter.ToInt32(buffer, startIndex);
+
+            //如果是大端字节序，则交换
+            if (!BitConverter.IsLittleEndian)
+                Array.Reverse(buffer, startIndex, sizeof(int));
+
+            return ret;
         }
     }
 }

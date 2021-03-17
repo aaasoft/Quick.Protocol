@@ -8,6 +8,8 @@ namespace Quick.Protocol.Utils
 {
     public class LogUtils
     {
+        public const string NOT_SHOW_CONTENT_MESSAGE = "[NOT_SHOW: LogUtils.LogContent is False]";
+
         private static LoggerFactory loggerFactory;
 
         private class ConsoleLogger : ILogger
@@ -49,10 +51,12 @@ namespace Quick.Protocol.Utils
         /// <summary>
         /// 是否记录心跳相关日志
         /// </summary>
+        public static bool LogPackage { get; set; } = false;
         public static bool LogHeartbeat { get; set; } = false;
         public static bool LogNotice { get; set; } = false;
         public static bool LogCommand { get; set; } = false;
-        public static bool LogCommandContent { get; set; } = false;
+        public static bool LogContent { get; set; } = false;
+        public static bool LogSplit{ get; set; } = false;        
 
         /// <summary>
         /// 增加控制台输出

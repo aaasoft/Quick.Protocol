@@ -8,8 +8,10 @@ namespace PipelineServer
         static void Main(string[] args)
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
-            Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
+            Quick.Protocol.Utils.LogUtils.LogPackage = true;
             Quick.Protocol.Utils.LogUtils.LogNotice = true;
+            //Quick.Protocol.Utils.LogUtils.LogSplit = true;
+            Quick.Protocol.Utils.LogUtils.LogContent = true;
 
             var server = new Quick.Protocol.Pipeline.QpPipelineServer(new Quick.Protocol.Pipeline.QpPipelineServerOptions()
             {
