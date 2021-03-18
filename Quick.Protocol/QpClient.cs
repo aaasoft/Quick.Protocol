@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Quick.Protocol
 {
-    public abstract class QpClient : QpPackageHandler
+    public abstract class QpClient : QpCommandHandler
     {
         private CancellationTokenSource cts = null;
         public QpClientOptions Options { get; private set; }
@@ -106,7 +106,7 @@ namespace Quick.Protocol
             cancellAll();
             Disconnect();
             if (tmpAuthPassed)
-                Disconnected?.Invoke(this, EventArgs.Empty);
+                Disconnected?.Invoke(this, QpEventArgs.Empty);
         }
 
         private void cancellAll()

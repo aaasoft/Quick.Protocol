@@ -19,6 +19,10 @@ namespace Quick.Protocol
         /// 包头长度
         /// </summary>
         public const int PACKAGE_HEAD_LENGTH = 5;
+        /// <summary>
+        /// 命令编号长度(字节数)
+        /// </summary>
+        public const int COMMAND_ID_LENGTH = 16;
 
         private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         /// <summary>
@@ -80,8 +84,7 @@ namespace Quick.Protocol
         public Object Tag { get; set; }
 
         private Dictionary<string, Type> noticeTypeDict = new Dictionary<string, Type>();
-        private Dictionary<string, Type> commandRequestTypeDict = new Dictionary<string, Type>();
-        private Dictionary<string, Type> commandResponseTypeDict = new Dictionary<string, Type>();
+
         public QpPackageHandler(QpPackageHandlerOptions options)
         {
             this.options = options;
@@ -89,6 +92,7 @@ namespace Quick.Protocol
             passwordMd5Buffer = CryptographyUtils.ComputeMD5Hash(Encoding.UTF8.GetBytes(options.Password)).Take(8).ToArray();
             enc = des.CreateEncryptor(passwordMd5Buffer, passwordMd5Buffer);
             dec = des.CreateDecryptor(passwordMd5Buffer, passwordMd5Buffer);
+
             foreach (var instructionSet in options.InstructionSet)
             {
                 //添加通知数据包信息
@@ -97,15 +101,6 @@ namespace Quick.Protocol
                     foreach (var item in instructionSet.NoticeInfos)
                     {
                         noticeTypeDict[item.NoticeTypeName] = item.NoticeType;
-                    }
-                }
-                //添加命令数据包信息
-                if (instructionSet.CommandInfos != null && instructionSet.CommandInfos.Length > 0)
-                {
-                    foreach (var item in instructionSet.CommandInfos)
-                    {
-                        commandRequestTypeDict[item.RequestTypeName] = item.RequestType;
-                        commandResponseTypeDict[item.ResponseTypeName] = item.ResponseType;
                     }
                 }
             }
@@ -496,17 +491,13 @@ namespace Quick.Protocol
         /// </summary>
         public event EventHandler HeartbeatPackageReceived;
         /// <summary>
+        /// 原始收到通知数据包事件
+        /// </summary>
+        public event EventHandler<RawNoticePackageReceivedEventArgs> RawNoticePackageReceived;
+        /// <summary>
         /// 收到通知数据包事件
         /// </summary>
-        public event EventHandler NoticePackageReceived;
-        /// <summary>
-        /// 收到命令请求数据包事件
-        /// </summary>
-        public event EventHandler CommandRequestPackageReceived;
-        /// <summary>
-        /// 收到命令响应数据包事件
-        /// </summary>
-        public event EventHandler CommandResponsePackageReceived;
+        public event EventHandler<NoticePackageReceivedEventArgs> NoticePackageReceived;
 
         protected void BeginReadPackage(CancellationToken token)
         {
@@ -526,16 +517,6 @@ namespace Quick.Protocol
                 //如果读取出错
                 if (t.IsFaulted)
                 {
-                    try
-                    {
-                        //if (QpPackageHandler_Stream.CanWrite)
-                        //    SendPackage(new CommandResponsePackage()
-                        //    {
-                        //        Code = -1,
-                        //        Message = ExceptionUtils.GetExceptionMessage(t.Exception)
-                        //    });
-                    }
-                    catch { }
                     OnReadError(t.Exception);
                     return;
                 }
@@ -549,34 +530,138 @@ namespace Quick.Protocol
                 switch (packageType)
                 {
                     case QpPackageType.Heartbeat:
-                        if (LogUtils.LogHeartbeat)
-                            logger.LogTrace("{0}: [Recv-HeartbetaPackage]", DateTime.Now);
-                        HeartbeatPackageReceived?.Invoke(this, EventArgs.Empty);
-                        break;
+                        {
+                            if (LogUtils.LogHeartbeat)
+                                logger.LogTrace("{0}: [Recv-HeartbetaPackage]", DateTime.Now);
+                            HeartbeatPackageReceived?.Invoke(this, QpEventArgs.Empty);
+                            break;
+                        }
                     case QpPackageType.Notice:
-                        var typeNameLength = package.Array[package.Offset + PACKAGE_HEAD_LENGTH];
-                        var typeNameOffset = package.Offset + PACKAGE_HEAD_LENGTH + 1;
-                        var typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
-                        var contentOffset = typeNameOffset + 1 + typeNameLength;
-                        var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
+                        {
+                            var typeNameLengthOffset = package.Offset + PACKAGE_HEAD_LENGTH;
+                            var typeNameLength = package.Array[typeNameLengthOffset];
 
-                        if (LogUtils.LogNotice)
-                            logger.LogTrace("{0}: [Recv-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                            var typeNameOffset = typeNameLengthOffset + 1;
+                            var typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
 
-                        NoticePackageReceived?.Invoke(this, EventArgs.Empty);
-                        break;
+                            var contentOffset = typeNameOffset + 1 + typeNameLength;
+                            var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
+
+                            if (LogUtils.LogNotice)
+                                logger.LogTrace("{0}: [Recv-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+
+                            OnRawNoticePackageReceived(typeName, content);
+                            break;
+                        }
                     case QpPackageType.CommandRequest:
-                        if(LogUtils.LogCommand)
-                            logger.LogTrace("{0}: [Recv-CommandRequestPackage]", DateTime.Now);
-                        CommandRequestPackageReceived?.Invoke(this, EventArgs.Empty);
-                        break;
+                        {
+                            var commandIdOffset = package.Offset + PACKAGE_HEAD_LENGTH;
+                            var commandId = BitConverter.ToString(package.Array, commandIdOffset, COMMAND_ID_LENGTH).Replace("-", string.Empty);
+
+                            var typeNameLengthOffset = commandIdOffset + COMMAND_ID_LENGTH;
+                            var typeNameLength = package.Array[typeNameLengthOffset];
+
+                            var typeNameOffset = typeNameLengthOffset + 1;
+                            var typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
+
+                            var contentOffset = typeNameOffset + 1 + typeNameLength;
+                            var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
+
+                            if (LogUtils.LogCommand)
+                                logger.LogTrace("{0}: [Recv-CommandRequestPackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+
+                            OnCommandRequestReceived(commandId, typeName, content);
+                            break;
+                        }
                     case QpPackageType.CommandResponse:
-                        if (LogUtils.LogCommand)
-                            logger.LogTrace("{0}: [Recv-CommandResponsePackage]", DateTime.Now);
-                        CommandResponsePackageReceived?.Invoke(this, EventArgs.Empty);
-                        break;
+                        {
+                            var commandIdOffset = package.Offset + PACKAGE_HEAD_LENGTH;
+                            var commandId = BitConverter.ToString(package.Array, commandIdOffset, COMMAND_ID_LENGTH).Replace("-", string.Empty);
+
+                            var codeOffset = commandIdOffset + COMMAND_ID_LENGTH;
+                            var code = package.Array[codeOffset];
+
+                            string typeName = null;
+                            string content = null;
+                            string message = null;
+
+                            //如果成功
+                            if (code == 0)
+                            {
+                                var typeNameLengthOffset = codeOffset + 1;
+                                var typeNameLength = package.Array[typeNameLengthOffset];
+
+                                var typeNameOffset = typeNameLengthOffset + 1;
+                                typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
+
+                                var contentOffset = typeNameOffset + 1 + typeNameLength;
+                                content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
+                            }
+                            else
+                            {
+                                var messageOffset = codeOffset + 1;
+                                message = encoding.GetString(package.Array, messageOffset, package.Offset + package.Count - messageOffset);
+                            }
+
+                            if (LogUtils.LogCommand)
+                                logger.LogTrace("{0}: [Recv-CommandResponsePackage]Code:{1}，Message：{2}，Type:{3},Content:{4}", DateTime.Now, code, message, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+
+                            OnCommandResponseReceived(commandId, code, message, typeName, content);
+                            break;
+                        }
                 }
             });
         }
+
+        /// <summary>
+        /// 接收到原始通知数据包时
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="content"></param>
+        protected void OnRawNoticePackageReceived(string typeName, string content)
+        {
+            RawNoticePackageReceived?.Invoke(this, new RawNoticePackageReceivedEventArgs()
+            {
+                TypeName = typeName,
+                Content = content
+            });
+            //如果在字典中未找到此类型名称，则直接返回
+            if (!noticeTypeDict.ContainsKey(typeName))
+                return;
+            var contentModel = JsonConvert.DeserializeObject(content, noticeTypeDict[typeName]);
+            OnNoticePackageReceived(typeName, contentModel);
+        }
+
+        /// <summary>
+        /// 接收到通知数据包时
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="contentModel"></param>
+        protected virtual void OnNoticePackageReceived(string typeName, object contentModel)
+        {
+            NoticePackageReceived?.Invoke(this, new NoticePackageReceivedEventArgs()
+            {
+                TypeName = typeName,
+                ContentModel = contentModel
+            });
+        }
+
+        /// <summary>
+        /// 接收到命令请求数据包时
+        /// </summary>
+        /// <param name="commandId"></param>
+        /// <param name="typeName"></param>
+        /// <param name="content"></param>
+        protected abstract void OnCommandRequestReceived(string commandId, string typeName, string content);
+
+        /// <summary>
+        /// 接收到命令响应数据包时
+        /// </summary>
+        /// <param name="commandId"></param>
+        /// <param name="code"></param>
+        /// <param name="message"></param>
+        /// <param name="typeName"></param>
+        /// <param name="content"></param>
+        protected abstract void OnCommandResponseReceived(string commandId, byte code, string message, string typeName, string content);
     }
 }

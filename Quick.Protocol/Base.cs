@@ -17,7 +17,8 @@ namespace Quick.Protocol
             CommandInfos = new CommandInfo[]
             {
                 CommandInfo.Create<Commands.Connect.Request,Commands.Connect.Response>(),
-                CommandInfo.Create<Commands.Authenticate.Request,Commands.Authenticate.Response>()
+                CommandInfo.Create<Commands.Authenticate.Request,Commands.Authenticate.Response>(),
+                CommandInfo.Create<Commands.PrivateCommand.Request,Commands.PrivateCommand.Response>()
             }
         };
     }

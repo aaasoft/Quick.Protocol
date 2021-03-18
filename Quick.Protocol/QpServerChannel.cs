@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Quick.Protocol
 {
-    public class QpServerChannel : QpPackageHandler
+    public class QpServerChannel : QpCommandHandler
     {
         private QpServer server;
         private Stream stream;
@@ -70,7 +70,11 @@ namespace Quick.Protocol
         /// </summary>
         public void Stop()
         {
-            try { stream?.Close(); } catch { }
+            try 
+            {
+                stream?.Close();
+                stream?.Dispose();
+            } catch { }
         }
 
         //private void QpServerChannel_CommandReceived(object sender, Commands.ICommand e)
@@ -120,7 +124,7 @@ namespace Quick.Protocol
                 return;
             }
             base.OnReadError(exception);
-            Disconnected?.Invoke(this, EventArgs.Empty);
+            Disconnected?.Invoke(this, QpEventArgs.Empty);
         }
     }
 }
