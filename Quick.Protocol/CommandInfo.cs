@@ -47,6 +47,8 @@ namespace Quick.Protocol
         /// <typeparam name="TResponse"></typeparam>
         /// <returns></returns>
         public static CommandInfo Create<TRequest, TResponse>()
+            where TRequest : class, new()
+            where TResponse : class, new()
         {
             return new CommandInfo(typeof(TRequest), typeof(TResponse));
         }

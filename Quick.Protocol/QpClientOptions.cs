@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Quick.Protocol
 {
-    public class QpClientOptions : QpPackageHandlerOptions
+    public class QpClientOptions : QpCommandHandlerOptions
     {
         /// <summary>
         /// 连接超时时间(默认为5秒)

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,10 +8,11 @@ namespace Quick.Protocol
 {
     public abstract class QpCommandHandler : QpPackageHandler
     {
-        private QpPackageHandlerOptions options;
+        private QpCommandHandlerOptions options;
 
         private Dictionary<string, Type> commandRequestTypeDict = new Dictionary<string, Type>();
         private Dictionary<string, Type> commandResponseTypeDict = new Dictionary<string, Type>();
+        private Dictionary<Type, Type> commandRequestTypeResponseTypeDict = new Dictionary<Type, Type>();
 
         /// <summary>
         /// 原始收到命令请求数据包事件
@@ -29,7 +31,7 @@ namespace Quick.Protocol
         /// </summary>
         public event EventHandler<CommandResponsePackageReceivedEventArgs> CommandResponsePackageReceived;
 
-        protected QpCommandHandler(QpPackageHandlerOptions options) : base(options)
+        protected QpCommandHandler(QpCommandHandlerOptions options) : base(options)
         {
             this.options = options;
             foreach (var instructionSet in options.InstructionSet)
@@ -41,6 +43,7 @@ namespace Quick.Protocol
                     {
                         commandRequestTypeDict[item.RequestTypeName] = item.RequestType;
                         commandResponseTypeDict[item.ResponseTypeName] = item.ResponseType;
+                        commandRequestTypeResponseTypeDict[item.RequestType] = item.ResponseType;
                     }
                 }
             }
@@ -57,7 +60,11 @@ namespace Quick.Protocol
             //如果在字典中未找到此类型名称，则直接返回
             if (!commandRequestTypeDict.ContainsKey(typeName))
                 return;
-            var contentModel = JsonConvert.DeserializeObject(content, commandRequestTypeDict[typeName]);
+
+            var cmdRequestType = commandRequestTypeDict[typeName];
+            var cmdResponseType = commandRequestTypeResponseTypeDict[cmdRequestType];
+
+            var contentModel = JsonConvert.DeserializeObject(content, cmdRequestType);
             CommandRequestPackageReceived?.Invoke(this, new CommandRequestPackageReceivedEventArgs()
             {
                 CommandId = commandId,
@@ -65,6 +72,21 @@ namespace Quick.Protocol
                 ContentModel = contentModel
             });
 
+            if (options.CommandExecuterManager == null)
+                return;
+            try
+            {
+                var responseModel = options.CommandExecuterManager.ExecuteCommand(typeName, contentModel);
+                SendCommandResponsePackage(commandId, 0, null, cmdResponseType.FullName, JsonConvert.SerializeObject(responseModel));
+            }
+            catch (CommandException ex)
+            {
+                SendCommandResponsePackage(commandId, ex.Code, ExceptionUtils.GetExceptionMessage(ex), null, null);
+            }
+            catch (Exception ex)
+            {
+                SendCommandResponsePackage(commandId, 255, ExceptionUtils.GetExceptionMessage(ex), null, null);
+            }
         }
 
         protected override void OnCommandResponseReceived(string commandId, byte code, string message, string typeName, string content)

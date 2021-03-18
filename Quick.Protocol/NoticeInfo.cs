@@ -36,6 +36,7 @@ namespace Quick.Protocol
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         public static NoticeInfo Create<T>()
+            where T : class, new()
         {
             return new NoticeInfo(typeof(T));
         }

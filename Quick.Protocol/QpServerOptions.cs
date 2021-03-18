@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Quick.Protocol
 {
-    public class QpServerOptions : QpPackageHandlerOptions
+    public class QpServerOptions : QpCommandHandlerOptions
     {
         /// <summary>
         /// 缓存大小(默认128KB)
