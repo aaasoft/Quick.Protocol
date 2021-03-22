@@ -8,17 +8,29 @@ namespace PipelineServer
         static void Main(string[] args)
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
-            Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            //Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            //Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             Quick.Protocol.Utils.LogUtils.LogNotice = true;
             //Quick.Protocol.Utils.LogUtils.LogSplit = true;
             Quick.Protocol.Utils.LogUtils.LogContent = true;
+
+            var commandExecuterManager = new CommandExecuterManager();
+            commandExecuterManager.Register<Quick.Protocol.Commands.PrivateCommand.Request, Quick.Protocol.Commands.PrivateCommand.Response>(req =>
+            {
+                return new Quick.Protocol.Commands.PrivateCommand.Response()
+                {
+                    Content = req.Content
+                };
+            });
 
             var server = new Quick.Protocol.Pipeline.QpPipelineServer(new Quick.Protocol.Pipeline.QpPipelineServerOptions()
             {
                 PipeName = "Quick.Protocol",
                 Password = "HelloQP",
-                ServerProgram = nameof(PipelineServer) + " 1.0"
+                ServerProgram = nameof(PipelineServer) + " 1.0",
+                CommandExecuterManager = commandExecuterManager
             });
+
             server.ChannelConnected += Server_ChannelConnected;
             server.ChannelDisconnected += Server_ChannelDisconnected;
             try

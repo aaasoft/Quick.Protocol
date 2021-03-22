@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace PipelineClient
 {
@@ -7,7 +8,7 @@ namespace PipelineClient
         static void Main(string[] args)
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
-            Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            //Quick.Protocol.Utils.LogUtils.LogPackage = true;
             //Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             Quick.Protocol.Utils.LogUtils.LogNotice = true;
             //Quick.Protocol.Utils.LogUtils.LogSplit = true;
@@ -23,7 +24,7 @@ namespace PipelineClient
             {
                 Console.WriteLine("连接已断开");
             };
-            client.ConnectAsync().ContinueWith(t =>
+            client.ConnectAsync().ContinueWith(async t =>
             {
                 if (t.IsCanceled)
                 {
@@ -37,7 +38,22 @@ namespace PipelineClient
                 }
                 Console.WriteLine("连接成功");
 
-                client.SendNoticePackage(new Quick.Protocol.Notices.Ping() { Content = "Hello Quick.Protocol V2!" });
+                try
+                {
+                    var rep = await client.SendCommand<Quick.Protocol.Commands.PrivateCommand.Request, Quick.Protocol.Commands.PrivateCommand.Response>(
+                        new Quick.Protocol.Commands.PrivateCommand.Request()
+                        {
+                            Action = "Echo",
+                            Content = DateTime.Now.ToString()
+                        });
+                    Console.WriteLine("SendCommand Success.Rep:" + JsonConvert.SerializeObject(rep));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("SendCommand Error:" + ex.ToString());
+                }
+
+                //client.SendNoticePackage(new Quick.Protocol.Notices.Ping() { Content = "Hello Quick.Protocol V2!" });
                 //client.SendNoticePackage(new Quick.Protocol.Notices.Ping() { Content = "".PadRight(5 * 1024, '0') });
             });
             Console.ReadLine();

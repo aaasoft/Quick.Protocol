@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace Quick.Protocol
         // <summary>
         // 指令执行器管理器
         // </summary>
+        [JsonIgnore]
         public CommandExecuterManager CommandExecuterManager { get; set; }
     }
 }

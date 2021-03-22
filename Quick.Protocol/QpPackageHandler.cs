@@ -254,9 +254,46 @@ namespace Quick.Protocol
         /// <summary>
         /// 发送命令请求包
         /// </summary>
-        public void SendCommandRequestPackage(object package)
+        protected void SendCommandRequestPackage(string commandId, string typeName, string content)
         {
+            sendPackage(buffer =>
+            {
+                //设置包类型
+                buffer[PACKAGE_HEAD_LENGTH - 1] = (byte)QpPackageType.CommandRequest;
+                //写入指令编号
+                var commandIdBufferOffset = PACKAGE_HEAD_LENGTH;
+                var commandIdBuffer = Guid.Parse(commandId).ToByteArray();
+                Array.Copy(commandIdBuffer, 0, buffer, commandIdBufferOffset, commandIdBuffer.Length);
 
+                var typeNameByteLengthOffset = commandIdBufferOffset + 16;
+                //写入类名
+                var typeNameByteOffset = typeNameByteLengthOffset + 1;
+                var typeNameByteLength = encoding.GetEncoder().GetBytes(typeName.ToCharArray(), 0, typeName.Length, buffer, typeNameByteOffset, true);
+                //写入类名长度
+                buffer[typeNameByteLengthOffset] = Convert.ToByte(typeNameByteLength);
+
+                var contentOffset = typeNameByteOffset + typeNameByteLength;
+                var contentLength = encoding.GetByteCount(content);
+                //如果内容超出了缓存可用空间的大小
+                var retBuffer = buffer;
+                if (contentLength > buffer.Length - contentOffset)
+                {
+                    retBuffer = new byte[contentOffset + contentLength];
+                    Array.Copy(buffer, retBuffer, contentOffset);
+                    encoding.GetEncoder().GetBytes(content.ToCharArray(), 0, content.Length, retBuffer, contentOffset, true);
+                }
+                else
+                {
+                    contentLength = encoding.GetEncoder().GetBytes(content.ToCharArray(), 0, content.Length, buffer, contentOffset, true);
+                }
+                //包总长度
+                var packageTotalLength = contentOffset + contentLength;
+
+                if (LogUtils.LogCommand)
+                    logger.LogTrace("{0}: [Send-CommandRequestPackage]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandId, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+
+                return new Tuple<int, byte[]>(packageTotalLength, retBuffer);
+            });
         }
 
         /// <summary>
@@ -303,7 +340,7 @@ namespace Quick.Protocol
                     //包总长度
                     var packageTotalLength = contentOffset + contentLength;
 
-                    if (LogUtils.LogNotice)
+                    if (LogUtils.LogCommand)
                         logger.LogTrace("{0}: [Send-CommandResponsePackage]CommandId:{1},Code:{2},Type:{3},Content:{4}", DateTime.Now, commandId, code, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                     return new Tuple<int, byte[]>(packageTotalLength, retBuffer);
@@ -319,11 +356,11 @@ namespace Quick.Protocol
                     {
                         retBuffer = new byte[messageOffset + messageLength];
                         Array.Copy(buffer, retBuffer, messageOffset);
-                        encoding.GetEncoder().GetBytes(content.ToCharArray(), 0, content.Length, retBuffer, messageOffset, true);
+                        encoding.GetEncoder().GetBytes(message.ToCharArray(), 0, message.Length, retBuffer, messageOffset, true);
                     }
                     else
                     {
-                        messageLength = encoding.GetEncoder().GetBytes(content.ToCharArray(), 0, content.Length, buffer, messageOffset, true);
+                        messageLength = encoding.GetEncoder().GetBytes(message.ToCharArray(), 0, message.Length, buffer, messageOffset, true);
                     }
                     //包总长度
                     var packageTotalLength = messageOffset + messageLength;
@@ -627,7 +664,7 @@ namespace Quick.Protocol
                     case QpPackageType.CommandRequest:
                         {
                             var commandIdOffset = package.Offset + PACKAGE_HEAD_LENGTH;
-                            var commandId = BitConverter.ToString(package.Array, commandIdOffset, COMMAND_ID_LENGTH).Replace("-", string.Empty);
+                            var commandId = BitConverter.ToString(package.Array, commandIdOffset, COMMAND_ID_LENGTH).Replace("-", string.Empty).ToLower();
 
                             var typeNameLengthOffset = commandIdOffset + COMMAND_ID_LENGTH;
                             var typeNameLength = package.Array[typeNameLengthOffset];
@@ -635,7 +672,7 @@ namespace Quick.Protocol
                             var typeNameOffset = typeNameLengthOffset + 1;
                             var typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
 
-                            var contentOffset = typeNameOffset + 1 + typeNameLength;
+                            var contentOffset = typeNameOffset + typeNameLength;
                             var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
 
                             if (LogUtils.LogCommand)
@@ -647,7 +684,7 @@ namespace Quick.Protocol
                     case QpPackageType.CommandResponse:
                         {
                             var commandIdOffset = package.Offset + PACKAGE_HEAD_LENGTH;
-                            var commandId = BitConverter.ToString(package.Array, commandIdOffset, COMMAND_ID_LENGTH).Replace("-", string.Empty);
+                            var commandId = BitConverter.ToString(package.Array, commandIdOffset, COMMAND_ID_LENGTH).Replace("-", string.Empty).ToLower();
 
                             var codeOffset = commandIdOffset + COMMAND_ID_LENGTH;
                             var code = package.Array[codeOffset];
@@ -665,7 +702,7 @@ namespace Quick.Protocol
                                 var typeNameOffset = typeNameLengthOffset + 1;
                                 typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
 
-                                var contentOffset = typeNameOffset + 1 + typeNameLength;
+                                var contentOffset = typeNameOffset + typeNameLength;
                                 content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
                             }
                             else

@@ -1,5 +1,4 @@
-﻿using Quick.Protocol.Core;
-using Quick.Protocol.Utils;
+﻿using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;

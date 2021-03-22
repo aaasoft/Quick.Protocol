@@ -9,6 +9,11 @@ namespace Quick.Protocol
     {
         private Dictionary<string, Delegate> commandExecuterDict = new Dictionary<string, Delegate>();
 
+        public CommandExecuterManager()
+        {
+
+        }
+
         public void Register(string cmdRequestTypeName, Delegate commandExecuter)
         {
             commandExecuterDict[cmdRequestTypeName] = commandExecuter;
