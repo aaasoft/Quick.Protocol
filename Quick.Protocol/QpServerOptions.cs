@@ -22,7 +22,7 @@ namespace Quick.Protocol
         /// 协议错误处理器
         /// </summary>
         [JsonIgnore]
-        public Action<Stream> ProtocolErrorHandler { get; set; }
+        public Action<Stream,ArraySegment<byte>> ProtocolErrorHandler { get; set; }
 
         public virtual QpServerOptions Clone()
         {

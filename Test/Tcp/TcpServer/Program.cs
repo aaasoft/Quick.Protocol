@@ -1,6 +1,8 @@
-﻿using Quick.Protocol.Core;
+﻿using Quick.Protocol;
 using System;
+using System.IO;
 using System.Net;
+using System.Text;
 
 namespace TcpServer
 {
@@ -10,6 +12,7 @@ namespace TcpServer
         {
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            Quick.Protocol.Utils.LogUtils.LogContent = true;
             Quick.Protocol.Utils.LogUtils.AddConsole();
             var server = new Quick.Protocol.Tcp.QpTcpServer(new Quick.Protocol.Tcp.QpTcpServerOptions()
             {
@@ -17,7 +20,33 @@ namespace TcpServer
                 Port = 3011,
                 BufferSize = 128,
                 Password = "HelloQP",
-                ServerProgram = nameof(TcpServer) + " 1.0"
+                ServerProgram = nameof(TcpServer) + " 1.0",
+                ProtocolErrorHandler = (stream, readBuffer) =>
+                {
+                    var messsge = $@"
+<html>
+    <head>
+        <title>Quick.Protocol</title>
+    </head>
+    <body>
+        <p>Welcome to use <b>Quick.Protocol</b>.</p>
+        <p>Source Code:<a href=""http://github.com/aaasoft/Quick.Protocol"">http://github.com/aaasoft/Quick.Protocol</a></p>
+        <p>Time:{DateTime.Now}</p>
+    </body>
+</html>";
+                    try
+                    {
+                        using (var writer = new StreamWriter(stream, Encoding.UTF8))
+                        {
+                            writer.WriteLine($@"HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: {Encoding.UTF8.GetByteCount(messsge)}
+
+{messsge}");
+                        }
+                    }
+                    catch { }
+                }
             });
             server.ChannelConnected += Server_ChannelConnected;
             server.ChannelDisconnected += Server_ChannelDisconnected;
@@ -37,13 +66,6 @@ namespace TcpServer
         private static void Server_ChannelConnected(object sender, QpServerChannel e)
         {
             Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.ChannelName}]已连接!");
-            e.CommandReceived += E_CommandReceived;
-        }
-
-        private static void E_CommandReceived(object sender, Quick.Protocol.Commands.ICommand e)
-        {
-            QpServerChannel channel = (QpServerChannel)sender;
-            Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{channel.ChannelName}]收到指令[{e.GetType().FullName}]!");
         }
 
         private static void Server_ChannelDisconnected(object sender, QpServerChannel e)

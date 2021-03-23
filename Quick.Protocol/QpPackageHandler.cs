@@ -475,14 +475,14 @@ namespace Quick.Protocol
                     return nullArraySegment;
 
                 if (ret < PACKAGE_HEAD_LENGTH)
-                    throw new IOException($"包头读取错误！包头长度：{PACKAGE_HEAD_LENGTH}，读取数据长度：{ret}");
+                    throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"包头读取错误！包头长度：{PACKAGE_HEAD_LENGTH}，读取数据长度：{ret}");
 
                 //包总长度
                 var packageTotalLength = ByteUtils.B2I_BE(recvBuffer, 0);
                 if (packageTotalLength < PACKAGE_HEAD_LENGTH)
-                    throw new IOException($"包长度[{packageTotalLength}]必须大于等于{PACKAGE_HEAD_LENGTH}！");
+                    throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"包长度[{packageTotalLength}]必须大于等于{PACKAGE_HEAD_LENGTH}！");
                 if (packageTotalLength > recvBuffer.Length)
-                    throw new IOException($"数据包总长度[{packageTotalLength}]大于缓存大小[{recvBuffer.Length}]");
+                    throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"数据包总长度[{packageTotalLength}]大于缓存大小[{recvBuffer.Length}]");
                 //包体长度
                 var packageBodyLength = packageTotalLength - PACKAGE_HEAD_LENGTH;
                 //读取包体
@@ -491,7 +491,7 @@ namespace Quick.Protocol
                 if (token.IsCancellationRequested)
                     return nullArraySegment;
                 if (ret < packageBodyLength)
-                    throw new IOException($"包体读取错误！包体长度：{packageBodyLength}，读取数据长度：{ret}");
+                    throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, PACKAGE_HEAD_LENGTH + ret), $"包体读取错误！包体长度：{packageBodyLength}，读取数据长度：{ret}");
 
                 if (LogUtils.LogPackage)
                     logger.LogTrace(

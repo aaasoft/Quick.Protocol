@@ -119,9 +119,13 @@ namespace Quick.Protocol
         {
             if (options.ProtocolErrorHandler != null)
             {
-                server.RemoveChannel(this);
-                options.ProtocolErrorHandler.Invoke(stream);
-                return;
+                if (exception is ProtocolException)
+                {
+                    var protocolException = (ProtocolException)exception;
+                    server.RemoveChannel(this);
+                    options.ProtocolErrorHandler.Invoke(stream, protocolException.ReadBuffer);
+                    return;
+                }
             }
             base.OnReadError(exception);
             Disconnected?.Invoke(this, QpEventArgs.Empty);
