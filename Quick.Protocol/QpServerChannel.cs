@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Quick.Protocol
 {
@@ -13,7 +14,9 @@ namespace Quick.Protocol
         private CancellationToken cancellationToken;
         private QpServerOptions options;
         private string question;
-        private bool isAuthSuccess = false;
+        //通过认证后，才允许使用的命令执行管理器列表
+        private List<CommandExecuterManager> authedCommandExecuterManagerList = null;
+
         public string ChannelName { get; private set; }
 
         /// <summary>
@@ -33,6 +36,7 @@ namespace Quick.Protocol
             this.ChannelName = channelName;
             this.cancellationToken = cancellationToken;
             this.options = options;
+            this.authedCommandExecuterManagerList = options.CommandExecuterManagerList;
 
             //修改缓存大小
             ChangeBufferSize(options.BufferSize);
@@ -55,9 +59,15 @@ namespace Quick.Protocol
         private Commands.Authenticate.Response authenticate(Commands.Authenticate.Request request)
         {
             if (Utils.CryptographyUtils.ComputeMD5Hash(question + options.Password) != request.Answer)
+            {
+                Task.Delay(1000).ContinueWith(t =>
+                {
+                    Stop();
+                });
                 throw new CommandException(1, "认证失败！");
+            }
 
-            isAuthSuccess = true;
+            options.CommandExecuterManagerList = authedCommandExecuterManagerList;
             options.InternalCompress = request.EnableCompress;
             options.InternalEncrypt = request.EnableEncrypt;
             options.InternalTransportTimeout = request.TransportTimeout;
@@ -72,12 +82,13 @@ namespace Quick.Protocol
             return new Commands.Authenticate.Response();
         }
 
+
         public void Start()
         {
             var connectAndAuthCommandExecuterManager = new CommandExecuterManager();
             connectAndAuthCommandExecuterManager.Register<Commands.Connect.Request, Commands.Connect.Response>(connect);
             connectAndAuthCommandExecuterManager.Register<Commands.Authenticate.Request, Commands.Authenticate.Response>(authenticate);
-            options.RegisterCommandExecuterManager(connectAndAuthCommandExecuterManager);
+            options.CommandExecuterManagerList = new List<CommandExecuterManager>() { connectAndAuthCommandExecuterManager };
         }
 
         /// <summary>

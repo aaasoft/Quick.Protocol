@@ -17,7 +17,7 @@ namespace PipelineClient
             var client = new Quick.Protocol.Pipeline.QpPipelineClient(new Quick.Protocol.Pipeline.QpPipelineClientOptions()
             {
                 PipeName = "Quick.Protocol",
-                Password = "HelloQP"
+                Password = "HelloQP2"
             });
 
             client.Disconnected += (sender, e) =>
