@@ -618,10 +618,8 @@ namespace Quick.Protocol
                     return;
                 //如果已经取消
                 if (t.IsCanceled || token.IsCancellationRequested)
-                {
-                    OnReadError(new TaskCanceledException());
                     return;
-                }
+                
                 //如果读取出错
                 if (t.IsFaulted)
                 {

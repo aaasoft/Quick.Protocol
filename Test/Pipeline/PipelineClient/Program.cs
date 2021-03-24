@@ -8,7 +8,7 @@ namespace PipelineClient
         static void Main(string[] args)
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
-            //Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            Quick.Protocol.Utils.LogUtils.LogPackage = true;
             //Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             Quick.Protocol.Utils.LogUtils.LogNotice = true;
             //Quick.Protocol.Utils.LogUtils.LogSplit = true;
@@ -17,7 +17,7 @@ namespace PipelineClient
             var client = new Quick.Protocol.Pipeline.QpPipelineClient(new Quick.Protocol.Pipeline.QpPipelineClientOptions()
             {
                 PipeName = "Quick.Protocol",
-                Password = "HelloQP2"
+                Password = "HelloQP"
             });
 
             client.Disconnected += (sender, e) =>
