@@ -412,7 +412,7 @@ namespace Quick.Protocol
                             gzStream.Write(packageBuffer.Array, packageBuffer.Offset + PACKAGE_TOTAL_LENGTH_LENGTH, packageBuffer.Count - PACKAGE_TOTAL_LENGTH_LENGTH);
                         var packageTotalLength = Convert.ToInt32(ms.Position);
                         writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
-                        packageBuffer = new ArraySegment<byte>(currentBuffer, 0, Convert.ToInt32(packageTotalLength));
+                        packageBuffer = new ArraySegment<byte>(currentBuffer, 0, packageTotalLength);
                     }
                 }
                 //如果加密
@@ -518,12 +518,10 @@ namespace Quick.Protocol
                 //如果设置了压缩或者加密
                 if (options.InternalCompress || options.InternalEncrypt)
                 {
-                    currentPackageBuffer = new ArraySegment<byte>(recvBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, packageTotalLength - PACKAGE_TOTAL_LENGTH_LENGTH);
-
                     //如果设置了加密，则先解密
                     if (options.InternalEncrypt)
                     {
-                        var retBuffer = dec.TransformFinalBlock(currentPackageBuffer.Array, currentPackageBuffer.Offset, currentPackageBuffer.Count);
+                        var retBuffer = dec.TransformFinalBlock(currentPackageBuffer.Array, PACKAGE_TOTAL_LENGTH_LENGTH + currentPackageBuffer.Offset, currentPackageBuffer.Count - PACKAGE_TOTAL_LENGTH_LENGTH);
                         var currentBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
                         packageTotalLength = PACKAGE_TOTAL_LENGTH_LENGTH + retBuffer.Length;
                         writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
@@ -535,7 +533,7 @@ namespace Quick.Protocol
                     {
                         var retBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
                         var count = 0;
-                        using (var readMs = new MemoryStream(currentPackageBuffer.Array, currentPackageBuffer.Offset, currentPackageBuffer.Count, false))
+                        using (var readMs = new MemoryStream(currentPackageBuffer.Array, PACKAGE_TOTAL_LENGTH_LENGTH + currentPackageBuffer.Offset, currentPackageBuffer.Count - PACKAGE_TOTAL_LENGTH_LENGTH, false))
                         using (var writeMs = new MemoryStream(retBuffer, 0, retBuffer.Length))
                         {
                             using (var gzStream = new GZipStream(readMs, CompressionMode.Decompress, true))
