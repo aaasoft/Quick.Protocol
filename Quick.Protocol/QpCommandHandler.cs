@@ -56,12 +56,7 @@ namespace Quick.Protocol
             }
         }
 
-        public Task<TCmdResponse> SendCommand<TCmdRequest, TCmdResponse>(TCmdRequest request)
-        {
-            return SendCommand<TCmdRequest, TCmdResponse>(request, 30 * 1000);
-        }
-
-        public async Task<TCmdResponse> SendCommand<TCmdRequest, TCmdResponse>(TCmdRequest request, int timeout)
+        public async Task<TCmdResponse> SendCommand<TCmdRequest, TCmdResponse>(TCmdRequest request, int timeout = 30 * 1000, Action afterSendHandler = null)
         {
             var typeName = typeof(TCmdRequest).FullName;
             var requestContent = JsonConvert.SerializeObject(request);
@@ -71,7 +66,7 @@ namespace Quick.Protocol
 
             if (timeout <= 0)
             {
-                SendCommandRequestPackage(commandContext.Id, typeName, requestContent);
+                SendCommandRequestPackage(commandContext.Id, typeName, requestContent, afterSendHandler);
                 return (TCmdResponse)await commandContext.ResponseTask;
             }
             //如果设置了超时
@@ -79,7 +74,7 @@ namespace Quick.Protocol
             {
                 try
                 {
-                    await TaskUtils.TaskWait(Task.Run(() => SendCommandRequestPackage(commandContext.Id, typeof(TCmdRequest).FullName, requestContent)), timeout);
+                    await TaskUtils.TaskWait(Task.Run(() => SendCommandRequestPackage(commandContext.Id, typeof(TCmdRequest).FullName, requestContent, afterSendHandler)), timeout);
                 }
                 catch
                 {

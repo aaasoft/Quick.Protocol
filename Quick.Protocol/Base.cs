@@ -18,6 +18,7 @@ namespace Quick.Protocol
             {
                 CommandInfo.Create<Commands.Connect.Request,Commands.Connect.Response>(),
                 CommandInfo.Create<Commands.Authenticate.Request,Commands.Authenticate.Response>(),
+                CommandInfo.Create<Commands.HandShake.Request,Commands.HandShake.Response>(),
                 CommandInfo.Create<Commands.PrivateCommand.Request,Commands.PrivateCommand.Response>()
             }
         };

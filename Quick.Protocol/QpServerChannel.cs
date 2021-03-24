@@ -70,11 +70,17 @@ namespace Quick.Protocol
                 throw new CommandException(1, "认证失败！");
             }
 
+            
+            Auchenticated?.Invoke(this, EventArgs.Empty);
+            return new Commands.Authenticate.Response();
+        }
+
+        private Commands.HandShake.Response handShake(Commands.HandShake.Request request)
+        {
             options.CommandExecuterManagerList = authedCommandExecuterManagerList;
             options.InternalCompress = request.EnableCompress;
             options.InternalEncrypt = request.EnableEncrypt;
             options.InternalTransportTimeout = request.TransportTimeout;
-            Auchenticated?.Invoke(this, EventArgs.Empty);
 
             //改变传输超时时间
             ChangeTransportTimeout();
@@ -82,15 +88,15 @@ namespace Quick.Protocol
             //开始心跳
             if (options.HeartBeatInterval > 0)
                 BeginHeartBeat(cancellationToken);
-            return new Commands.Authenticate.Response();
+            return new Commands.HandShake.Response();
         }
-
 
         public void Start()
         {
             var connectAndAuthCommandExecuterManager = new CommandExecuterManager();
             connectAndAuthCommandExecuterManager.Register<Commands.Connect.Request, Commands.Connect.Response>(connect);
             connectAndAuthCommandExecuterManager.Register<Commands.Authenticate.Request, Commands.Authenticate.Response>(authenticate);
+            connectAndAuthCommandExecuterManager.Register<Commands.HandShake.Request, Commands.HandShake.Response>(handShake);
             options.CommandExecuterManagerList = new List<CommandExecuterManager>() { connectAndAuthCommandExecuterManager };
         }
 

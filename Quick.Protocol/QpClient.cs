@@ -48,23 +48,29 @@ namespace Quick.Protocol
             BeginReadPackage(token);
 
             var repConnect = await SendCommand<Commands.Connect.Request, Commands.Connect.Response>(new Commands.Connect.Request()
-            {   
+            {
                 NeededInstructionIds = Options.InstructionSet.Select(t => t.Id).ToArray()
             });
 
             //如果服务端使用的缓存大小与客户端不同，则设置缓存大小为与服务端同样的大小
             if (BufferSize != repConnect.BufferSize)
                 ChangeBufferSize(repConnect.BufferSize);
-            
+
             var repAuth = await SendCommand<Commands.Authenticate.Request, Commands.Authenticate.Response>(new Commands.Authenticate.Request()
+            {
+                Answer = CryptographyUtils.ComputeMD5Hash(repConnect.Question + Options.Password)
+            });
+
+            var repHandShake = await SendCommand<Commands.HandShake.Request, Commands.HandShake.Response>(new Commands.HandShake.Request()
             {
                 EnableCompress = Options.EnableCompress,
                 EnableEncrypt = Options.EnableEncrypt,
-                TransportTimeout = Options.TransportTimeout,
-                Answer = CryptographyUtils.ComputeMD5Hash(repConnect.Question + Options.Password)
+                TransportTimeout = Options.TransportTimeout
+            }, 5000, () =>
+            {
+                authPassed = true;
+                Options.OnAuthPassed();
             });
-            authPassed = true;
-            Options.OnAuthPassed();
 
             //开始心跳
             if (Options.HeartBeatInterval > 0)

@@ -16,6 +16,10 @@ namespace Quick.Protocol
     public abstract class QpPackageHandler
     {
         /// <summary>
+        /// 包长度字节长度
+        /// </summary>
+        public const int PACKAGE_TOTAL_LENGTH_LENGTH = 4;
+        /// <summary>
         /// 包头长度
         /// </summary>
         public const int PACKAGE_HEAD_LENGTH = 5;
@@ -122,7 +126,17 @@ namespace Quick.Protocol
             InitQpPackageHandler_Stream(null);
         }
 
-        private void sendPackage(Func<byte[], Tuple<int, byte[]>> getPackagePayloadFunc)
+        private void writePackageTotalLengthToBuffer(byte[] buffer, int offset, int packageTotalLength)
+        {
+            //构造包头
+            var ret = BitConverter.GetBytes(packageTotalLength);
+            //如果是小端字节序，则交换
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(ret);
+            Array.Copy(ret, 0, buffer, offset, sizeof(int));
+        }
+
+        private void sendPackage(Func<byte[], Tuple<int, byte[]>> getPackagePayloadFunc, Action afterSendHandler = null)
         {
             var stream = QpPackageHandler_Stream;
             if (stream == null)
@@ -138,18 +152,15 @@ namespace Quick.Protocol
                 byte[] packageBuffer = ret.Item2;
 
                 //构造包头
-                BitConverter.GetBytes(packageTotalLength).CopyTo(packageBuffer, 0);
-                //如果是小端字节序，则交换
-                if (BitConverter.IsLittleEndian)
-                    Array.Reverse(packageBuffer, 0, sizeof(int));
-
+                writePackageTotalLengthToBuffer(packageBuffer, 0, packageTotalLength);
                 try
                 {
                     //如果包缓存是发送缓存
                     if (packageBuffer == sendBuffer)
                     {
                         sendPackageBuffer(stream,
-                            new ArraySegment<byte>(packageBuffer, 0, packageTotalLength)
+                            new ArraySegment<byte>(packageBuffer, 0, packageTotalLength),
+                            afterSendHandler
                             );
                     }
                     //否则，拆分为多个包发送
@@ -170,18 +181,15 @@ namespace Quick.Protocol
                             else
                                 takeLength = restLength;
                             //构造包头
-                            BitConverter.GetBytes(PACKAGE_HEAD_LENGTH + takeLength).CopyTo(sendBuffer, 0);
-                            //如果是小端字节序，则交换
-                            if (BitConverter.IsLittleEndian)
-                                Array.Reverse(sendBuffer, 0, sizeof(int));
+                            writePackageTotalLengthToBuffer(sendBuffer, 0, PACKAGE_HEAD_LENGTH + takeLength);
                             sendBuffer[4] = (byte)QpPackageType.Split;
                             //复制包体
                             Array.Copy(packageBuffer, currentIndex, sendBuffer, PACKAGE_HEAD_LENGTH, takeLength);
                             //发送
                             sendPackageBuffer(
                                 stream,
-                                new ArraySegment<byte>(sendBuffer, 0, PACKAGE_HEAD_LENGTH + takeLength)
-                                );
+                                new ArraySegment<byte>(sendBuffer, 0, PACKAGE_HEAD_LENGTH + takeLength),
+                                afterSendHandler);
                             currentIndex += takeLength;
                         }
                     }
@@ -254,7 +262,7 @@ namespace Quick.Protocol
         /// <summary>
         /// 发送命令请求包
         /// </summary>
-        protected void SendCommandRequestPackage(string commandId, string typeName, string content)
+        protected void SendCommandRequestPackage(string commandId, string typeName, string content, Action afterSendHandler = null)
         {
             sendPackage(buffer =>
             {
@@ -293,7 +301,7 @@ namespace Quick.Protocol
                     logger.LogTrace("{0}: [Send-CommandRequestPackage]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandId, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                 return new Tuple<int, byte[]>(packageTotalLength, retBuffer);
-            });
+            }, afterSendHandler);
         }
 
         /// <summary>
@@ -384,7 +392,7 @@ namespace Quick.Protocol
             return null;
         }
 
-        private void sendPackageBuffer(Stream stream, ArraySegment<byte> packageBuffer)
+        private void sendPackageBuffer(Stream stream, ArraySegment<byte> packageBuffer, Action afterSendHandler = null)
         {
             var packageType = packageBuffer.Array[packageBuffer.Offset + PACKAGE_HEAD_LENGTH - 1];
 
@@ -397,25 +405,30 @@ namespace Quick.Protocol
                     var currentBuffer = getFreeBuffer(packageBuffer.Array, sendBuffer, sendBuffer2);
                     using (var ms = new MemoryStream(currentBuffer))
                     {
+                        //写入包长度
+                        for (var i = 0; i < PACKAGE_TOTAL_LENGTH_LENGTH; i++)
+                            ms.WriteByte(0);
                         using (var gzStream = new GZipStream(ms, CompressionMode.Compress, true))
-                            gzStream.Write(packageBuffer.Array, packageBuffer.Offset, packageBuffer.Count);
-                        packageBuffer = new ArraySegment<byte>(currentBuffer, 0, Convert.ToInt32(ms.Position));
+                            gzStream.Write(packageBuffer.Array, packageBuffer.Offset + PACKAGE_TOTAL_LENGTH_LENGTH, packageBuffer.Count - PACKAGE_TOTAL_LENGTH_LENGTH);
+                        var packageTotalLength = Convert.ToInt32(ms.Position);
+                        writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
+                        packageBuffer = new ArraySegment<byte>(currentBuffer, 0, Convert.ToInt32(packageTotalLength));
                     }
                 }
                 //如果加密
                 if (options.InternalEncrypt)
                 {
-                    var currentBuffer = enc.TransformFinalBlock(packageBuffer.Array, packageBuffer.Offset, packageBuffer.Count);
-                    packageBuffer = new ArraySegment<byte>(currentBuffer, 0, currentBuffer.Length);
+                    var retBuffer = enc.TransformFinalBlock(packageBuffer.Array, packageBuffer.Offset + PACKAGE_TOTAL_LENGTH_LENGTH, packageBuffer.Count - PACKAGE_TOTAL_LENGTH_LENGTH);
+                    var packageTotalLength = PACKAGE_TOTAL_LENGTH_LENGTH + retBuffer.Length;
+                    var currentBuffer = getFreeBuffer(packageBuffer.Array, sendBuffer, sendBuffer2);
+                    //写入包长度
+                    writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
+                    Array.Copy(retBuffer, 0, currentBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, retBuffer.Length);
+                    packageBuffer = new ArraySegment<byte>(currentBuffer, 0, packageTotalLength);
                 }
-                //发送包头
-                var totalPackageLength = packageBuffer.Count + PACKAGE_HEAD_LENGTH;
-                var totalPackageLengthBuffer = BitConverter.GetBytes(totalPackageLength);
-                if (BitConverter.IsLittleEndian)
-                    Array.Reverse(totalPackageLengthBuffer);
-                stream.Write(totalPackageLengthBuffer, 0, totalPackageLengthBuffer.Length);
-                stream.WriteByte(packageType);
             }
+            //执行AfterSendHandler
+            afterSendHandler?.Invoke();
             //发送包内容
             stream.Write(packageBuffer.Array, packageBuffer.Offset, packageBuffer.Count);
             if (LogUtils.LogPackage)
@@ -471,18 +484,18 @@ namespace Quick.Protocol
             {
                 var currentRecvBuffer = recvBuffer;
                 //读取包头
-                var ret = await readData(stream, currentRecvBuffer, 0, PACKAGE_HEAD_LENGTH, token);
+                var ret = await readData(stream, currentRecvBuffer, 0, PACKAGE_TOTAL_LENGTH_LENGTH, token);
                 if (token.IsCancellationRequested)
                     return nullArraySegment;
 
-                if (ret < PACKAGE_HEAD_LENGTH)
-                    throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"包头读取错误！包头长度：{PACKAGE_HEAD_LENGTH}，读取数据长度：{ret}");
+                if (ret < PACKAGE_TOTAL_LENGTH_LENGTH)
+                    throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"包头读取错误！包头长度：{PACKAGE_TOTAL_LENGTH_LENGTH}，读取数据长度：{ret}");
 
                 var currentRecvBuffer2 = recvBuffer;
 
                 //如果读取缓存数组对象变化
                 if (currentRecvBuffer != currentRecvBuffer2)
-                    Array.Copy(currentRecvBuffer, currentRecvBuffer2, PACKAGE_HEAD_LENGTH);                
+                    Array.Copy(currentRecvBuffer, currentRecvBuffer2, PACKAGE_TOTAL_LENGTH_LENGTH);
 
                 //包总长度
                 var packageTotalLength = ByteUtils.B2I_BE(recvBuffer, 0);
@@ -491,51 +504,49 @@ namespace Quick.Protocol
                 if (packageTotalLength > recvBuffer.Length)
                     throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"数据包总长度[{packageTotalLength}]大于缓存大小[{recvBuffer.Length}]");
                 //包体长度
-                var packageBodyLength = packageTotalLength - PACKAGE_HEAD_LENGTH;
+                var packageBodyLength = packageTotalLength - PACKAGE_TOTAL_LENGTH_LENGTH;
                 //读取包体
-                ret = await readData(stream, recvBuffer, PACKAGE_HEAD_LENGTH, packageBodyLength, token);
+                ret = await readData(stream, recvBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, packageBodyLength, token);
 
                 if (token.IsCancellationRequested)
                     return nullArraySegment;
                 if (ret < packageBodyLength)
                     throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, PACKAGE_HEAD_LENGTH + ret), $"包体读取错误！包体长度：{packageBodyLength}，读取数据长度：{ret}");
 
-                if (LogUtils.LogPackage)
-                    logger.LogTrace(
-                    "{0}: [Recv-Package]Length:{1}，Type:{2}，Content:{}",
-                    DateTime.Now,
-                    packageTotalLength,
-                    (QpPackageType)recvBuffer[PACKAGE_HEAD_LENGTH - 1],
-                    LogUtils.LogContent ?
-                        BitConverter.ToString(recvBuffer, 0, packageTotalLength)
-                        : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
-
                 var currentPackageBuffer = new ArraySegment<byte>(recvBuffer, 0, packageTotalLength);
 
                 //如果设置了压缩或者加密
                 if (options.InternalCompress || options.InternalEncrypt)
                 {
-                    currentPackageBuffer = new ArraySegment<byte>(recvBuffer, PACKAGE_HEAD_LENGTH, packageBodyLength);
+                    currentPackageBuffer = new ArraySegment<byte>(recvBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, packageTotalLength - PACKAGE_TOTAL_LENGTH_LENGTH);
 
                     //如果设置了加密，则先解密
                     if (options.InternalEncrypt)
                     {
-                        var currentBuffer = dec.TransformFinalBlock(currentPackageBuffer.Array, currentPackageBuffer.Offset, currentPackageBuffer.Count);
-                        currentPackageBuffer = new ArraySegment<byte>(currentBuffer, 0, currentBuffer.Length);
+                        var retBuffer = dec.TransformFinalBlock(currentPackageBuffer.Array, currentPackageBuffer.Offset, currentPackageBuffer.Count);
+                        var currentBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
+                        packageTotalLength = PACKAGE_TOTAL_LENGTH_LENGTH + retBuffer.Length;
+                        writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
+                        Array.Copy(retBuffer, 0, currentBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, retBuffer.Length);
+                        currentPackageBuffer = new ArraySegment<byte>(currentBuffer, 0, packageTotalLength);
                     }
                     //如果设置了压缩，则先解压
                     if (options.InternalCompress)
                     {
-                        var currentBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
+                        var retBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
                         var count = 0;
                         using (var readMs = new MemoryStream(currentPackageBuffer.Array, currentPackageBuffer.Offset, currentPackageBuffer.Count, false))
-                        using (var writeMs = new MemoryStream(currentBuffer, 0, currentBuffer.Length))
+                        using (var writeMs = new MemoryStream(retBuffer, 0, retBuffer.Length))
                         {
                             using (var gzStream = new GZipStream(readMs, CompressionMode.Decompress, true))
                                 gzStream.CopyTo(writeMs);
                             count = Convert.ToInt32(writeMs.Position);
                         }
-                        currentPackageBuffer = new ArraySegment<byte>(currentBuffer, 0, count);
+                        var currentBuffer = getFreeBuffer(retBuffer, recvBuffer, recvBuffer2);
+                        packageTotalLength = PACKAGE_TOTAL_LENGTH_LENGTH + count;
+                        writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
+                        Array.Copy(retBuffer, 0, currentBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, count);
+                        currentPackageBuffer = new ArraySegment<byte>(currentBuffer, 0, packageTotalLength);
                     }
                 }
                 var packageType = (QpPackageType)currentPackageBuffer.Array[currentPackageBuffer.Offset + PACKAGE_HEAD_LENGTH - 1];
@@ -571,6 +582,16 @@ namespace Quick.Protocol
                     break;
                 }
             }
+
+            if (LogUtils.LogPackage)
+                logger.LogTrace(
+                "{0}: [Recv-Package]Length:{1}，Type:{2}，Content:{}",
+                DateTime.Now,
+                finalPackageBuffer.Count,
+                (QpPackageType)finalPackageBuffer.Array[finalPackageBuffer.Offset + PACKAGE_HEAD_LENGTH - 1],
+                LogUtils.LogContent ?
+                    BitConverter.ToString(finalPackageBuffer.Array, finalPackageBuffer.Offset, finalPackageBuffer.Count)
+                    : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
             return new ArraySegment<byte>(finalPackageBuffer.Array,
                     finalPackageBuffer.Offset,
