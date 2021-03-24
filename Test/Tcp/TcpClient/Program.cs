@@ -9,15 +9,13 @@ namespace TcpClient
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             Quick.Protocol.Utils.LogUtils.LogPackage = true;
             Quick.Protocol.Utils.LogUtils.LogContent = true;
+            Quick.Protocol.Utils.LogUtils.LogCommand = true;
             Quick.Protocol.Utils.LogUtils.AddConsole();
 
             var client = new Quick.Protocol.Tcp.QpTcpClient(new Quick.Protocol.Tcp.QpTcpClientOptions()
             {
                 Host = "127.0.0.1",
                 Port = 3011,
-                EnableCompress = true,
-                EnableEncrypt = true,
-                //TransportTimeout = 120 * 1000,
                 Password = "HelloQP"
             });
 

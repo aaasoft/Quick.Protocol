@@ -469,13 +469,20 @@ namespace Quick.Protocol
             MemoryStream splitMs = null;
             while (true)
             {
+                var currentRecvBuffer = recvBuffer;
                 //读取包头
-                var ret = await readData(stream, recvBuffer, 0, PACKAGE_HEAD_LENGTH, token);
+                var ret = await readData(stream, currentRecvBuffer, 0, PACKAGE_HEAD_LENGTH, token);
                 if (token.IsCancellationRequested)
                     return nullArraySegment;
 
                 if (ret < PACKAGE_HEAD_LENGTH)
                     throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"包头读取错误！包头长度：{PACKAGE_HEAD_LENGTH}，读取数据长度：{ret}");
+
+                var currentRecvBuffer2 = recvBuffer;
+
+                //如果读取缓存数组对象变化
+                if (currentRecvBuffer != currentRecvBuffer2)
+                    Array.Copy(currentRecvBuffer, currentRecvBuffer2, PACKAGE_HEAD_LENGTH);                
 
                 //包总长度
                 var packageTotalLength = ByteUtils.B2I_BE(recvBuffer, 0);
@@ -619,11 +626,11 @@ namespace Quick.Protocol
                 //如果已经取消
                 if (t.IsCanceled || token.IsCancellationRequested)
                     return;
-                
+
                 //如果读取出错
                 if (t.IsFaulted)
                 {
-                    OnReadError(t.Exception);
+                    OnReadError(t.Exception.InnerException);
                     return;
                 }
                 //读取下一个数据包

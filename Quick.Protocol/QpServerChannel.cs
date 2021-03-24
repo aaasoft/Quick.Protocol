@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Quick.Protocol.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,6 +11,7 @@ namespace Quick.Protocol
 {
     public class QpServerChannel : QpCommandHandler
     {
+        private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private QpServer server;
         private Stream stream;
         private CancellationToken cancellationToken;
@@ -111,6 +114,8 @@ namespace Quick.Protocol
                 {
                     var protocolException = (ProtocolException)exception;
                     server.RemoveChannel(this);
+                    logger.LogTrace("[ProtocolErrorHandler]{0}: Begin ProtocolErrorHandler invoke...", DateTime.Now);
+
                     options.ProtocolErrorHandler.Invoke(stream, protocolException.ReadBuffer);
                     return;
                 }

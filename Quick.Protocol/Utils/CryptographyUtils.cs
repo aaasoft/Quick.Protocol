@@ -11,7 +11,7 @@ namespace Quick.Protocol.Utils
         public static String ComputeMD5Hash(String data)
         {
             var buffer = ComputeMD5Hash(Encoding.UTF8.GetBytes(data));
-            return BitConverter.ToString(buffer).Replace("-", "");
+            return BitConverter.ToString(buffer).Replace("-", "").ToLower();
         }
 
         public static byte[] ComputeMD5Hash(byte[] data)
@@ -43,7 +43,7 @@ namespace Quick.Protocol.Utils
         {
             var dataBuffer = Encoding.UTF8.GetBytes(data);
             var pwdBuffer = GetDesPassword(password);
-            return BitConverter.ToString(DesEncrypt(pwdBuffer, dataBuffer, 0, dataBuffer.Length)).Replace("-", "");
+            return BitConverter.ToString(DesEncrypt(pwdBuffer, dataBuffer, 0, dataBuffer.Length)).Replace("-", "").ToLower();
         }
 
 

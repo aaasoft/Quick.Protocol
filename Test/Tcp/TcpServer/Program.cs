@@ -13,12 +13,13 @@ namespace TcpServer
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             Quick.Protocol.Utils.LogUtils.LogPackage = true;
             Quick.Protocol.Utils.LogUtils.LogContent = true;
+            Quick.Protocol.Utils.LogUtils.LogCommand = true;
+
             Quick.Protocol.Utils.LogUtils.AddConsole();
             var server = new Quick.Protocol.Tcp.QpTcpServer(new Quick.Protocol.Tcp.QpTcpServerOptions()
             {
                 Address = IPAddress.Loopback,
                 Port = 3011,
-                BufferSize = 128,
                 Password = "HelloQP",
                 ServerProgram = nameof(TcpServer) + " 1.0",
                 ProtocolErrorHandler = (stream, readBuffer) =>

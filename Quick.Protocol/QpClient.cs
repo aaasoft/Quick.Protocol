@@ -51,16 +51,11 @@ namespace Quick.Protocol
             {   
                 NeededInstructionIds = Options.InstructionSet.Select(t => t.Id).ToArray()
             });
+
             //如果服务端使用的缓存大小与客户端不同，则设置缓存大小为与服务端同样的大小
             if (BufferSize != repConnect.BufferSize)
-            {
                 ChangeBufferSize(repConnect.BufferSize);
-                cts.Cancel();
-                cts = new CancellationTokenSource();
-                token = cts.Token;
-                //开始读取其他数据包
-                BeginReadPackage(token);
-            }
+            
             var repAuth = await SendCommand<Commands.Authenticate.Request, Commands.Authenticate.Response>(new Commands.Authenticate.Request()
             {
                 EnableCompress = Options.EnableCompress,
