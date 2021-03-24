@@ -22,14 +22,15 @@ namespace PipelineServer
                     Content = req.Content
                 };
             });
-
-            var server = new Quick.Protocol.Pipeline.QpPipelineServer(new Quick.Protocol.Pipeline.QpPipelineServerOptions()
+            var serverOptions = new Quick.Protocol.Pipeline.QpPipelineServerOptions()
             {
                 PipeName = "Quick.Protocol",
                 Password = "HelloQP",
-                ServerProgram = nameof(PipelineServer) + " 1.0",
-                CommandExecuterManager = commandExecuterManager
-            });
+                ServerProgram = nameof(PipelineServer) + " 1.0"
+            };
+            serverOptions.RegisterCommandExecuterManager(commandExecuterManager);
+
+            var server = new Quick.Protocol.Pipeline.QpPipelineServer(serverOptions);
 
             server.ChannelConnected += Server_ChannelConnected;
             server.ChannelDisconnected += Server_ChannelDisconnected;

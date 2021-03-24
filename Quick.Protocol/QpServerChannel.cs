@@ -33,7 +33,6 @@ namespace Quick.Protocol
             this.ChannelName = channelName;
             this.cancellationToken = cancellationToken;
             this.options = options;
-            //this.CommandReceived += QpServerChannel_CommandReceived;
 
             //修改缓存大小
             ChangeBufferSize(options.BufferSize);
@@ -43,26 +42,42 @@ namespace Quick.Protocol
             BeginReadPackage(cancellationToken);
         }
 
-        public void Start()
+        private Commands.Connect.Response connect(Commands.Connect.Request request)
         {
-            //var welcomeCmd = new Commands.WelcomeCommand(new Commands.WelcomeCommand.CommandContent()
-            //{
-            //    ProtocolVersion = QpConsts.QUICK_PROTOCOL_VERSION,
-            //    ServerProgram = options.ServerProgram,
-            //    BufferSize = options.BufferSize,
-            //    InstructionSet = options.InstructionSet
-            //});
-            //question = welcomeCmd.Id;
+            question = Guid.NewGuid().ToString("N");
+            return new Commands.Connect.Response()
+            {
+                BufferSize = options.BufferSize,
+                Question = question
+            };
+        }
 
-            ////发送欢迎指令
-            //var ret = SendCommand(welcomeCmd).Result;
+        private Commands.Authenticate.Response authenticate(Commands.Authenticate.Request request)
+        {
+            if (Utils.CryptographyUtils.ComputeMD5Hash(question + options.Password) != request.Answer)
+                throw new CommandException(1, "认证失败！");
 
-            //if (ret.Code != 0)
-            //    throw new IOException(ret.Message);
+            isAuthSuccess = true;
+            options.InternalCompress = request.EnableCompress;
+            options.InternalEncrypt = request.EnableEncrypt;
+            options.InternalTransportTimeout = request.TransportTimeout;
+            Auchenticated?.Invoke(this, EventArgs.Empty);
+
+            //改变传输超时时间
+            ChangeTransportTimeout();
 
             //开始心跳
             if (options.HeartBeatInterval > 0)
                 BeginHeartBeat(cancellationToken);
+            return new Commands.Authenticate.Response();
+        }
+
+        public void Start()
+        {
+            var connectAndAuthCommandExecuterManager = new CommandExecuterManager();
+            connectAndAuthCommandExecuterManager.Register<Commands.Connect.Request, Commands.Connect.Response>(connect);
+            connectAndAuthCommandExecuterManager.Register<Commands.Authenticate.Request, Commands.Authenticate.Response>(authenticate);
+            options.RegisterCommandExecuterManager(connectAndAuthCommandExecuterManager);
         }
 
         /// <summary>
@@ -76,44 +91,6 @@ namespace Quick.Protocol
                 stream?.Dispose();
             } catch { }
         }
-
-        //private void QpServerChannel_CommandReceived(object sender, Commands.ICommand e)
-        //{
-        //    if (e == null)
-        //        return;
-        //    var authCmd = e as Commands.AuthenticateCommand;
-        //    if (authCmd == null)
-        //    {
-        //        if (!isAuthSuccess)
-        //        {
-        //            OnReadError(new IOException("No authenticated"));
-        //        }
-        //        return;
-        //    }
-
-        //    var authCmdContent = authCmd.ContentT;
-        //    if (Utils.CryptographyUtils.ComputeMD5Hash(question + options.Password) != authCmdContent.Answer)
-        //    {
-        //        SendCommandResponse(e, -1, "认证失败！").ContinueWith(t =>
-        //        {
-        //            OnReadError(new IOException("认证失败！"));
-        //        });
-        //        return;
-        //    }
-
-        //    SendCommandResponse(e, 0, "认证通过！").ContinueWith(t =>
-        //    {
-        //        isAuthSuccess = true;
-        //        options.InternalCompress = authCmdContent.Compress;
-        //        options.InternalEncrypt = authCmdContent.Encrypt;
-        //        options.InternalTransportTimeout = authCmdContent.TransportTimeout;
-        //        Auchenticated?.Invoke(this, EventArgs.Empty);
-
-        //        //改变传输超时时间
-        //        ChangeTransportTimeout();
-                
-        //    });
-        //}
 
         protected override void OnReadError(Exception exception)
         {

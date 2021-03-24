@@ -28,7 +28,7 @@ namespace Quick.Protocol
         {
             var ret = JsonConvert.DeserializeObject<QpServerOptions>(JsonConvert.SerializeObject(this));
             ret.InstructionSet = InstructionSet;
-            ret.CommandExecuterManager = CommandExecuterManager;
+            ret.CommandExecuterManagerList = CommandExecuterManagerList;
             ret.ProtocolErrorHandler = ProtocolErrorHandler;
             return ret;
         }

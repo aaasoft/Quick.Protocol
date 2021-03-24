@@ -119,12 +119,19 @@ namespace Quick.Protocol
                 ContentModel = contentModel
             });
 
-            if (options.CommandExecuterManager == null)
+            if (options.CommandExecuterManagerList == null || options.CommandExecuterManagerList.Count == 0)
                 return;
             try
             {
-                var responseModel = options.CommandExecuterManager.ExecuteCommand(typeName, contentModel);
-                SendCommandResponsePackage(commandId, 0, null, cmdResponseType.FullName, JsonConvert.SerializeObject(responseModel));
+                foreach (var commandExecuterManager in options.CommandExecuterManagerList)
+                {
+                    if (commandExecuterManager.CanExecuteCommand(typeName))
+                    {
+                        var responseModel = commandExecuterManager.ExecuteCommand(typeName, contentModel);
+                        SendCommandResponsePackage(commandId, 0, null, cmdResponseType.FullName, JsonConvert.SerializeObject(responseModel));
+                        break;
+                    }
+                }
             }
             catch (CommandException ex)
             {

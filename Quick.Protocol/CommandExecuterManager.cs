@@ -28,17 +28,27 @@ namespace Quick.Protocol
         }
 
         /// <summary>
-        /// 执行指令
+        /// 执行命令
         /// </summary>
         /// <param name="cmdRequestTypeName"></param>
         /// <param name="cmdRequestModel"></param>
         /// <returns></returns>
         public object ExecuteCommand(string cmdRequestTypeName, object cmdRequestModel)
         {
-            if (!commandExecuterDict.ContainsKey(cmdRequestTypeName))
+            if (!CanExecuteCommand(cmdRequestTypeName))
                 throw new IOException($"Command Request Type[{cmdRequestTypeName}] has no executer.");
             Delegate commandExecuter = commandExecuterDict[cmdRequestTypeName];
             return commandExecuter.DynamicInvoke(new object[] { cmdRequestModel });
+        }
+
+        /// <summary>
+        /// 能否执行指定类型的命令
+        /// </summary>
+        /// <param name="cmdRequestTypeName"></param>
+        /// <returns></returns>
+        public bool CanExecuteCommand(string cmdRequestTypeName)
+        {
+            return commandExecuterDict.ContainsKey(cmdRequestTypeName);
         }
     }
 }
