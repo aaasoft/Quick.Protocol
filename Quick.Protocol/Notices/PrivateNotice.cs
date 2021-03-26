@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
-namespace Quick.Protocol.Commands.PrivateCommand
+namespace Quick.Protocol.Notices
 {
-    /// <summary>
-    /// 私有命令请求
-    /// </summary>
-    public class Request : IQpCommandRequest<Response>
+    [DisplayName("私有通知")]
+    public class PrivateNotice
     {
         /// <summary>
         /// 动作

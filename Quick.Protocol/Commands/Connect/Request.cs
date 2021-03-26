@@ -7,7 +7,7 @@ namespace Quick.Protocol.Commands.Connect
     /// <summary>
     /// 连接请求命令
     /// </summary>
-    public class Request
+    public class Request : IQpCommandRequest<Response>
     {
         /// <summary>
         /// 协议版本

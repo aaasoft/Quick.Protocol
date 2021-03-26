@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 
 namespace Quick.Protocol
@@ -25,8 +27,9 @@ namespace Quick.Protocol
         public Type NoticeType { get; set; }
 
         public NoticeInfo() { }
-        public NoticeInfo(Type noticeType)
+        public NoticeInfo(string name, Type noticeType)
         {
+            Name = name;
             NoticeType = noticeType;
         }
 
@@ -38,7 +41,33 @@ namespace Quick.Protocol
         public static NoticeInfo Create<T>()
             where T : class, new()
         {
-            return new NoticeInfo(typeof(T));
+            return Create(typeof(T));
+        }
+
+        /// <summary>
+        /// 创建通知信息实例
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static NoticeInfo Create(Type type)
+        {
+            var name = type.FullName;
+
+            var attr = type.GetCustomAttribute<DisplayNameAttribute>();
+            if (attr != null)
+                name = attr.DisplayName;
+
+            return new NoticeInfo(name, type);
+        }
+
+        /// <summary>
+        /// 创建通知信息实例
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public static NoticeInfo Create(object instance)
+        {
+            return Create(instance.GetType());
         }
     }
 }

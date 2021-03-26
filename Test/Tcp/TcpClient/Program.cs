@@ -38,7 +38,7 @@ namespace TcpClient
                     return;
                 }
                 Console.WriteLine("连接成功");
-                _ = client.SendCommand<Quick.Protocol.Commands.PrivateCommand.Request, Quick.Protocol.Commands.PrivateCommand.Response>(new Quick.Protocol.Commands.PrivateCommand.Request()
+                _ = client.SendCommand(new Quick.Protocol.Commands.PrivateCommand.Request()
                 {
                     Action = "ABC",
                     Content = "123"

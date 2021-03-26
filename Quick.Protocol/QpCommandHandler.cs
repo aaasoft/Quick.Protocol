@@ -55,10 +55,11 @@ namespace Quick.Protocol
                 }
             }
         }
-
-        public async Task<TCmdResponse> SendCommand<TCmdRequest, TCmdResponse>(TCmdRequest request, int timeout = 30 * 1000, Action afterSendHandler = null)
+        
+        public async Task<TCmdResponse> SendCommand<TCmdResponse>(IQpCommandRequest<TCmdResponse> request, int timeout = 30 * 1000, Action afterSendHandler = null)
         {
-            var typeName = typeof(TCmdRequest).FullName;
+            var requestType = request.GetType();
+            var typeName = requestType.FullName;
             var requestContent = JsonConvert.SerializeObject(request);
 
             var commandContext = new CommandContext(typeName);
@@ -74,7 +75,7 @@ namespace Quick.Protocol
             {
                 try
                 {
-                    await TaskUtils.TaskWait(Task.Run(() => SendCommandRequestPackage(commandContext.Id, typeof(TCmdRequest).FullName, requestContent, afterSendHandler)), timeout);
+                    await TaskUtils.TaskWait(Task.Run(() => SendCommandRequestPackage(commandContext.Id, typeName, requestContent, afterSendHandler)), timeout);
                 }
                 catch
                 {

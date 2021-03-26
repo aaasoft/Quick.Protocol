@@ -40,7 +40,7 @@ namespace PipelineClient
 
                 try
                 {
-                    var rep = await client.SendCommand<Quick.Protocol.Commands.PrivateCommand.Request, Quick.Protocol.Commands.PrivateCommand.Response>(
+                    var rep = await client.SendCommand(
                         new Quick.Protocol.Commands.PrivateCommand.Request()
                         {
                             Action = "Echo",

@@ -47,7 +47,7 @@ namespace Quick.Protocol
             //开始读取其他数据包
             BeginReadPackage(token);
 
-            var repConnect = await SendCommand<Commands.Connect.Request, Commands.Connect.Response>(new Commands.Connect.Request()
+            var repConnect = await SendCommand(new Commands.Connect.Request()
             {
                 NeededInstructionIds = Options.InstructionSet.Select(t => t.Id).ToArray()
             });
@@ -56,12 +56,12 @@ namespace Quick.Protocol
             if (BufferSize != repConnect.BufferSize)
                 ChangeBufferSize(repConnect.BufferSize);
 
-            var repAuth = await SendCommand<Commands.Authenticate.Request, Commands.Authenticate.Response>(new Commands.Authenticate.Request()
+            var repAuth = await SendCommand(new Commands.Authenticate.Request()
             {
                 Answer = CryptographyUtils.ComputeMD5Hash(repConnect.Question + Options.Password)
             });
 
-            var repHandShake = await SendCommand<Commands.HandShake.Request, Commands.HandShake.Response>(new Commands.HandShake.Request()
+            var repHandShake = await SendCommand(new Commands.HandShake.Request()
             {
                 EnableCompress = Options.EnableCompress,
                 EnableEncrypt = Options.EnableEncrypt,

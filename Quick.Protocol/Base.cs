@@ -12,14 +12,14 @@ namespace Quick.Protocol
             Name = "基础指令集",
             NoticeInfos = new NoticeInfo[]
             {
-                NoticeInfo.Create<Notices.Ping>()
+                NoticeInfo.Create(new Notices.PrivateNotice())
             },
             CommandInfos = new CommandInfo[]
             {
-                CommandInfo.Create<Commands.Connect.Request,Commands.Connect.Response>(),
-                CommandInfo.Create<Commands.Authenticate.Request,Commands.Authenticate.Response>(),
-                CommandInfo.Create<Commands.HandShake.Request,Commands.HandShake.Response>(),
-                CommandInfo.Create<Commands.PrivateCommand.Request,Commands.PrivateCommand.Response>()
+                CommandInfo.Create(new Commands.Connect.Request()),
+                CommandInfo.Create(new Commands.Authenticate.Request()),
+                CommandInfo.Create(new Commands.HandShake.Request()),
+                CommandInfo.Create(new Commands.PrivateCommand.Request())
             }
         };
     }

@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 
 namespace Quick.Protocol
@@ -34,23 +36,30 @@ namespace Quick.Protocol
         public Type ResponseType { get; set; }
 
         public CommandInfo() { }
-        public CommandInfo(Type requestType, Type responseType)
+        public CommandInfo(string name, Type requestType, Type responseType)
         {
+            Name = name;
             RequestType = requestType;
             ResponseType = responseType;
         }
 
+
         /// <summary>
         /// 创建命令信息实例
         /// </summary>
-        /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
         /// <returns></returns>
-        public static CommandInfo Create<TRequest, TResponse>()
-            where TRequest : class, new()
+        public static CommandInfo Create<TResponse>(IQpCommandRequest<TResponse> request)
             where TResponse : class, new()
         {
-            return new CommandInfo(typeof(TRequest), typeof(TResponse));
+            var requestType = request.GetType();
+            var name = requestType.FullName;
+
+            var attr = requestType.GetCustomAttribute<DisplayNameAttribute>();
+            if (attr != null)
+                name = attr.DisplayName;
+
+            return new CommandInfo(name, requestType, typeof(TResponse));
         }
     }
 }
