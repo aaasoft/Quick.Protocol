@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Product>QP测试客户端</Product>
+    <Authors>scbeta</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Quick.Protocol.Pipeline\Quick.Protocol.Pipeline.csproj" />
+    <ProjectReference Include="..\Quick.Protocol.Tcp\Quick.Protocol.Tcp.csproj" />
+    <ProjectReference Include="..\Quick.Protocol\Quick.Protocol.csproj" />
+  </ItemGroup>
+
+</Project>
