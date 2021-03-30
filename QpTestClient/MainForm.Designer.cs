@@ -32,20 +32,26 @@ namespace QpTestClient
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tsMain = new System.Windows.Forms.ToolStrip();
+            this.btnFile = new System.Windows.Forms.ToolStripDropDownButton();
+            this.btnAddConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.ssMain = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.tvQpInstructions = new System.Windows.Forms.TreeView();
             this.ilQpInstructions = new System.Windows.Forms.ImageList(this.components);
             this.gbNodeInfo = new System.Windows.Forms.GroupBox();
-            this.btnFile = new System.Windows.Forms.ToolStripDropDownButton();
-            this.btnAddConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsAllConnections = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmsBtnAddConnect = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsConnection = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnDisconnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
             this.scMain.Panel2.SuspendLayout();
             this.scMain.SuspendLayout();
+            this.cmsAllConnections.SuspendLayout();
+            this.cmsConnection.SuspendLayout();
             this.SuspendLayout();
             // 
             // tsMain
@@ -58,6 +64,23 @@ namespace QpTestClient
             this.tsMain.Size = new System.Drawing.Size(833, 27);
             this.tsMain.TabIndex = 2;
             this.tsMain.Text = "toolStrip1";
+            // 
+            // btnFile
+            // 
+            this.btnFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnAddConnection});
+            this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
+            this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnFile.Name = "btnFile";
+            this.btnFile.Size = new System.Drawing.Size(71, 24);
+            this.btnFile.Text = "文件(&F)";
+            // 
+            // btnAddConnection
+            // 
+            this.btnAddConnection.Name = "btnAddConnection";
+            this.btnAddConnection.Size = new System.Drawing.Size(185, 26);
+            this.btnAddConnection.Text = "添加连接(&A)...";
             // 
             // ssMain
             // 
@@ -111,7 +134,7 @@ namespace QpTestClient
             this.ilQpInstructions.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             this.ilQpInstructions.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilQpInstructions.ImageStream")));
             this.ilQpInstructions.TransparentColor = System.Drawing.Color.Transparent;
-            this.ilQpInstructions.Images.SetKeyName(0, "Refresh.png");
+            this.ilQpInstructions.Images.SetKeyName(0, "Connection.png");
             this.ilQpInstructions.Images.SetKeyName(1, "Connection.png");
             this.ilQpInstructions.Images.SetKeyName(2, "Instruction.png");
             this.ilQpInstructions.Images.SetKeyName(3, "Folder.png");
@@ -127,22 +150,33 @@ namespace QpTestClient
             this.gbNodeInfo.TabIndex = 0;
             this.gbNodeInfo.TabStop = false;
             // 
-            // btnFile
+            // cmsAllConnections
             // 
-            this.btnFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnAddConnection});
-            this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
-            this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnFile.Name = "btnFile";
-            this.btnFile.Size = new System.Drawing.Size(71, 24);
-            this.btnFile.Text = "文件(&F)";
+            this.cmsAllConnections.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsAllConnections.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmsBtnAddConnect});
+            this.cmsAllConnections.Name = "cmsAllConnections";
+            this.cmsAllConnections.Size = new System.Drawing.Size(172, 28);
             // 
-            // btnAddConnection
+            // cmsBtnAddConnect
             // 
-            this.btnAddConnection.Name = "btnAddConnection";
-            this.btnAddConnection.Size = new System.Drawing.Size(185, 26);
-            this.btnAddConnection.Text = "添加连接(&A)...";
+            this.cmsBtnAddConnect.Name = "cmsBtnAddConnect";
+            this.cmsBtnAddConnect.Size = new System.Drawing.Size(171, 24);
+            this.cmsBtnAddConnect.Text = "添加连接(&A)...";
+            // 
+            // cmsConnection
+            // 
+            this.cmsConnection.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsConnection.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnDisconnectConnection});
+            this.cmsConnection.Name = "cmsConnection";
+            this.cmsConnection.Size = new System.Drawing.Size(130, 28);
+            // 
+            // btnDisconnectConnection
+            // 
+            this.btnDisconnectConnection.Name = "btnDisconnectConnection";
+            this.btnDisconnectConnection.Size = new System.Drawing.Size(129, 24);
+            this.btnDisconnectConnection.Text = "断开(&D)";
             // 
             // MainForm
             // 
@@ -164,6 +198,8 @@ namespace QpTestClient
             this.scMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).EndInit();
             this.scMain.ResumeLayout(false);
+            this.cmsAllConnections.ResumeLayout(false);
+            this.cmsConnection.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -180,6 +216,10 @@ namespace QpTestClient
         private System.Windows.Forms.GroupBox gbNodeInfo;
         private System.Windows.Forms.ToolStripDropDownButton btnFile;
         private System.Windows.Forms.ToolStripMenuItem btnAddConnection;
+        private System.Windows.Forms.ContextMenuStrip cmsAllConnections;
+        private System.Windows.Forms.ToolStripMenuItem cmsBtnAddConnect;
+        private System.Windows.Forms.ContextMenuStrip cmsConnection;
+        private System.Windows.Forms.ToolStripMenuItem btnDisconnectConnection;
     }
 }
 

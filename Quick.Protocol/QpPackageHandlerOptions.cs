@@ -12,13 +12,17 @@ namespace Quick.Protocol
         /// <summary>
         /// 心跳间隔，为发送或接收超时中小的值的三分一
         /// </summary>
+        [Category("高级")]
         [DisplayName("心跳间隔")]
         [ReadOnly(true)]
         public int HeartBeatInterval => InternalTransportTimeout / 3;
         /// <summary>
         /// 密码
         /// </summary>
-        [Browsable(false)]
+        [Category("常用")]
+        [DisplayName("密码")]
+        [ReadOnly(true)]
+        [PasswordPropertyText(true)]
         public string Password { get; set; }
 
         private QpInstruction[] _InstructionSet = new QpInstruction[] { Base.Instruction };
@@ -56,6 +60,7 @@ namespace Quick.Protocol
         /// <summary>
         /// 最大包大小(默认为：10MB)
         /// </summary>
+        [Category("高级")]
         [DisplayName("最大包大小")]
         [ReadOnly(true)]
         public int MaxPackageSize { get; set; } = 10 * 1024 * 1024;

@@ -17,10 +17,14 @@ namespace Quick.Protocol
         /// <summary>
         /// 名称
         /// </summary>
+        [DisplayName("名称")]
+        [ReadOnly(true)]
         public string Name { get; set; }
         /// <summary>
         /// 通知类型名称
         /// </summary>
+        [DisplayName("类型")]
+        [ReadOnly(true)]
         public string NoticeTypeName { get; set; }
         
         public QpNoticeInfo() { }

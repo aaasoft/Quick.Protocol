@@ -15,16 +15,22 @@ namespace Quick.Protocol
         /// <summary>
         /// 名称
         /// </summary>
+        [DisplayName("名称")]
+        [ReadOnly(true)]
         public string Name { get; set; }
         /// <summary>
         /// 命令请求类型名称
         /// </summary>
+        [DisplayName("请求类型")]
+        [ReadOnly(true)]
         public string RequestTypeName { get; set; }
         /// <summary>
         /// 命令响应类型名称
         /// </summary>
+        [DisplayName("响应类型")]
+        [ReadOnly(true)]
         public string ResponseTypeName { get; set; }
-        
+
         private Type requestType;
 
         private Type responseType;
@@ -48,7 +54,7 @@ namespace Quick.Protocol
         /// 获取命令响应类型
         /// </summary>
         /// <returns></returns>
-        public Type GetResponseType()=>responseType ?? Type.GetType(ResponseTypeName);
+        public Type GetResponseType() => responseType ?? Type.GetType(ResponseTypeName);
 
         /// <summary>
         /// 创建命令信息实例

@@ -29,37 +29,36 @@ namespace QpTestClient
         /// </summary>
         private void InitializeComponent()
         {
-            this.gbConnectMethod = new System.Windows.Forms.GroupBox();
-            this.tcConnectMethod = new System.Windows.Forms.TabControl();
-            this.tpTcp = new System.Windows.Forms.TabPage();
-            this.nudTcpPort = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.txtTcpHost = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tpPipeline = new System.Windows.Forms.TabPage();
-            this.tpSerialPort = new System.Windows.Forms.TabPage();
             this.btnConnect = new System.Windows.Forms.Button();
+            this.tcConnectMethod = new System.Windows.Forms.TabControl();
+            this.tpSerialPort = new System.Windows.Forms.TabPage();
+            this.tpPipeline = new System.Windows.Forms.TabPage();
+            this.tpTcp = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtTcpHost = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.nudTcpPort = new System.Windows.Forms.NumericUpDown();
+            this.gbConnectMethod = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.cbCompress = new System.Windows.Forms.CheckBox();
             this.cbEncrypt = new System.Windows.Forms.CheckBox();
-            this.gbConnectMethod.SuspendLayout();
             this.tcConnectMethod.SuspendLayout();
             this.tpTcp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudTcpPort)).BeginInit();
+            this.gbConnectMethod.SuspendLayout();
             this.SuspendLayout();
             // 
-            // gbConnectMethod
+            // btnConnect
             // 
-            this.gbConnectMethod.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbConnectMethod.Controls.Add(this.tcConnectMethod);
-            this.gbConnectMethod.Location = new System.Drawing.Point(12, 12);
-            this.gbConnectMethod.Name = "gbConnectMethod";
-            this.gbConnectMethod.Size = new System.Drawing.Size(502, 247);
-            this.gbConnectMethod.TabIndex = 0;
-            this.gbConnectMethod.TabStop = false;
-            this.gbConnectMethod.Text = "连接方式";
+            this.btnConnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConnect.Location = new System.Drawing.Point(413, 324);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(94, 29);
+            this.btnConnect.TabIndex = 1;
+            this.btnConnect.Text = "连接";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // tcConnectMethod
             // 
@@ -72,6 +71,26 @@ namespace QpTestClient
             this.tcConnectMethod.SelectedIndex = 0;
             this.tcConnectMethod.Size = new System.Drawing.Size(496, 221);
             this.tcConnectMethod.TabIndex = 2;
+            // 
+            // tpSerialPort
+            // 
+            this.tpSerialPort.Location = new System.Drawing.Point(4, 29);
+            this.tpSerialPort.Name = "tpSerialPort";
+            this.tpSerialPort.Padding = new System.Windows.Forms.Padding(3);
+            this.tpSerialPort.Size = new System.Drawing.Size(488, 188);
+            this.tpSerialPort.TabIndex = 2;
+            this.tpSerialPort.Text = "串口";
+            this.tpSerialPort.UseVisualStyleBackColor = true;
+            // 
+            // tpPipeline
+            // 
+            this.tpPipeline.Location = new System.Drawing.Point(4, 29);
+            this.tpPipeline.Name = "tpPipeline";
+            this.tpPipeline.Padding = new System.Windows.Forms.Padding(3);
+            this.tpPipeline.Size = new System.Drawing.Size(488, 188);
+            this.tpPipeline.TabIndex = 1;
+            this.tpPipeline.Text = "命名管道";
+            this.tpPipeline.UseVisualStyleBackColor = true;
             // 
             // tpTcp
             // 
@@ -86,6 +105,35 @@ namespace QpTestClient
             this.tpTcp.TabIndex = 0;
             this.tpTcp.Text = "TCP";
             this.tpTcp.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(93, 58);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(43, 20);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "主机:";
+            // 
+            // txtTcpHost
+            // 
+            this.txtTcpHost.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.txtTcpHost.Location = new System.Drawing.Point(142, 55);
+            this.txtTcpHost.Name = "txtTcpHost";
+            this.txtTcpHost.Size = new System.Drawing.Size(219, 27);
+            this.txtTcpHost.TabIndex = 1;
+            this.txtTcpHost.Text = "127.0.0.1";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(93, 90);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(43, 20);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "端口:";
             // 
             // nudTcpPort
             // 
@@ -105,65 +153,17 @@ namespace QpTestClient
             0,
             0});
             // 
-            // label3
+            // gbConnectMethod
             // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(93, 90);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(43, 20);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "端口:";
-            // 
-            // txtTcpHost
-            // 
-            this.txtTcpHost.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.txtTcpHost.Location = new System.Drawing.Point(142, 55);
-            this.txtTcpHost.Name = "txtTcpHost";
-            this.txtTcpHost.Size = new System.Drawing.Size(219, 27);
-            this.txtTcpHost.TabIndex = 1;
-            this.txtTcpHost.Text = "127.0.0.1";
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(93, 58);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(43, 20);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "主机:";
-            // 
-            // tpPipeline
-            // 
-            this.tpPipeline.Location = new System.Drawing.Point(4, 29);
-            this.tpPipeline.Name = "tpPipeline";
-            this.tpPipeline.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPipeline.Size = new System.Drawing.Size(488, 188);
-            this.tpPipeline.TabIndex = 1;
-            this.tpPipeline.Text = "命名管道";
-            this.tpPipeline.UseVisualStyleBackColor = true;
-            // 
-            // tpSerialPort
-            // 
-            this.tpSerialPort.Location = new System.Drawing.Point(4, 29);
-            this.tpSerialPort.Name = "tpSerialPort";
-            this.tpSerialPort.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSerialPort.Size = new System.Drawing.Size(488, 188);
-            this.tpSerialPort.TabIndex = 2;
-            this.tpSerialPort.Text = "串口";
-            this.tpSerialPort.UseVisualStyleBackColor = true;
-            // 
-            // btnConnect
-            // 
-            this.btnConnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnect.Location = new System.Drawing.Point(413, 324);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(94, 29);
-            this.btnConnect.TabIndex = 1;
-            this.btnConnect.Text = "连接";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            this.gbConnectMethod.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbConnectMethod.Controls.Add(this.tcConnectMethod);
+            this.gbConnectMethod.Location = new System.Drawing.Point(12, 12);
+            this.gbConnectMethod.Name = "gbConnectMethod";
+            this.gbConnectMethod.Size = new System.Drawing.Size(502, 247);
+            this.gbConnectMethod.TabIndex = 0;
+            this.gbConnectMethod.TabStop = false;
+            this.gbConnectMethod.Text = "连接方式";
             // 
             // label1
             // 
@@ -220,33 +220,32 @@ namespace QpTestClient
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ConnectForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "连接";
-            this.gbConnectMethod.ResumeLayout(false);
             this.tcConnectMethod.ResumeLayout(false);
             this.tpTcp.ResumeLayout(false);
             this.tpTcp.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudTcpPort)).EndInit();
+            this.gbConnectMethod.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.GroupBox gbConnectMethod;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.TabControl tcConnectMethod;
         private System.Windows.Forms.TabPage tpTcp;
+        private System.Windows.Forms.NumericUpDown nudTcpPort;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtTcpHost;
+        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TabPage tpPipeline;
         private System.Windows.Forms.TabPage tpSerialPort;
+        private System.Windows.Forms.GroupBox gbConnectMethod;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.CheckBox cbCompress;
         private System.Windows.Forms.CheckBox cbEncrypt;
-        private System.Windows.Forms.TextBox txtTcpHost;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown nudTcpPort;
-        private System.Windows.Forms.Label label3;
     }
 }

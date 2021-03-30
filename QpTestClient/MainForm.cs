@@ -20,8 +20,11 @@ namespace QpTestClient
         {
             InitializeComponent();
             Text = Application.ProductName;
-            rootNode = tvQpInstructions.Nodes.Add("root", "全部连接", 1, 1);
+            rootNode = tvQpInstructions.Nodes.Add("root", "全部连接", 0, 0);
+            rootNode.ContextMenuStrip = cmsAllConnections;
+            cmsBtnAddConnect.Click += BtnAddConnection_Click;
             btnAddConnection.Click += BtnAddConnection_Click;
+            btnDisconnectConnection.Click += BtnDisconnectConnection_Click;
         }
 
         private void pushState(string state)
@@ -68,8 +71,8 @@ namespace QpTestClient
             var control = new PropertyGrid();
             control.SelectedObject = obj;
             control.DisabledItemForeColor = SystemColors.WindowText;
-            control.PropertySort = PropertySort.NoSort;
             control.ToolbarVisible = false;
+            control.PropertySort = PropertySort.Categorized;
             return control;
         }
 
@@ -98,14 +101,14 @@ namespace QpTestClient
             }
             else if (nodeObj is QpCommandInfo)
             {
-                var item = (QpCommandInfo)nodeObj;
-                showContent(new Label() { Text = $"[命令]Id:{item.RequestTypeName},Name:{item.Name}" });
+                showContent(getPropertyGridControl(nodeObj));
             }
         }
         private void addConnection(string connectionInfo, QpClient qpClient, QpInstruction[] qpInstructions)
         {
             var connectNode = rootNode.Nodes.Add(connectionInfo, connectionInfo, 1, 1);
             connectNode.Tag = qpClient;
+            connectNode.ContextMenuStrip = cmsConnection;
             try
             {
                 foreach (var instruction in qpInstructions)
@@ -147,6 +150,15 @@ namespace QpTestClient
             if (ret != DialogResult.OK)
                 return;
             addConnection(form.ConnectionInfo, form.QpClient, form.QpInstructions);
+        }
+
+        private void BtnDisconnectConnection_Click(object sender, EventArgs e)
+        {
+            var client =  tvQpInstructions.SelectedNode.Tag as QpClient;
+            if (client == null)
+                return;
+            client.Close();
+            tvQpInstructions.SelectedNode.Parent.Nodes.Remove(tvQpInstructions.SelectedNode);
         }
     }
 }

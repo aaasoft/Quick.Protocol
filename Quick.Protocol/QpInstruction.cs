@@ -14,13 +14,13 @@ namespace Quick.Protocol
         /// <summary>
         /// 指令集编号
         /// </summary>
-        [DisplayName("指令集编号")]
+        [DisplayName("编号")]
         [ReadOnly(true)]
         public string Id { get; set; }
         /// <summary>
         /// 指令集名称
         /// </summary>
-        [DisplayName("指令集名称")]
+        [DisplayName("名称")]
         [ReadOnly(true)]
         public string Name { get; set; }
         /// <summary>
