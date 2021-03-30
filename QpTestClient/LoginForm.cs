@@ -39,7 +39,7 @@ namespace QpTestClient
                 switch (tcConnectMethod.SelectedIndex)
                 {
                     case 0:
-                        connectInfo = $"net.tcp://{txtTcpHost.Text.Trim()}:{nudTcpPort.Value}";
+                        connectInfo = $"[TCP]{txtTcpHost.Text.Trim()}:{nudTcpPort.Value}";
                         client = new QpTcpClient(handleClientOptions(new QpTcpClientOptions()
                         {
                             Host = txtTcpHost.Text.Trim(),

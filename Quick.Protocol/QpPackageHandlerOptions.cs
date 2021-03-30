@@ -28,7 +28,7 @@ namespace Quick.Protocol
             {
                 _InstructionSet = value;
                 //必须加上QP基础指令集
-                if (Array.IndexOf(_InstructionSet, Base.Instruction) < 0)
+                if (!_InstructionSet.Any(t => t.Id == Base.Instruction.Id))
                     _InstructionSet = new QpInstruction[] { Base.Instruction }
                         .Concat(_InstructionSet)
                         .ToArray();

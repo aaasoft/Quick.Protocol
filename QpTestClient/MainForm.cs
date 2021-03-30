@@ -78,7 +78,7 @@ namespace QpTestClient
             var nodeObj = node.Tag;
             if (nodeObj == null)
             {
-                showContent(new Label() { Text = node.Name });
+                showContent(new Label() { Text = node.Text });
             }
             else if (nodeObj is QpClient)
             {
@@ -114,7 +114,7 @@ namespace QpTestClient
                 try
                 {
                     var rep = await client.SendCommand(new Quick.Protocol.Commands.GetQpInstructions.Request());
-                    rootNode.Nodes.Clear();
+                    e.Node.Nodes.Clear();
                     foreach (var item in rep.Data)
                     {
                         var instructionNode = rootNode.Nodes.Add(item.Id, item.Name, 2, 2);
@@ -136,7 +136,7 @@ namespace QpTestClient
             }
             else if (nodeObj is Quick.Protocol.Commands.GetQpInstructions.QpInstructionInfo)
             {
-                rootNode.Nodes.Clear();
+                e.Node.Nodes.Clear();
                 addLoadingChildToNode(e.Node.Nodes.Add("Notice", "通知数据包", 3, 3));
                 addLoadingChildToNode(e.Node.Nodes.Add("Command", "命令数据包", 3, 3));
             }

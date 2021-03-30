@@ -487,7 +487,8 @@ namespace Quick.Protocol
                 var ret = await readData(stream, currentRecvBuffer, 0, PACKAGE_TOTAL_LENGTH_LENGTH, token);
                 if (token.IsCancellationRequested)
                     return nullArraySegment;
-
+                if (ret == 0)
+                    throw new IOException("未读取到数据！");
                 if (ret < PACKAGE_TOTAL_LENGTH_LENGTH)
                     throw new ProtocolException(new ArraySegment<byte>(recvBuffer, 0, ret), $"包头读取错误！包头长度：{PACKAGE_TOTAL_LENGTH_LENGTH}，读取数据长度：{ret}");
 
