@@ -70,15 +70,17 @@ namespace QpTestClient
                 {
                     var instructionNode = rootNode.Nodes.Add(item.Id, item.Name, 2, 2);
                     instructionNode.Tag = item;
-                    var noticeInfoNode = instructionNode.Nodes.Add("Notice", "通知", 3, 3);
+                    var noticesNode = instructionNode.Nodes.Add("Notice", "通知", 3, 3);
                     foreach (var noticeInfo in item.NoticeInfos)
                     {
-                        noticeInfoNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 4, 4);
+                        var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 4, 4);
+                        noticeNode.Tag = noticeInfo;
                     }
-                    var commandInfoNode = instructionNode.Nodes.Add("Command", "命令", 3, 3);
+                    var commandsNode = instructionNode.Nodes.Add("Command", "命令", 3, 3);
                     foreach (var commandInfo in item.CommandInfos)
                     {
-                        commandInfoNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 5, 5);
+                        var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 5, 5);
+                        commandNode.Tag = commandInfo;
                     }
                 }
                 rootNode.ExpandAll();
@@ -98,8 +100,11 @@ namespace QpTestClient
         private void showContent(Control item)
         {
             scMain.Panel2.Controls.Clear();
-            item.Dock = DockStyle.Fill;
-            scMain.Panel2.Controls.Add(item);
+            if (item != null)
+            {
+                item.Dock = DockStyle.Fill;
+                scMain.Panel2.Controls.Add(item);
+            }
         }
 
         private void tvQpInstructions_AfterSelect(object sender, TreeViewEventArgs e)
@@ -108,22 +113,27 @@ namespace QpTestClient
             var nodeObj = node.Tag;
             if (nodeObj == null)
             {
-                showContent(new Label() { Text = node.Text });
+                showContent(null);
             }
             else if (nodeObj is QpClient)
             {
                 showContent(new Label() { Text = connectInfo });
             }
-        }
-
-        private void tvQpInstructions_AfterCollapse(object sender, TreeViewEventArgs e)
-        {
-
-        }
-
-        private void tvQpInstructions_AfterExpand(object sender, TreeViewEventArgs e)
-        {
-           
+            else if (nodeObj is QpInstruction)
+            {
+                var item = (QpInstruction)nodeObj;
+                showContent(new Label() { Text = $"[指令集]Id:{item.Id},Name:{item.Name}" });
+            }
+            else if (nodeObj is QpNoticeInfo)
+            {
+                var item = (QpNoticeInfo)nodeObj;
+                showContent(new Label() { Text = $"[通知]Id:{item.NoticeTypeName},Name:{item.Name}" });
+            }
+            else if (nodeObj is QpCommandInfo)
+            {
+                var item = (QpCommandInfo)nodeObj;
+                showContent(new Label() { Text = $"[命令]Id:{item.RequestTypeName},Name:{item.Name}" });
+            }
         }
     }
 }

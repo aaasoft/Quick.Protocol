@@ -10,8 +10,10 @@ namespace Quick.Protocol
     /// <summary>
     /// 通知信息
     /// </summary>
-    public class NoticeInfo
+    public class QpNoticeInfo
     {
+        private Type noticeType;
+
         /// <summary>
         /// 名称
         /// </summary>
@@ -20,26 +22,26 @@ namespace Quick.Protocol
         /// 通知类型名称
         /// </summary>
         public string NoticeTypeName { get; set; }
-        /// <summary>
-        /// 通知类型
-        /// </summary>
-        [JsonIgnore]
-        public Type NoticeType { get; set; }
-
-        public NoticeInfo() { }
-        public NoticeInfo(string name, Type noticeType)
+        
+        public QpNoticeInfo() { }
+        public QpNoticeInfo(string name, Type noticeType)
         {
             Name = name;
-            NoticeType = noticeType;
+            this.noticeType = noticeType;
             NoticeTypeName = noticeType.FullName;
         }
+
+        /// <summary>
+        /// 获取通知类型
+        /// </summary>
+        public Type GetNoticeType() => noticeType ?? Type.GetType(NoticeTypeName);
 
         /// <summary>
         /// 创建通知信息实例
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static NoticeInfo Create<T>()
+        public static QpNoticeInfo Create<T>()
             where T : class, new()
         {
             return Create(typeof(T));
@@ -50,7 +52,7 @@ namespace Quick.Protocol
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static NoticeInfo Create(Type type)
+        public static QpNoticeInfo Create(Type type)
         {
             var name = type.FullName;
 
@@ -58,7 +60,7 @@ namespace Quick.Protocol
             if (attr != null)
                 name = attr.DisplayName;
 
-            return new NoticeInfo(name, type);
+            return new QpNoticeInfo(name, type);
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace Quick.Protocol
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        public static NoticeInfo Create(object instance)
+        public static QpNoticeInfo Create(object instance)
         {
             return Create(instance.GetType());
         }

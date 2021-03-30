@@ -10,17 +10,17 @@ namespace Quick.Protocol
         {
             Id = typeof(Base).FullName,
             Name = "基础指令集",
-            NoticeInfos = new NoticeInfo[]
+            NoticeInfos = new QpNoticeInfo[]
             {
-                NoticeInfo.Create(new Notices.PrivateNotice())
+                QpNoticeInfo.Create(new Notices.PrivateNotice())
             },
-            CommandInfos = new CommandInfo[]
+            CommandInfos = new QpCommandInfo[]
             {
-                CommandInfo.Create(new Commands.Connect.Request()),
-                CommandInfo.Create(new Commands.Authenticate.Request()),
-                CommandInfo.Create(new Commands.HandShake.Request()),
-                CommandInfo.Create(new Commands.PrivateCommand.Request()),
-                CommandInfo.Create(new Commands.GetQpInstructions.Request()),
+                QpCommandInfo.Create(new Commands.Connect.Request()),
+                QpCommandInfo.Create(new Commands.Authenticate.Request()),
+                QpCommandInfo.Create(new Commands.HandShake.Request()),
+                QpCommandInfo.Create(new Commands.PrivateCommand.Request()),
+                QpCommandInfo.Create(new Commands.GetQpInstructions.Request()),
             }
         };
     }

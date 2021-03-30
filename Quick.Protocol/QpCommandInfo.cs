@@ -10,7 +10,7 @@ namespace Quick.Protocol
     /// <summary>
     /// 命令信息
     /// </summary>
-    public class CommandInfo
+    public class QpCommandInfo
     {
         /// <summary>
         /// 名称
@@ -24,33 +24,38 @@ namespace Quick.Protocol
         /// 命令响应类型名称
         /// </summary>
         public string ResponseTypeName { get; set; }
-        /// <summary>
-        /// 命令请求类型
-        /// </summary>
-        [JsonIgnore]
-        public Type RequestType { get; set; }
-        /// <summary>
-        /// 命令响应类型
-        /// </summary>
-        [JsonIgnore]
-        public Type ResponseType { get; set; }
+        
+        private Type requestType;
 
-        public CommandInfo() { }
-        public CommandInfo(string name, Type requestType, Type responseType)
+        private Type responseType;
+
+        public QpCommandInfo() { }
+        public QpCommandInfo(string name, Type requestType, Type responseType)
         {
             Name = name;
-            RequestType = requestType;
+            this.requestType = requestType;
             RequestTypeName = requestType.FullName;
-            ResponseType = responseType;
+            this.responseType = responseType;
             ResponseTypeName = responseType.FullName;
         }
+
+        /// <summary>
+        /// 获取命令请求类型
+        /// </summary>
+        /// <returns></returns>
+        public Type GetRequestType() => requestType ?? Type.GetType(RequestTypeName);
+        /// <summary>
+        /// 获取命令响应类型
+        /// </summary>
+        /// <returns></returns>
+        public Type GetResponseType()=>responseType ?? Type.GetType(ResponseTypeName);
 
         /// <summary>
         /// 创建命令信息实例
         /// </summary>
         /// <typeparam name="TResponse"></typeparam>
         /// <returns></returns>
-        public static CommandInfo Create<TResponse>(IQpCommandRequest<TResponse> request)
+        public static QpCommandInfo Create<TResponse>(IQpCommandRequest<TResponse> request)
             where TResponse : class, new()
         {
             var requestType = request.GetType();
@@ -60,7 +65,7 @@ namespace Quick.Protocol
             if (attr != null)
                 name = attr.DisplayName;
 
-            return new CommandInfo(name, requestType, typeof(TResponse));
+            return new QpCommandInfo(name, requestType, typeof(TResponse));
         }
     }
 }

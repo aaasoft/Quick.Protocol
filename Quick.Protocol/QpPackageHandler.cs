@@ -104,7 +104,7 @@ namespace Quick.Protocol
                 {
                     foreach (var item in instructionSet.NoticeInfos)
                     {
-                        noticeTypeDict[item.NoticeTypeName] = item.NoticeType;
+                        noticeTypeDict[item.NoticeTypeName] = item.GetNoticeType();
                     }
                 }
             }

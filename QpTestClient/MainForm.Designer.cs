@@ -105,8 +105,6 @@ namespace QpTestClient
             this.tvQpInstructions.SelectedImageIndex = 0;
             this.tvQpInstructions.Size = new System.Drawing.Size(277, 486);
             this.tvQpInstructions.TabIndex = 0;
-            this.tvQpInstructions.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.tvQpInstructions_AfterCollapse);
-            this.tvQpInstructions.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.tvQpInstructions_AfterExpand);
             this.tvQpInstructions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvQpInstructions_AfterSelect);
             // 
             // ilQpInstructions

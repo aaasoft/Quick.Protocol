@@ -48,9 +48,11 @@ namespace Quick.Protocol
                 {
                     foreach (var item in instructionSet.CommandInfos)
                     {
-                        commandRequestTypeDict[item.RequestTypeName] = item.RequestType;
-                        commandResponseTypeDict[item.ResponseTypeName] = item.ResponseType;
-                        commandRequestTypeResponseTypeDict[item.RequestType] = item.ResponseType;
+                        var requestType = item.GetRequestType();
+                        var responseType = item.GetResponseType();
+                        commandRequestTypeDict[item.RequestTypeName] = requestType;
+                        commandResponseTypeDict[item.ResponseTypeName] = responseType;
+                        commandRequestTypeResponseTypeDict[requestType] = responseType;
                     }
                 }
             }
