@@ -14,14 +14,12 @@ namespace Quick.Protocol
         /// </summary>
         [Category("高级")]
         [DisplayName("心跳间隔")]
-        [ReadOnly(true)]
         public int HeartBeatInterval => InternalTransportTimeout / 3;
         /// <summary>
         /// 密码
         /// </summary>
         [Category("常用")]
         [DisplayName("密码")]
-        [ReadOnly(true)]
         [PasswordPropertyText(true)]
         public string Password { get; set; }
 
@@ -62,7 +60,6 @@ namespace Quick.Protocol
         /// </summary>
         [Category("高级")]
         [DisplayName("最大包大小")]
-        [ReadOnly(true)]
         public int MaxPackageSize { get; set; } = 10 * 1024 * 1024;
 
         public virtual void Check()

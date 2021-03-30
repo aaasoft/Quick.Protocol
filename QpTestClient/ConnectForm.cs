@@ -19,18 +19,13 @@ namespace QpTestClient
         public QpClient QpClient { get; private set; }
         public QpInstruction[] QpInstructions { get; private set; }
 
+        private Func<string> getConnectionInfoFunc = null;
+        private Func<QpClient> getQpClientFunc = null;
+
         public ConnectForm()
         {
             InitializeComponent();
-        }
-
-        private T handleClientOptions<T>(T clientOptions)
-            where T : QpClientOptions
-        {
-            clientOptions.EnableCompress = cbCompress.Checked;
-            clientOptions.EnableEncrypt = cbEncrypt.Checked;
-            clientOptions.Password = txtPassword.Text;
-            return clientOptions;
+            cbConnectType.SelectedIndex = 0;
         }
 
         private async void btnConnect_Click(object sender, EventArgs e)
@@ -38,29 +33,14 @@ namespace QpTestClient
             btnConnect.Enabled = false;
             try
             {
-                switch (tcConnectMethod.SelectedIndex)
-                {
-                    case 0:
-                        var tcpHost = txtTcpHost.Text.Trim();
-                        var tcpPort = Convert.ToInt32(nudTcpPort.Value);
-                        ConnectionInfo = $"[TCP]{tcpHost}:{tcpPort}";
-                        QpClient = new QpTcpClient(handleClientOptions(new QpTcpClientOptions()
-                        {
-                            Host = tcpHost,
-                            Port = tcpPort
-                        }));
-                        break;
-                    case 1:
-                        {
-
-                            break;
-                        }
-                }
+                ConnectionInfo = getConnectionInfoFunc();
+                QpClient = getQpClientFunc();
                 await QpClient.ConnectAsync();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"连接失败，原因：{ExceptionUtils.GetExceptionMessage(ex)}", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
             finally
             {
@@ -77,6 +57,7 @@ namespace QpTestClient
             catch (Exception ex)
             {
                 MessageBox.Show("获取指令集时出错，原因：" + ExceptionUtils.GetExceptionMessage(ex), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
             finally
             {
@@ -84,6 +65,37 @@ namespace QpTestClient
             }
             //关闭窗口
             Close();
+        }
+
+        private void cbConnectType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            QpClientOptions options = null;
+            getConnectionInfoFunc = null;
+            getQpClientFunc = null;
+
+            switch (cbConnectType.SelectedIndex)
+            {
+                //TCP
+                case 0:
+                    var tcpOptions = new QpTcpClientOptions()
+                    {
+                        Host = "127.0.0.1",
+                        Port = 3011,
+                        Password = "HelloQP"
+                    };
+                    getConnectionInfoFunc = () => $"[TCP]{tcpOptions.Host}:{tcpOptions.Port}";
+                    getQpClientFunc = () => new QpTcpClient(tcpOptions);
+                    options = tcpOptions;
+                    break;
+                //命名管道
+                case 1:
+                    break;
+                //串口
+                case 2:
+                    break;
+            }
+            pgOptions.SelectedObject = options;
+            btnConnect.Enabled = pgOptions.SelectedObject != null;
         }
     }
 }

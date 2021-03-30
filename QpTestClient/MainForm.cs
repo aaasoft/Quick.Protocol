@@ -109,6 +109,10 @@ namespace QpTestClient
             var connectNode = rootNode.Nodes.Add(connectionInfo, connectionInfo, 1, 1);
             connectNode.Tag = qpClient;
             connectNode.ContextMenuStrip = cmsConnection;
+            qpClient.Disconnected += (sender, e) =>
+              {
+                  Invoke(new Action(() => connectNode.Text += "[已断开]"));
+              };
             try
             {
                 foreach (var instruction in qpInstructions)

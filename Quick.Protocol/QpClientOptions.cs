@@ -11,14 +11,12 @@ namespace Quick.Protocol
         /// 连接超时(默认为5秒)
         /// </summary>
         [DisplayName("连接超时")]
-        [ReadOnly(true)]
         [Category("高级")]
         public int ConnectionTimeout { get; set; } = 5 * 1000;
         /// <summary>
         /// 传输超时(默认15秒)
         /// </summary>
         [DisplayName("传输超时")]
-        [ReadOnly(true)]
         [Category("高级")]
         public int TransportTimeout
         {
@@ -30,14 +28,12 @@ namespace Quick.Protocol
         /// 启用加密(默认为false)
         /// </summary>
         [DisplayName("启用加密")]
-        [ReadOnly(true)]
         [Category("高级")]
         public bool EnableEncrypt { get; set; }
         /// <summary>
         /// 启用压缩(默认为false)
         /// </summary>
         [DisplayName("启用压缩")]
-        [ReadOnly(true)]
         [Category("高级")]
         public bool EnableCompress { get; set; }
 
