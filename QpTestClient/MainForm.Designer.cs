@@ -38,10 +38,12 @@ namespace QpTestClient
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.tvQpInstructions = new System.Windows.Forms.TreeView();
             this.ilQpInstructions = new System.Windows.Forms.ImageList(this.components);
+            this.gbNodeInfo = new System.Windows.Forms.GroupBox();
             this.tsMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
+            this.scMain.Panel2.SuspendLayout();
             this.scMain.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -91,6 +93,10 @@ namespace QpTestClient
             // scMain.Panel1
             // 
             this.scMain.Panel1.Controls.Add(this.tvQpInstructions);
+            // 
+            // scMain.Panel2
+            // 
+            this.scMain.Panel2.Controls.Add(this.gbNodeInfo);
             this.scMain.Size = new System.Drawing.Size(833, 486);
             this.scMain.SplitterDistance = 277;
             this.scMain.TabIndex = 5;
@@ -98,6 +104,7 @@ namespace QpTestClient
             // tvQpInstructions
             // 
             this.tvQpInstructions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvQpInstructions.HideSelection = false;
             this.tvQpInstructions.ImageIndex = 0;
             this.tvQpInstructions.ImageList = this.ilQpInstructions;
             this.tvQpInstructions.Location = new System.Drawing.Point(0, 0);
@@ -119,6 +126,15 @@ namespace QpTestClient
             this.ilQpInstructions.Images.SetKeyName(4, "Notice.png");
             this.ilQpInstructions.Images.SetKeyName(5, "Command.png");
             // 
+            // gbNodeInfo
+            // 
+            this.gbNodeInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbNodeInfo.Location = new System.Drawing.Point(0, 0);
+            this.gbNodeInfo.Name = "gbNodeInfo";
+            this.gbNodeInfo.Size = new System.Drawing.Size(552, 486);
+            this.gbNodeInfo.TabIndex = 0;
+            this.gbNodeInfo.TabStop = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -137,6 +153,7 @@ namespace QpTestClient
             this.ssMain.ResumeLayout(false);
             this.ssMain.PerformLayout();
             this.scMain.Panel1.ResumeLayout(false);
+            this.scMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).EndInit();
             this.scMain.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -153,6 +170,7 @@ namespace QpTestClient
         private System.Windows.Forms.TreeView tvQpInstructions;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
         private System.Windows.Forms.ImageList ilQpInstructions;
+        private System.Windows.Forms.GroupBox gbNodeInfo;
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Quick.Protocol.Tcp
@@ -9,18 +10,26 @@ namespace Quick.Protocol.Tcp
         /// <summary>
         /// 主机
         /// </summary>
+        [DisplayName("主机")]
+        [ReadOnly(true)]
         public string Host { get; set; }
         /// <summary>
         /// 端口
         /// </summary>
+        [DisplayName("端口")]
+        [ReadOnly(true)]
         public int Port { get; set; }
         /// <summary>
         /// 本地主机
         /// </summary>
+        [DisplayName("本地主机")]
+        [ReadOnly(true)]
         public string LocalHost { get; set; }
         /// <summary>
         /// 本地端口
         /// </summary>
+        [DisplayName("本地端口")]
+        [ReadOnly(true)]
         public int LocalPort { get; set; } = 0;
 
         public override void Check()

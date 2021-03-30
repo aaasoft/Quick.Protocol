@@ -14,13 +14,11 @@ namespace QpTestClient
 {
     public partial class MainForm : Form
     {
-        private string connectInfo;
         private QpClient client;
         private TreeNode rootNode;
 
-        public MainForm(string connectInfo, QpClient client)
+        public MainForm(QpClient client)
         {
-            this.connectInfo = connectInfo;
             this.client = client;
             InitializeComponent();
             Text = Application.ProductName;
@@ -55,7 +53,7 @@ namespace QpTestClient
 
         private async void MainForm_Load(object sender, EventArgs e)
         {
-            rootNode = tvQpInstructions.Nodes.Add("root", connectInfo, 1, 1);
+            rootNode = tvQpInstructions.Nodes.Add("root", "连接", 1, 1);
             rootNode.Tag = client;
             rootNode.Nodes.Add("loading", "加载中...", 0, 0);
             rootNode.ExpandAll();
@@ -99,35 +97,45 @@ namespace QpTestClient
 
         private void showContent(Control item)
         {
-            scMain.Panel2.Controls.Clear();
+            gbNodeInfo.Controls.Clear();
             if (item != null)
             {
                 item.Dock = DockStyle.Fill;
-                scMain.Panel2.Controls.Add(item);
+                gbNodeInfo.Controls.Add(item);
             }
+        }
+
+        private Control getPropertyGridControl(object obj)
+        {
+            var control = new PropertyGrid();
+            control.SelectedObject = obj;
+            control.DisabledItemForeColor = SystemColors.WindowText;
+            control.PropertySort = PropertySort.NoSort;
+            control.ToolbarVisible = false;
+            return control;
         }
 
         private void tvQpInstructions_AfterSelect(object sender, TreeViewEventArgs e)
         {
             var node = e.Node;
             var nodeObj = node.Tag;
+
+            gbNodeInfo.Text = node.FullPath;
             if (nodeObj == null)
             {
                 showContent(null);
             }
             else if (nodeObj is QpClient)
             {
-                showContent(new Label() { Text = connectInfo });
+                showContent(getPropertyGridControl(client.Options));
             }
             else if (nodeObj is QpInstruction)
             {
-                var item = (QpInstruction)nodeObj;
-                showContent(new Label() { Text = $"[指令集]Id:{item.Id},Name:{item.Name}" });
+                showContent(getPropertyGridControl(nodeObj));
             }
             else if (nodeObj is QpNoticeInfo)
             {
-                var item = (QpNoticeInfo)nodeObj;
-                showContent(new Label() { Text = $"[通知]Id:{item.NoticeTypeName},Name:{item.Name}" });
+                showContent(getPropertyGridControl(nodeObj));
             }
             else if (nodeObj is QpCommandInfo)
             {

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -11,16 +12,20 @@ namespace Quick.Protocol
         /// <summary>
         /// 心跳间隔，为发送或接收超时中小的值的三分一
         /// </summary>
+        [DisplayName("心跳间隔")]
+        [ReadOnly(true)]
         public int HeartBeatInterval => InternalTransportTimeout / 3;
         /// <summary>
         /// 密码
         /// </summary>
+        [Browsable(false)]
         public string Password { get; set; }
 
         private QpInstruction[] _InstructionSet = new QpInstruction[] { Base.Instruction };
         /// <summary>
         /// 支持的指令集
         /// </summary>
+        [Browsable(false)]
         public QpInstruction[] InstructionSet
         {
             get { return _InstructionSet; }
@@ -51,6 +56,8 @@ namespace Quick.Protocol
         /// <summary>
         /// 最大包大小(默认为：10MB)
         /// </summary>
+        [DisplayName("最大包大小")]
+        [ReadOnly(true)]
         public int MaxPackageSize { get; set; } = 10 * 1024 * 1024;
 
         public virtual void Check()

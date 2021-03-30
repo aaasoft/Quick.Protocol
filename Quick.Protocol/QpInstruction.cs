@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Quick.Protocol
@@ -13,18 +14,24 @@ namespace Quick.Protocol
         /// <summary>
         /// 指令集编号
         /// </summary>
+        [DisplayName("指令集编号")]
+        [ReadOnly(true)]
         public string Id { get; set; }
         /// <summary>
         /// 指令集名称
         /// </summary>
+        [DisplayName("指令集名称")]
+        [ReadOnly(true)]
         public string Name { get; set; }
         /// <summary>
         /// 包含的通知信息数组
-        /// </summary>        
+        /// </summary>
+        [Browsable(false)]
         public QpNoticeInfo[] NoticeInfos { get; set; }
         /// <summary>
         /// 包含的命令信息数组
         /// </summary>
+        [Browsable(false)]
         public QpCommandInfo[] CommandInfos { get; set; }
     }
 }

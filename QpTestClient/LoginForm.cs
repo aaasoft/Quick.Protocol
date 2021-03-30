@@ -34,12 +34,10 @@ namespace QpTestClient
         {
             try
             {
-                string connectInfo = null;
                 QpClient client = null;
                 switch (tcConnectMethod.SelectedIndex)
                 {
                     case 0:
-                        connectInfo = $"[TCP]{txtTcpHost.Text.Trim()}:{nudTcpPort.Value}";
                         client = new QpTcpClient(handleClientOptions(new QpTcpClientOptions()
                         {
                             Host = txtTcpHost.Text.Trim(),
@@ -55,7 +53,7 @@ namespace QpTestClient
                 this.Enabled = false;
                 await client.ConnectAsync();
                 this.Hide();
-                new MainForm(connectInfo, client).ShowDialog();
+                new MainForm(client).ShowDialog();
                 this.Show();
             }
             catch (Exception ex)

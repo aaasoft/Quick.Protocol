@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quick.Protocol.WebSocket.Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "Test\WebSocket\WebApplication1\WebApplication1.csproj", "{39497212-8529-4418-9D6E-ED9FC546699D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QpTestClient", "QpTestClient\QpTestClient.csproj", "{371967E0-628F-41F7-8983-BA4088CEC9D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QpTestClient", "QpTestClient\QpTestClient.csproj", "{371967E0-628F-41F7-8983-BA4088CEC9D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
