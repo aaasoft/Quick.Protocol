@@ -32,13 +32,14 @@ namespace QpTestClient
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tsMain = new System.Windows.Forms.ToolStrip();
-            this.btnFile = new System.Windows.Forms.ToolStripButton();
             this.ssMain = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.tvQpInstructions = new System.Windows.Forms.TreeView();
             this.ilQpInstructions = new System.Windows.Forms.ImageList(this.components);
             this.gbNodeInfo = new System.Windows.Forms.GroupBox();
+            this.btnFile = new System.Windows.Forms.ToolStripDropDownButton();
+            this.btnAddConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
@@ -57,15 +58,6 @@ namespace QpTestClient
             this.tsMain.Size = new System.Drawing.Size(833, 27);
             this.tsMain.TabIndex = 2;
             this.tsMain.Text = "toolStrip1";
-            // 
-            // btnFile
-            // 
-            this.btnFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
-            this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnFile.Name = "btnFile";
-            this.btnFile.Size = new System.Drawing.Size(61, 24);
-            this.btnFile.Text = "文件(&F)";
             // 
             // ssMain
             // 
@@ -135,6 +127,23 @@ namespace QpTestClient
             this.gbNodeInfo.TabIndex = 0;
             this.gbNodeInfo.TabStop = false;
             // 
+            // btnFile
+            // 
+            this.btnFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnAddConnection});
+            this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
+            this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnFile.Name = "btnFile";
+            this.btnFile.Size = new System.Drawing.Size(71, 24);
+            this.btnFile.Text = "文件(&F)";
+            // 
+            // btnAddConnection
+            // 
+            this.btnAddConnection.Name = "btnAddConnection";
+            this.btnAddConnection.Size = new System.Drawing.Size(185, 26);
+            this.btnAddConnection.Text = "添加连接(&A)...";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -147,7 +156,6 @@ namespace QpTestClient
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.tsMain.ResumeLayout(false);
             this.tsMain.PerformLayout();
             this.ssMain.ResumeLayout(false);
@@ -164,13 +172,14 @@ namespace QpTestClient
         #endregion
 
         private System.Windows.Forms.ToolStrip tsMain;
-        private System.Windows.Forms.ToolStripButton btnFile;
         private System.Windows.Forms.StatusStrip ssMain;
         private System.Windows.Forms.SplitContainer scMain;
         private System.Windows.Forms.TreeView tvQpInstructions;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
         private System.Windows.Forms.ImageList ilQpInstructions;
         private System.Windows.Forms.GroupBox gbNodeInfo;
+        private System.Windows.Forms.ToolStripDropDownButton btnFile;
+        private System.Windows.Forms.ToolStripMenuItem btnAddConnection;
     }
 }
 

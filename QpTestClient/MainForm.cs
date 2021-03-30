@@ -14,16 +14,14 @@ namespace QpTestClient
 {
     public partial class MainForm : Form
     {
-        private QpClient client;
         private TreeNode rootNode;
 
-        public MainForm(QpClient client)
+        public MainForm()
         {
-            this.client = client;
             InitializeComponent();
             Text = Application.ProductName;
-
-            client.Disconnected += Client_Disconnected;
+            rootNode = tvQpInstructions.Nodes.Add("root", "全部连接", 1, 1);
+            btnAddConnection.Click += BtnAddConnection_Click;
         }
 
         private void pushState(string state)
@@ -47,51 +45,11 @@ namespace QpTestClient
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            client.Close();
-            client = null;
-        }
-
-        private async void MainForm_Load(object sender, EventArgs e)
-        {
-            rootNode = tvQpInstructions.Nodes.Add("root", "连接", 1, 1);
-            rootNode.Tag = client;
-            rootNode.Nodes.Add("loading", "加载中...", 0, 0);
-            rootNode.ExpandAll();
-
-            pushState("正在刷新指令集中...");
-            tvQpInstructions.Enabled = false;
-            try
+            foreach(TreeNode connectNode in rootNode.Nodes)
             {
-                var rep = await client.SendCommand(new Quick.Protocol.Commands.GetQpInstructions.Request());
-                rootNode.Nodes.Clear();
-                foreach (var item in rep.Data)
-                {
-                    var instructionNode = rootNode.Nodes.Add(item.Id, item.Name, 2, 2);
-                    instructionNode.Tag = item;
-                    var noticesNode = instructionNode.Nodes.Add("Notice", "通知", 3, 3);
-                    foreach (var noticeInfo in item.NoticeInfos)
-                    {
-                        var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 4, 4);
-                        noticeNode.Tag = noticeInfo;
-                    }
-                    var commandsNode = instructionNode.Nodes.Add("Command", "命令", 3, 3);
-                    foreach (var commandInfo in item.CommandInfos)
-                    {
-                        var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 5, 5);
-                        commandNode.Tag = commandInfo;
-                    }
-                }
-                rootNode.ExpandAll();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("刷新指令集时出错，原因：" + ExceptionUtils.GetExceptionMessage(ex), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.Close();
-            }
-            finally
-            {
-                pushState_Ready();
-                tvQpInstructions.Enabled = true;
+                var client = (QpClient)connectNode.Tag;
+                client.Close();
+                client = null;
             }
         }
 
@@ -120,14 +78,15 @@ namespace QpTestClient
             var node = e.Node;
             var nodeObj = node.Tag;
 
-            gbNodeInfo.Text = node.FullPath;
+            gbNodeInfo.Text = node.Text;
             if (nodeObj == null)
             {
                 showContent(null);
             }
             else if (nodeObj is QpClient)
             {
-                showContent(getPropertyGridControl(client.Options));
+                var qpClient = (QpClient)nodeObj;
+                showContent(getPropertyGridControl(qpClient.Options));
             }
             else if (nodeObj is QpInstruction)
             {
@@ -142,6 +101,52 @@ namespace QpTestClient
                 var item = (QpCommandInfo)nodeObj;
                 showContent(new Label() { Text = $"[命令]Id:{item.RequestTypeName},Name:{item.Name}" });
             }
+        }
+        private void addConnection(string connectionInfo, QpClient qpClient, QpInstruction[] qpInstructions)
+        {
+            var connectNode = rootNode.Nodes.Add(connectionInfo, connectionInfo, 1, 1);
+            connectNode.Tag = qpClient;
+            try
+            {
+                foreach (var instruction in qpInstructions)
+                {
+                    var instructionNode = connectNode.Nodes.Add(instruction.Id, instruction.Name, 2, 2);
+                    instructionNode.Tag = instruction;
+                    var noticesNode = instructionNode.Nodes.Add("Notice", "通知", 3, 3);
+                    foreach (var noticeInfo in instruction.NoticeInfos)
+                    {
+                        var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 4, 4);
+                        noticeNode.Tag = noticeInfo;
+                    }
+                    var commandsNode = instructionNode.Nodes.Add("Command", "命令", 3, 3);
+                    foreach (var commandInfo in instruction.CommandInfos)
+                    {
+                        var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 5, 5);
+                        commandNode.Tag = commandInfo;
+                    }
+                }
+                connectNode.ExpandAll();
+                rootNode.Expand();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("刷新指令集时出错，原因：" + ExceptionUtils.GetExceptionMessage(ex), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.Close();
+            }
+            finally
+            {
+                pushState_Ready();
+                tvQpInstructions.Enabled = true;
+            }
+        }
+
+        private void BtnAddConnection_Click(object sender, EventArgs e)
+        {
+            var form = new ConnectForm();
+            var ret = form.ShowDialog();
+            if (ret != DialogResult.OK)
+                return;
+            addConnection(form.ConnectionInfo, form.QpClient, form.QpInstructions);
         }
     }
 }

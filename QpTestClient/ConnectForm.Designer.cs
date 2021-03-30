@@ -1,7 +1,7 @@
 ﻿
 namespace QpTestClient
 {
-    partial class LoginForm
+    partial class ConnectForm
     {
         /// <summary>
         /// Required designer variable.
@@ -205,7 +205,7 @@ namespace QpTestClient
             this.cbEncrypt.Text = "加密";
             this.cbEncrypt.UseVisualStyleBackColor = true;
             // 
-            // LoginForm
+            // ConnectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -219,9 +219,9 @@ namespace QpTestClient
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "LoginForm";
+            this.Name = "ConnectForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "登录 ";
+            this.Text = "连接";
             this.gbConnectMethod.ResumeLayout(false);
             this.tcConnectMethod.ResumeLayout(false);
             this.tpTcp.ResumeLayout(false);
