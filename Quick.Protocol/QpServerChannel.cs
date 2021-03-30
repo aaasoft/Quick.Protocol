@@ -3,6 +3,7 @@ using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,15 +70,13 @@ namespace Quick.Protocol
                 });
                 throw new CommandException(1, "认证失败！");
             }
-
-            
             Auchenticated?.Invoke(this, EventArgs.Empty);
             return new Commands.Authenticate.Response();
         }
 
         private Commands.HandShake.Response handShake(Commands.HandShake.Request request)
         {
-            options.CommandExecuterManagerList = authedCommandExecuterManagerList;
+            options.CommandExecuterManagerList.AddRange(authedCommandExecuterManagerList);
             options.InternalCompress = request.EnableCompress;
             options.InternalEncrypt = request.EnableEncrypt;
             options.InternalTransportTimeout = request.TransportTimeout;
@@ -91,12 +90,25 @@ namespace Quick.Protocol
             return new Commands.HandShake.Response();
         }
 
+        private Commands.GetQpInstructions.Response getQpInstructions(Commands.GetQpInstructions.Request request)
+        {
+            return new Commands.GetQpInstructions.Response()
+            {
+                Data = options.InstructionSet.Select(t => new Commands.GetQpInstructions.QpInstructionInfo()
+                {
+                    Id = t.Id,
+                    Name = t.Name
+                }).ToArray()
+            };
+        }
+
         public void Start()
         {
             var connectAndAuthCommandExecuterManager = new CommandExecuterManager();
-            connectAndAuthCommandExecuterManager.Register<Commands.Connect.Request, Commands.Connect.Response>(connect);
-            connectAndAuthCommandExecuterManager.Register<Commands.Authenticate.Request, Commands.Authenticate.Response>(authenticate);
-            connectAndAuthCommandExecuterManager.Register<Commands.HandShake.Request, Commands.HandShake.Response>(handShake);
+            connectAndAuthCommandExecuterManager.Register(new Commands.Connect.Request(), connect);
+            connectAndAuthCommandExecuterManager.Register(new Commands.Authenticate.Request(), authenticate);
+            connectAndAuthCommandExecuterManager.Register(new Commands.HandShake.Request(), handShake);
+            connectAndAuthCommandExecuterManager.Register(new Commands.GetQpInstructions.Request(), getQpInstructions);
             options.CommandExecuterManagerList = new List<CommandExecuterManager>() { connectAndAuthCommandExecuterManager };
         }
 

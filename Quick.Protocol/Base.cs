@@ -19,7 +19,8 @@ namespace Quick.Protocol
                 CommandInfo.Create(new Commands.Connect.Request()),
                 CommandInfo.Create(new Commands.Authenticate.Request()),
                 CommandInfo.Create(new Commands.HandShake.Request()),
-                CommandInfo.Create(new Commands.PrivateCommand.Request())
+                CommandInfo.Create(new Commands.PrivateCommand.Request()),
+                CommandInfo.Create(new Commands.GetQpInstructions.Request()),
             }
         };
     }

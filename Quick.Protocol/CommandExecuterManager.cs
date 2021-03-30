@@ -27,6 +27,14 @@ namespace Quick.Protocol
             Register(cmdRequestTypeName, commandExecuter);
         }
 
+        public void Register<TCmdRequest, TCmdResponse>(TCmdRequest request, Func<TCmdRequest, TCmdResponse> commandExecuter)
+            where TCmdRequest : class, IQpCommandRequest<TCmdResponse>, new()
+            where TCmdResponse : class, new()
+        {
+            var cmdRequestTypeName = request.GetType().FullName;
+            Register(cmdRequestTypeName, commandExecuter);
+        }
+
         /// <summary>
         /// 执行命令
         /// </summary>
