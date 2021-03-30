@@ -53,16 +53,46 @@ namespace QpTestClient
             client = null;
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
             rootNode = tvQpInstructions.Nodes.Add("root", connectInfo, 1, 1);
             rootNode.Tag = client;
-            addLoadingChildToNode(rootNode);
-        }
+            rootNode.Nodes.Add("loading", "加载中...", 0, 0);
+            rootNode.ExpandAll();
 
-        private void addLoadingChildToNode(TreeNode node)
-        {
-            node.Nodes.Add("loading", "加载中...", 0, 0);
+            pushState("正在刷新指令集中...");
+            tvQpInstructions.Enabled = false;
+            try
+            {
+                var rep = await client.SendCommand(new Quick.Protocol.Commands.GetQpInstructions.Request());
+                rootNode.Nodes.Clear();
+                foreach (var item in rep.Data)
+                {
+                    var instructionNode = rootNode.Nodes.Add(item.Id, item.Name, 2, 2);
+                    instructionNode.Tag = item;
+                    var noticeInfoNode = instructionNode.Nodes.Add("Notice", "通知", 3, 3);
+                    foreach (var noticeInfo in item.NoticeInfos)
+                    {
+                        noticeInfoNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 4, 4);
+                    }
+                    var commandInfoNode = instructionNode.Nodes.Add("Command", "命令", 3, 3);
+                    foreach (var commandInfo in item.CommandInfos)
+                    {
+                        commandInfoNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 5, 5);
+                    }
+                }
+                rootNode.ExpandAll();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("刷新指令集时出错，原因：" + ExceptionUtils.GetExceptionMessage(ex), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.Close();
+            }
+            finally
+            {
+                pushState_Ready();
+                tvQpInstructions.Enabled = true;
+            }
         }
 
         private void showContent(Control item)
@@ -88,58 +118,12 @@ namespace QpTestClient
 
         private void tvQpInstructions_AfterCollapse(object sender, TreeViewEventArgs e)
         {
-            //收起后，清空子节点
-            e.Node.Nodes.Clear();
+
         }
 
-        private async void tvQpInstructions_AfterExpand(object sender, TreeViewEventArgs e)
+        private void tvQpInstructions_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            var node = e.Node;
-            var nodeObj = node.Tag;
-            if (nodeObj == null)
-            {
-                if (node.Name == "Notice")
-                {
-
-                }
-                else if (node.Name == "Command")
-                {
-
-                }
-            }
-            else if (nodeObj is QpClient)
-            {
-                pushState("正在刷新指令集中...");
-                tvQpInstructions.Enabled = false;
-                try
-                {
-                    var rep = await client.SendCommand(new Quick.Protocol.Commands.GetQpInstructions.Request());
-                    e.Node.Nodes.Clear();
-                    foreach (var item in rep.Data)
-                    {
-                        var instructionNode = rootNode.Nodes.Add(item.Id, item.Name, 2, 2);
-                        instructionNode.Tag = item;
-                        addLoadingChildToNode(instructionNode);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("刷新指令集时出错，原因：" + ExceptionUtils.GetExceptionMessage(ex), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    e.Node.Collapse();
-                    addLoadingChildToNode(e.Node);
-                }
-                finally
-                {
-                    pushState_Ready();
-                    tvQpInstructions.Enabled = true;
-                }
-            }
-            else if (nodeObj is Quick.Protocol.Commands.GetQpInstructions.QpInstructionInfo)
-            {
-                e.Node.Nodes.Clear();
-                addLoadingChildToNode(e.Node.Nodes.Add("Notice", "通知数据包", 3, 3));
-                addLoadingChildToNode(e.Node.Nodes.Add("Command", "命令数据包", 3, 3));
-            }
+           
         }
     }
 }

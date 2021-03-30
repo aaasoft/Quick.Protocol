@@ -12,6 +12,6 @@ namespace Quick.Protocol.Commands.GetQpInstructions
         /// <summary>
         /// 指令集数据
         /// </summary>
-        public QpInstructionInfo[] Data { get; set; }
+        public QpInstruction[] Data { get; set; }
     }
 }

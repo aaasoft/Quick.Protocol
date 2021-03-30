@@ -94,11 +94,7 @@ namespace Quick.Protocol
         {
             return new Commands.GetQpInstructions.Response()
             {
-                Data = options.InstructionSet.Select(t => new Commands.GetQpInstructions.QpInstructionInfo()
-                {
-                    Id = t.Id,
-                    Name = t.Name
-                }).ToArray()
+                Data = options.InstructionSet
             };
         }
 

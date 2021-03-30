@@ -19,11 +19,11 @@ namespace Quick.Protocol
         /// <summary>
         /// 命令请求类型名称
         /// </summary>
-        public string RequestTypeName => RequestType.FullName;
+        public string RequestTypeName { get; set; }
         /// <summary>
         /// 命令响应类型名称
         /// </summary>
-        public string ResponseTypeName => ResponseType.FullName;
+        public string ResponseTypeName { get; set; }
         /// <summary>
         /// 命令请求类型
         /// </summary>
@@ -40,9 +40,10 @@ namespace Quick.Protocol
         {
             Name = name;
             RequestType = requestType;
+            RequestTypeName = requestType.FullName;
             ResponseType = responseType;
+            ResponseTypeName = responseType.FullName;
         }
-
 
         /// <summary>
         /// 创建命令信息实例

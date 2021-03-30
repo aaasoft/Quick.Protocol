@@ -19,7 +19,7 @@ namespace Quick.Protocol
         /// <summary>
         /// 通知类型名称
         /// </summary>
-        public string NoticeTypeName => NoticeType.FullName;
+        public string NoticeTypeName { get; set; }
         /// <summary>
         /// 通知类型
         /// </summary>
@@ -31,6 +31,7 @@ namespace Quick.Protocol
         {
             Name = name;
             NoticeType = noticeType;
+            NoticeTypeName = noticeType.FullName;
         }
 
         /// <summary>

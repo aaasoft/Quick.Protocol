@@ -20,13 +20,11 @@ namespace Quick.Protocol
         public string Name { get; set; }
         /// <summary>
         /// 包含的通知信息数组
-        /// </summary>
-        [JsonIgnore]
+        /// </summary>        
         public NoticeInfo[] NoticeInfos { get; set; }
         /// <summary>
         /// 包含的命令信息数组
         /// </summary>
-        [JsonIgnore]
         public CommandInfo[] CommandInfos { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Quick.Protocol.Commands.HandShake
 {
+    [DisplayName("握手")]
     public class Request : IQpCommandRequest<Response>
     {
         /// <summary>
