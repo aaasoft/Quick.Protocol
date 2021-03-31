@@ -12,12 +12,8 @@ namespace Quick.Protocol.Commands.Connect
     public class Request : IQpCommandRequest<Response>
     {
         /// <summary>
-        /// 协议版本
+        /// 指令集编号数组
         /// </summary>
-        public string ProtocolVersion { get; set; } = "2";
-        /// <summary>
-        /// 需要的指令集编号数组
-        /// </summary>
-        public string[] NeededInstructionIds { get; set; }
+        public string[] InstructionIds { get; set; }
     }
 }

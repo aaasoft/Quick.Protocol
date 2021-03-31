@@ -29,6 +29,7 @@ namespace QpTestClient.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CommandInfoControl));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpBasic = new System.Windows.Forms.TabPage();
             this.txtBasic = new System.Windows.Forms.TextBox();
@@ -37,15 +38,27 @@ namespace QpTestClient.Controls
             this.tpRequestSchemaSample = new System.Windows.Forms.TabPage();
             this.txtRequestSchemaSample = new System.Windows.Forms.TextBox();
             this.tpResponseSchema = new System.Windows.Forms.TabPage();
-            this.tpResponseSchemaSample = new System.Windows.Forms.TabPage();
             this.txtResponseSchema = new System.Windows.Forms.TextBox();
+            this.tpResponseSchemaSample = new System.Windows.Forms.TabPage();
             this.txtResponseSchemaSample = new System.Windows.Forms.TextBox();
+            this.tpTest = new System.Windows.Forms.TabPage();
+            this.tsTest = new System.Windows.Forms.ToolStrip();
+            this.btnExecuteTest = new System.Windows.Forms.ToolStripButton();
+            this.scTest = new System.Windows.Forms.SplitContainer();
+            this.txtTestRequest = new System.Windows.Forms.TextBox();
+            this.txtTestResponse = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tpBasic.SuspendLayout();
             this.tpRequestSchema.SuspendLayout();
             this.tpRequestSchemaSample.SuspendLayout();
             this.tpResponseSchema.SuspendLayout();
             this.tpResponseSchemaSample.SuspendLayout();
+            this.tpTest.SuspendLayout();
+            this.tsTest.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.scTest)).BeginInit();
+            this.scTest.Panel1.SuspendLayout();
+            this.scTest.Panel2.SuspendLayout();
+            this.scTest.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -55,6 +68,7 @@ namespace QpTestClient.Controls
             this.tabControl1.Controls.Add(this.tpRequestSchemaSample);
             this.tabControl1.Controls.Add(this.tpResponseSchema);
             this.tabControl1.Controls.Add(this.tpResponseSchemaSample);
+            this.tabControl1.Controls.Add(this.tpTest);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -139,17 +153,6 @@ namespace QpTestClient.Controls
             this.tpResponseSchema.Text = "响应定义";
             this.tpResponseSchema.UseVisualStyleBackColor = true;
             // 
-            // tpResponseSchemaSample
-            // 
-            this.tpResponseSchemaSample.Controls.Add(this.txtResponseSchemaSample);
-            this.tpResponseSchemaSample.Location = new System.Drawing.Point(4, 29);
-            this.tpResponseSchemaSample.Name = "tpResponseSchemaSample";
-            this.tpResponseSchemaSample.Padding = new System.Windows.Forms.Padding(3);
-            this.tpResponseSchemaSample.Size = new System.Drawing.Size(424, 404);
-            this.tpResponseSchemaSample.TabIndex = 4;
-            this.tpResponseSchemaSample.Text = "响应示例";
-            this.tpResponseSchemaSample.UseVisualStyleBackColor = true;
-            // 
             // txtResponseSchema
             // 
             this.txtResponseSchema.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -161,6 +164,17 @@ namespace QpTestClient.Controls
             this.txtResponseSchema.Size = new System.Drawing.Size(418, 398);
             this.txtResponseSchema.TabIndex = 1;
             // 
+            // tpResponseSchemaSample
+            // 
+            this.tpResponseSchemaSample.Controls.Add(this.txtResponseSchemaSample);
+            this.tpResponseSchemaSample.Location = new System.Drawing.Point(4, 29);
+            this.tpResponseSchemaSample.Name = "tpResponseSchemaSample";
+            this.tpResponseSchemaSample.Padding = new System.Windows.Forms.Padding(3);
+            this.tpResponseSchemaSample.Size = new System.Drawing.Size(424, 404);
+            this.tpResponseSchemaSample.TabIndex = 4;
+            this.tpResponseSchemaSample.Text = "响应示例";
+            this.tpResponseSchemaSample.UseVisualStyleBackColor = true;
+            // 
             // txtResponseSchemaSample
             // 
             this.txtResponseSchemaSample.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -171,6 +185,77 @@ namespace QpTestClient.Controls
             this.txtResponseSchemaSample.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtResponseSchemaSample.Size = new System.Drawing.Size(418, 398);
             this.txtResponseSchemaSample.TabIndex = 1;
+            // 
+            // tpTest
+            // 
+            this.tpTest.Controls.Add(this.scTest);
+            this.tpTest.Controls.Add(this.tsTest);
+            this.tpTest.Location = new System.Drawing.Point(4, 29);
+            this.tpTest.Name = "tpTest";
+            this.tpTest.Padding = new System.Windows.Forms.Padding(3);
+            this.tpTest.Size = new System.Drawing.Size(424, 404);
+            this.tpTest.TabIndex = 5;
+            this.tpTest.Text = "测试";
+            this.tpTest.UseVisualStyleBackColor = true;
+            // 
+            // tsTest
+            // 
+            this.tsTest.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.tsTest.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnExecuteTest});
+            this.tsTest.Location = new System.Drawing.Point(3, 3);
+            this.tsTest.Name = "tsTest";
+            this.tsTest.Size = new System.Drawing.Size(418, 27);
+            this.tsTest.TabIndex = 0;
+            this.tsTest.Text = "toolStrip1";
+            // 
+            // btnExecuteTest
+            // 
+            this.btnExecuteTest.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnExecuteTest.Image = ((System.Drawing.Image)(resources.GetObject("btnExecuteTest.Image")));
+            this.btnExecuteTest.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnExecuteTest.Name = "btnExecuteTest";
+            this.btnExecuteTest.Size = new System.Drawing.Size(43, 24);
+            this.btnExecuteTest.Text = "执行";
+            // 
+            // scTest
+            // 
+            this.scTest.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scTest.Location = new System.Drawing.Point(3, 30);
+            this.scTest.Name = "scTest";
+            this.scTest.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // scTest.pnlRequest
+            // 
+            this.scTest.Panel1.Controls.Add(this.txtTestRequest);
+            // 
+            // scTest.pnlResponse
+            // 
+            this.scTest.Panel2.Controls.Add(this.txtTestResponse);
+            this.scTest.Size = new System.Drawing.Size(418, 371);
+            this.scTest.SplitterDistance = 180;
+            this.scTest.TabIndex = 1;
+            // 
+            // txtTestRequest
+            // 
+            this.txtTestRequest.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtTestRequest.Location = new System.Drawing.Point(0, 0);
+            this.txtTestRequest.Multiline = true;
+            this.txtTestRequest.Name = "txtTestRequest";
+            this.txtTestRequest.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtTestRequest.Size = new System.Drawing.Size(418, 180);
+            this.txtTestRequest.TabIndex = 2;
+            // 
+            // txtTestResponse
+            // 
+            this.txtTestResponse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtTestResponse.Location = new System.Drawing.Point(0, 0);
+            this.txtTestResponse.Multiline = true;
+            this.txtTestResponse.Name = "txtTestResponse";
+            this.txtTestResponse.ReadOnly = true;
+            this.txtTestResponse.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtTestResponse.Size = new System.Drawing.Size(418, 187);
+            this.txtTestResponse.TabIndex = 2;
             // 
             // CommandInfoControl
             // 
@@ -190,6 +275,16 @@ namespace QpTestClient.Controls
             this.tpResponseSchema.PerformLayout();
             this.tpResponseSchemaSample.ResumeLayout(false);
             this.tpResponseSchemaSample.PerformLayout();
+            this.tpTest.ResumeLayout(false);
+            this.tpTest.PerformLayout();
+            this.tsTest.ResumeLayout(false);
+            this.tsTest.PerformLayout();
+            this.scTest.Panel1.ResumeLayout(false);
+            this.scTest.Panel1.PerformLayout();
+            this.scTest.Panel2.ResumeLayout(false);
+            this.scTest.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.scTest)).EndInit();
+            this.scTest.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -207,5 +302,11 @@ namespace QpTestClient.Controls
         private System.Windows.Forms.TabPage tpResponseSchemaSample;
         private System.Windows.Forms.TextBox txtResponseSchema;
         private System.Windows.Forms.TextBox txtResponseSchemaSample;
+        private System.Windows.Forms.TabPage tpTest;
+        private System.Windows.Forms.ToolStrip tsTest;
+        private System.Windows.Forms.ToolStripButton btnExecuteTest;
+        private System.Windows.Forms.SplitContainer scTest;
+        private System.Windows.Forms.TextBox txtTestRequest;
+        private System.Windows.Forms.TextBox txtTestResponse;
     }
 }

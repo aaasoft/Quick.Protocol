@@ -10,13 +10,13 @@ namespace Quick.Protocol
         public string Id { get; private set; }
         private CommandException commandException;
         private bool isTimeout = false;
-        private object response;
-        public Task<object> ResponseTask { get; private set; }
+        private CommandResponsePackageReceivedEventArgs response;
+        public Task<CommandResponsePackageReceivedEventArgs> ResponseTask { get; private set; }
 
         public CommandContext(string typeName)
         {
             Id = Guid.NewGuid().ToString("N").ToLower();
-            ResponseTask = new Task<object>(() =>
+            ResponseTask = new Task<CommandResponsePackageReceivedEventArgs>(() =>
             {
                 if (isTimeout)
                     throw new TimeoutException($"Command[Id:{Id},Type:{typeName}] is timeout.");
@@ -35,11 +35,17 @@ namespace Quick.Protocol
                 ResponseTask.Start();
         }
 
-        public virtual void SetResponse(object responsePackage)
+        public virtual void SetResponse(string responseTypeName,string responseContent)
         {
             if (isTimeout)
                 return;
-            this.response = responsePackage;
+
+            this.response = new CommandResponsePackageReceivedEventArgs()
+            {
+                TypeName = responseTypeName,
+                Content = responseContent
+            };
+            
             if (ResponseTask.Status == TaskStatus.Created)
                 ResponseTask.Start();
         }

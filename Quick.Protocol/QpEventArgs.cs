@@ -126,8 +126,8 @@ namespace Quick.Protocol
         /// </summary>
         public string TypeName { get; set; }
         /// <summary>
-        /// 内容模型
+        /// 内容
         /// </summary>
-        public object ContentModel { get; set; }
+        public string Content { get; set; }
     }
 }

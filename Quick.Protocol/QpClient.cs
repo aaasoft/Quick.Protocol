@@ -49,7 +49,7 @@ namespace Quick.Protocol
 
             var repConnect = await SendCommand(new Commands.Connect.Request()
             {
-                NeededInstructionIds = Options.InstructionSet.Select(t => t.Id).ToArray()
+                InstructionIds = Options.InstructionSet.Select(t => t.Id).ToArray()
             });
 
             //如果服务端使用的缓存大小与客户端不同，则设置缓存大小为与服务端同样的大小

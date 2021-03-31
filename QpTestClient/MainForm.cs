@@ -102,9 +102,21 @@ namespace QpTestClient
             }
             else if (nodeObj is QpCommandInfo)
             {
-                showContent(new Controls.CommandInfoControl((QpCommandInfo)nodeObj));
+                QpClient client = null;
+                var currentNode = e.Node;
+                while (true)
+                {
+                    if (currentNode.Tag is QpClient)
+                    {
+                        client = (QpClient)currentNode.Tag;
+                        break;
+                    }
+                    currentNode = currentNode.Parent;
+                }
+                showContent(new Controls.CommandInfoControl(client, (QpCommandInfo)nodeObj));
             }
         }
+
         private void addConnection(string connectionInfo, QpClient qpClient, QpInstruction[] qpInstructions)
         {
             var connectNode = rootNode.Nodes.Add(connectionInfo, connectionInfo, 1, 1);

@@ -57,7 +57,39 @@ namespace Quick.Protocol
                 }
             }
         }
-        
+
+        public async Task<CommandResponsePackageReceivedEventArgs> SendCommand(string requestTypeName, string requestContent, int timeout = 30 * 1000, Action afterSendHandler = null)
+        {
+            var commandContext = new CommandContext(requestTypeName);
+            commandDict.TryAdd(commandContext.Id, commandContext);
+
+            if (timeout <= 0)
+            {
+                SendCommandRequestPackage(commandContext.Id, requestTypeName, requestContent, afterSendHandler);
+                return await commandContext.ResponseTask;
+            }
+            //如果设置了超时
+            else
+            {
+                try
+                {
+                    await TaskUtils.TaskWait(Task.Run(() => SendCommandRequestPackage(commandContext.Id, requestTypeName, requestContent, afterSendHandler)), timeout);
+                }
+                catch
+                {
+                    if (LogUtils.LogCommand)
+                        logger.LogTrace("{0}: [Send-CommandRequestPackage-Timeout]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandContext.Id, requestTypeName, LogUtils.LogContent ? requestContent : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+
+                    if (commandContext.ResponseTask.Status == TaskStatus.Created)
+                    {
+                        commandContext.Timeout();
+                        commandDict.TryRemove(commandContext.Id, out _);
+                    }
+                }
+                return await await TaskUtils.TaskWait(commandContext.ResponseTask, timeout);
+            }
+        }
+
         public async Task<TCmdResponse> SendCommand<TCmdResponse>(IQpCommandRequest<TCmdResponse> request, int timeout = 30 * 1000, Action afterSendHandler = null)
         {
             var requestType = request.GetType();
@@ -67,10 +99,11 @@ namespace Quick.Protocol
             var commandContext = new CommandContext(typeName);
             commandDict.TryAdd(commandContext.Id, commandContext);
 
+            CommandResponsePackageReceivedEventArgs ret = null;
             if (timeout <= 0)
             {
                 SendCommandRequestPackage(commandContext.Id, typeName, requestContent, afterSendHandler);
-                return (TCmdResponse)await commandContext.ResponseTask;
+                ret = await commandContext.ResponseTask;
             }
             //如果设置了超时
             else
@@ -90,8 +123,9 @@ namespace Quick.Protocol
                         commandDict.TryRemove(commandContext.Id, out _);
                     }
                 }
-                return (TCmdResponse)await await TaskUtils.TaskWait(commandContext.ResponseTask, timeout);
+                ret = await await TaskUtils.TaskWait(commandContext.ResponseTask, timeout);
             }
+            return JsonConvert.DeserializeObject<TCmdResponse>(ret.Content);
         }
 
         protected override void OnCommandRequestReceived(string commandId, string typeName, string content)
@@ -150,15 +184,7 @@ namespace Quick.Protocol
                 Message = message,
                 TypeName = typeName,
                 Content = content
-            });            
-            object contentModel = null;
-            if (code == 0)
-            {
-                //如果在字典中未找到此类型名称，则直接返回
-                if (!commandResponseTypeDict.ContainsKey(typeName))
-                    return;
-                contentModel = JsonConvert.DeserializeObject(content, commandResponseTypeDict[typeName]);
-            }
+            });
 
             CommandResponsePackageReceived?.Invoke(this, new CommandResponsePackageReceivedEventArgs()
             {
@@ -166,14 +192,14 @@ namespace Quick.Protocol
                 Code = code,
                 Message = message,
                 TypeName = typeName,
-                ContentModel = contentModel
+                Content = content
             });
             //设置指令响应
             CommandContext commandContext;
             if (!commandDict.TryRemove(commandId, out commandContext))
                 return;
             if (code == 0)
-                commandContext.SetResponse(contentModel);
+                commandContext.SetResponse(typeName, content);
             else
                 commandContext.SetResponse(new CommandException(code, message));
         }

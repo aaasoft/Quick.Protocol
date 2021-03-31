@@ -52,6 +52,15 @@ namespace Quick.Protocol
 
         private Commands.Connect.Response connect(Commands.Connect.Request request)
         {
+            if (request.InstructionIds != null)
+            {
+                foreach (var id in request.InstructionIds.Where(t => !string.IsNullOrEmpty(t)))
+                {
+                    if (!options.InstructionSet.Any(t => t.Id == id))
+                        throw new CommandException(255, $"Unknown instruction: {id}");
+                }
+            }
+
             question = Guid.NewGuid().ToString("N");
             return new Commands.Connect.Response()
             {
