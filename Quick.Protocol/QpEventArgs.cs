@@ -105,9 +105,24 @@ namespace Quick.Protocol
     }
 
     /// <summary>
+    /// 命令响应中的类型名称和内容
+    /// </summary>
+    public class CommandResponseTypeNameAndContent : QpEventArgs
+    {
+        /// <summary>
+        /// 类型名称
+        /// </summary>
+        public string TypeName { get; set; }
+        /// <summary>
+        /// 内容
+        /// </summary>
+        public string Content { get; set; }
+    }
+
+    /// <summary>
     /// 收到命令响应数据包事件参数
     /// </summary>
-    public class CommandResponsePackageReceivedEventArgs : QpEventArgs
+    public class CommandResponsePackageReceivedEventArgs : CommandResponseTypeNameAndContent
     {
         /// <summary>
         /// 命令编号
@@ -120,14 +135,6 @@ namespace Quick.Protocol
         /// <summary>
         /// 错误消息
         /// </summary>
-        public string Message { get; set; }
-        /// <summary>
-        /// 类型名称
-        /// </summary>
-        public string TypeName { get; set; }
-        /// <summary>
-        /// 内容
-        /// </summary>
-        public string Content { get; set; }
+        public string Message { get; set; }        
     }
 }

@@ -58,7 +58,7 @@ namespace Quick.Protocol
             }
         }
 
-        public async Task<CommandResponsePackageReceivedEventArgs> SendCommand(string requestTypeName, string requestContent, int timeout = 30 * 1000, Action afterSendHandler = null)
+        public async Task<CommandResponseTypeNameAndContent> SendCommand(string requestTypeName, string requestContent, int timeout = 30 * 1000, Action afterSendHandler = null)
         {
             var commandContext = new CommandContext(requestTypeName);
             commandDict.TryAdd(commandContext.Id, commandContext);
@@ -99,7 +99,7 @@ namespace Quick.Protocol
             var commandContext = new CommandContext(typeName);
             commandDict.TryAdd(commandContext.Id, commandContext);
 
-            CommandResponsePackageReceivedEventArgs ret = null;
+            CommandResponseTypeNameAndContent ret = null;
             if (timeout <= 0)
             {
                 SendCommandRequestPackage(commandContext.Id, typeName, requestContent, afterSendHandler);

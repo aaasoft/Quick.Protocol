@@ -29,7 +29,6 @@ namespace QpTestClient.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CommandInfoControl));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpBasic = new System.Windows.Forms.TabPage();
             this.txtBasic = new System.Windows.Forms.TextBox();
@@ -42,11 +41,11 @@ namespace QpTestClient.Controls
             this.tpResponseSchemaSample = new System.Windows.Forms.TabPage();
             this.txtResponseSchemaSample = new System.Windows.Forms.TextBox();
             this.tpTest = new System.Windows.Forms.TabPage();
-            this.tsTest = new System.Windows.Forms.ToolStrip();
-            this.btnExecuteTest = new System.Windows.Forms.ToolStripButton();
             this.scTest = new System.Windows.Forms.SplitContainer();
             this.txtTestRequest = new System.Windows.Forms.TextBox();
             this.txtTestResponse = new System.Windows.Forms.TextBox();
+            this.tsTest = new System.Windows.Forms.ToolStrip();
+            this.btnExecuteTest = new System.Windows.Forms.ToolStripButton();
             this.tabControl1.SuspendLayout();
             this.tpBasic.SuspendLayout();
             this.tpRequestSchema.SuspendLayout();
@@ -54,11 +53,11 @@ namespace QpTestClient.Controls
             this.tpResponseSchema.SuspendLayout();
             this.tpResponseSchemaSample.SuspendLayout();
             this.tpTest.SuspendLayout();
-            this.tsTest.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scTest)).BeginInit();
             this.scTest.Panel1.SuspendLayout();
             this.scTest.Panel2.SuspendLayout();
             this.scTest.SuspendLayout();
+            this.tsTest.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -198,26 +197,6 @@ namespace QpTestClient.Controls
             this.tpTest.Text = "测试";
             this.tpTest.UseVisualStyleBackColor = true;
             // 
-            // tsTest
-            // 
-            this.tsTest.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.tsTest.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnExecuteTest});
-            this.tsTest.Location = new System.Drawing.Point(3, 3);
-            this.tsTest.Name = "tsTest";
-            this.tsTest.Size = new System.Drawing.Size(418, 27);
-            this.tsTest.TabIndex = 0;
-            this.tsTest.Text = "toolStrip1";
-            // 
-            // btnExecuteTest
-            // 
-            this.btnExecuteTest.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnExecuteTest.Image = ((System.Drawing.Image)(resources.GetObject("btnExecuteTest.Image")));
-            this.btnExecuteTest.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnExecuteTest.Name = "btnExecuteTest";
-            this.btnExecuteTest.Size = new System.Drawing.Size(43, 24);
-            this.btnExecuteTest.Text = "执行";
-            // 
             // scTest
             // 
             this.scTest.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -225,11 +204,11 @@ namespace QpTestClient.Controls
             this.scTest.Name = "scTest";
             this.scTest.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // scTest.pnlRequest
+            // scTest.Panel1
             // 
             this.scTest.Panel1.Controls.Add(this.txtTestRequest);
             // 
-            // scTest.pnlResponse
+            // scTest.Panel2
             // 
             this.scTest.Panel2.Controls.Add(this.txtTestResponse);
             this.scTest.Size = new System.Drawing.Size(418, 371);
@@ -257,6 +236,25 @@ namespace QpTestClient.Controls
             this.txtTestResponse.Size = new System.Drawing.Size(418, 187);
             this.txtTestResponse.TabIndex = 2;
             // 
+            // tsTest
+            // 
+            this.tsTest.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.tsTest.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnExecuteTest});
+            this.tsTest.Location = new System.Drawing.Point(3, 3);
+            this.tsTest.Name = "tsTest";
+            this.tsTest.Size = new System.Drawing.Size(418, 27);
+            this.tsTest.TabIndex = 0;
+            this.tsTest.Text = "toolStrip1";
+            // 
+            // btnExecuteTest
+            // 
+            this.btnExecuteTest.Image = global::QpTestClient.Properties.Resources._009_HighPriority_32x32_72;
+            this.btnExecuteTest.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnExecuteTest.Name = "btnExecuteTest";
+            this.btnExecuteTest.Size = new System.Drawing.Size(63, 24);
+            this.btnExecuteTest.Text = "执行";
+            // 
             // CommandInfoControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -277,14 +275,14 @@ namespace QpTestClient.Controls
             this.tpResponseSchemaSample.PerformLayout();
             this.tpTest.ResumeLayout(false);
             this.tpTest.PerformLayout();
-            this.tsTest.ResumeLayout(false);
-            this.tsTest.PerformLayout();
             this.scTest.Panel1.ResumeLayout(false);
             this.scTest.Panel1.PerformLayout();
             this.scTest.Panel2.ResumeLayout(false);
             this.scTest.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scTest)).EndInit();
             this.scTest.ResumeLayout(false);
+            this.tsTest.ResumeLayout(false);
+            this.tsTest.PerformLayout();
             this.ResumeLayout(false);
 
         }
