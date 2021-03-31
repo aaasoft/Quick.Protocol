@@ -6,6 +6,7 @@ using System.Text;
 namespace Quick.Protocol.Notices
 {
     [DisplayName("私有通知")]
+    [Description("用于传递私有协议通知。")]
     public class PrivateNotice
     {
         /// <summary>

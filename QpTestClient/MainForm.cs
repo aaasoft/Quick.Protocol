@@ -98,11 +98,11 @@ namespace QpTestClient
             }
             else if (nodeObj is QpNoticeInfo)
             {
-                showContent(getPropertyGridControl(nodeObj));
+                showContent(new Controls.NoticeInfoControl((QpNoticeInfo)nodeObj));
             }
             else if (nodeObj is QpCommandInfo)
             {
-                showContent(getPropertyGridControl(nodeObj));
+                showContent(new Controls.CommandInfoControl((QpCommandInfo)nodeObj));
             }
         }
         private void addConnection(string connectionInfo, QpClient qpClient, QpInstruction[] qpInstructions)
