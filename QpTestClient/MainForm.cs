@@ -68,11 +68,12 @@ namespace QpTestClient
 
         private Control getPropertyGridControl(object obj)
         {
+            TypeDescriptor.AddAttributes(obj, new Attribute[] { new ReadOnlyAttribute(true) });
+
             var control = new PropertyGrid();
             control.SelectedObject = obj;
-            control.DisabledItemForeColor = SystemColors.WindowText;
             control.ToolbarVisible = false;
-            control.PropertySort = PropertySort.Categorized;
+            control.PropertySort = PropertySort.NoSort;
             return control;
         }
 

@@ -1,4 +1,5 @@
 ﻿using Quick.Protocol;
+using Quick.Protocol.Pipeline;
 using Quick.Protocol.Tcp;
 using Quick.Protocol.Utils;
 using System;
@@ -89,6 +90,14 @@ namespace QpTestClient
                     break;
                 //命名管道
                 case 1:
+                    var pipelineOptions = new QpPipelineClientOptions()
+                    {
+                        PipeName = "Quick.Protocol",
+                        Password = "HelloQP"
+                    };
+                    getConnectionInfoFunc = () => $"[命名管道]{pipelineOptions.ServerName}\\{pipelineOptions.PipeName}";
+                    getQpClientFunc = () => new QpPipelineClient(pipelineOptions);
+                    options = pipelineOptions;
                     break;
                 //串口
                 case 2:

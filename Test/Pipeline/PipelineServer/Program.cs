@@ -8,11 +8,11 @@ namespace PipelineServer
         static void Main(string[] args)
         {
             Quick.Protocol.Utils.LogUtils.AddConsole();
-            Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            //Quick.Protocol.Utils.LogUtils.LogPackage = true;
             //Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
-            Quick.Protocol.Utils.LogUtils.LogNotice = true;
+            //Quick.Protocol.Utils.LogUtils.LogNotice = true;
             //Quick.Protocol.Utils.LogUtils.LogSplit = true;
-            Quick.Protocol.Utils.LogUtils.LogContent = true;
+            //Quick.Protocol.Utils.LogUtils.LogContent = true;
 
             var commandExecuterManager = new CommandExecuterManager();
             commandExecuterManager.Register<Quick.Protocol.Commands.PrivateCommand.Request, Quick.Protocol.Commands.PrivateCommand.Response>(req =>

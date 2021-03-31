@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Quick.Protocol.Pipeline
 {
     public class QpPipelineClientOptions : QpClientOptions
     {
+        [Category("常用")]
+        [DisplayName("服务器名称")]
         public string ServerName { get; set; } = ".";
+
+        [Category("常用")]
+        [DisplayName("管道名称")]
         public string PipeName { get; set; }
 
         public override void Check()
