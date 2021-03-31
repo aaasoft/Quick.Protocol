@@ -151,19 +151,19 @@ namespace Quick.Protocol
                 ContentModel = contentModel
             });
 
-            if (options.CommandExecuterManagerList == null || options.CommandExecuterManagerList.Count == 0)
-                return;
             try
             {
-                foreach (var commandExecuterManager in options.CommandExecuterManagerList)
-                {
-                    if (commandExecuterManager.CanExecuteCommand(typeName))
+                if (options.CommandExecuterManagerList != null)
+                    foreach (var commandExecuterManager in options.CommandExecuterManagerList)
                     {
-                        var responseModel = commandExecuterManager.ExecuteCommand(typeName, contentModel);
-                        SendCommandResponsePackage(commandId, 0, null, cmdResponseType.FullName, JsonConvert.SerializeObject(responseModel));
-                        break;
+                        if (commandExecuterManager.CanExecuteCommand(typeName))
+                        {
+                            var responseModel = commandExecuterManager.ExecuteCommand(typeName, contentModel);
+                            SendCommandResponsePackage(commandId, 0, null, cmdResponseType.FullName, JsonConvert.SerializeObject(responseModel));
+                            break;
+                        }
                     }
-                }
+                throw new CommandException(255, $"No CommandExecuter for RequestType:{typeName}");
             }
             catch (CommandException ex)
             {

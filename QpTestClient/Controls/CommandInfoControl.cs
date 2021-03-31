@@ -59,7 +59,7 @@ namespace QpTestClient.Controls
                 txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 执行失败{Environment.NewLine}");
                 txtTestResponse.AppendText($"错误信息{Environment.NewLine}");
                 txtTestResponse.AppendText($"--------------------------{Environment.NewLine}");
-                txtTestResponse.AppendText(ExceptionUtils.GetExceptionString(ex));
+                txtTestResponse.AppendText(ExceptionUtils.GetExceptionMessage(ex));
             }
             btnExecuteTest.Enabled = true;
         }
