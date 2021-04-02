@@ -1,4 +1,4 @@
-﻿using Quick.Protocol.Core;
+﻿using Quick.Protocol;
 using System;
 using System.Net;
 
@@ -37,13 +37,6 @@ namespace WebSocketServer
         private static void Server_ChannelConnected(object sender, QpServerChannel e)
         {
             Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.ChannelName}]已连接!");
-            e.CommandReceived += E_CommandReceived;
-        }
-
-        private static void E_CommandReceived(object sender, Quick.Protocol.Commands.ICommand e)
-        {
-            QpServerChannel channel = (QpServerChannel)sender;
-            Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{channel.ChannelName}]收到指令[{e.GetType().FullName}]!");
         }
 
         private static void Server_ChannelDisconnected(object sender, QpServerChannel e)

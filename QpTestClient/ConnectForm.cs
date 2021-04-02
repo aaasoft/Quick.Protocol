@@ -1,7 +1,9 @@
 ﻿using Quick.Protocol;
 using Quick.Protocol.Pipeline;
+using Quick.Protocol.SerialPort;
 using Quick.Protocol.Tcp;
 using Quick.Protocol.Utils;
+using Quick.Protocol.WebSocket.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -101,6 +103,25 @@ namespace QpTestClient
                     break;
                 //串口
                 case 2:
+                    var serialPortOptions = new QpSerialPortClientOptions()
+                    {
+                        PortName = "COM1",
+                        Password = "HelloQP"
+                    };
+                    getConnectionInfoFunc = () => $"[串口]{serialPortOptions.PortName}";
+                    getQpClientFunc = () => new QpSerialPortClient(serialPortOptions);
+                    options = serialPortOptions;
+                    break;
+                //WebSocket
+                case 3:
+                    var webSocketOptions = new QpWebSocketClientOptions()
+                    {
+                        Url = "ws://127.0.0.1:3011/qp_test",
+                        Password = "HelloQP"
+                    };
+                    getConnectionInfoFunc = () => $"[WebSocket]{webSocketOptions.Url}";
+                    getQpClientFunc = () => new QpWebSocketClient(webSocketOptions);
+                    options = webSocketOptions;
                     break;
             }
             pgOptions.SelectedObject = options;

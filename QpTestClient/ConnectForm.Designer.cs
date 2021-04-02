@@ -55,7 +55,8 @@ namespace QpTestClient
             this.cbConnectType.Items.AddRange(new object[] {
             "TCP",
             "命名管道",
-            "串口"});
+            "串口",
+            "WebSocket"});
             this.cbConnectType.Location = new System.Drawing.Point(101, 12);
             this.cbConnectType.Name = "cbConnectType";
             this.cbConnectType.Size = new System.Drawing.Size(310, 28);
