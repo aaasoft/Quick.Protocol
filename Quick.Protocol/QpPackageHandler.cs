@@ -522,12 +522,19 @@ namespace Quick.Protocol
                     //如果设置了加密，则先解密
                     if (options.InternalEncrypt)
                     {
-                        var retBuffer = dec.TransformFinalBlock(currentPackageBuffer.Array, PACKAGE_TOTAL_LENGTH_LENGTH + currentPackageBuffer.Offset, currentPackageBuffer.Count - PACKAGE_TOTAL_LENGTH_LENGTH);
-                        var currentBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
-                        packageTotalLength = PACKAGE_TOTAL_LENGTH_LENGTH + retBuffer.Length;
-                        writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
-                        Array.Copy(retBuffer, 0, currentBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, retBuffer.Length);
-                        currentPackageBuffer = new ArraySegment<byte>(currentBuffer, 0, packageTotalLength);
+                        try
+                        {
+                            var retBuffer = dec.TransformFinalBlock(currentPackageBuffer.Array, PACKAGE_TOTAL_LENGTH_LENGTH + currentPackageBuffer.Offset, currentPackageBuffer.Count - PACKAGE_TOTAL_LENGTH_LENGTH);
+                            var currentBuffer = getFreeBuffer(currentPackageBuffer.Array, recvBuffer, recvBuffer2);
+                            packageTotalLength = PACKAGE_TOTAL_LENGTH_LENGTH + retBuffer.Length;
+                            writePackageTotalLengthToBuffer(currentBuffer, 0, packageTotalLength);
+                            Array.Copy(retBuffer, 0, currentBuffer, PACKAGE_TOTAL_LENGTH_LENGTH, retBuffer.Length);
+                            currentPackageBuffer = new ArraySegment<byte>(currentBuffer, 0, packageTotalLength);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
                     }
                     //如果设置了压缩，则先解压
                     if (options.InternalCompress)

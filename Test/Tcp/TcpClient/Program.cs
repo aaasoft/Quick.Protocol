@@ -6,11 +6,12 @@ namespace TcpClient
     {
         static void Main(string[] args)
         {
-            //Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
-            //Quick.Protocol.Utils.LogUtils.LogPackage = true;
-            Quick.Protocol.Utils.LogUtils.LogContent = true;
-            Quick.Protocol.Utils.LogUtils.LogCommand = true;
             Quick.Protocol.Utils.LogUtils.AddConsole();
+            //Quick.Protocol.Utils.LogUtils.LogPackage = true;
+            Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
+            //Quick.Protocol.Utils.LogUtils.LogNotice = true;
+            //Quick.Protocol.Utils.LogUtils.LogSplit = true;
+            //Quick.Protocol.Utils.LogUtils.LogContent = true;
 
             var client = new Quick.Protocol.Tcp.QpTcpClient(new Quick.Protocol.Tcp.QpTcpClientOptions()
             {
