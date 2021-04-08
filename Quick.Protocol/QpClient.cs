@@ -103,6 +103,7 @@ namespace Quick.Protocol
 
         protected virtual void Disconnect()
         {
+            InitQpPackageHandler_Stream(null);
         }
 
         /// <summary>

@@ -112,6 +112,9 @@ namespace Quick.Protocol
 
         protected void InitQpPackageHandler_Stream(Stream stream)
         {
+            if (stream == null)
+                try { QpPackageHandler_Stream?.Dispose(); }
+                catch { }
             QpPackageHandler_Stream = stream;
             ChangeTransportTimeout();
         }
