@@ -37,15 +37,6 @@ namespace QpTestClient
 
         private void pushState_Ready() => pushState("就绪");
 
-        private void Client_Disconnected(object sender, EventArgs e)
-        {
-            Invoke(new Action(() =>
-            {
-                MessageBox.Show("连接已经断开！", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.Close();
-            }));
-        }
-
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             foreach(TreeNode connectNode in rootNode.Nodes)
@@ -124,24 +115,24 @@ namespace QpTestClient
             connectNode.ContextMenuStrip = cmsConnection;
             qpClient.Disconnected += (sender, e) =>
               {
-                  Invoke(new Action(() => connectNode.Text += "[已断开]"));
+                  Invoke(new Action(() => connectNode.ImageIndex = connectNode.SelectedImageIndex = 2));
               };
             try
             {
                 foreach (var instruction in qpInstructions)
                 {
-                    var instructionNode = connectNode.Nodes.Add(instruction.Id, instruction.Name, 2, 2);
+                    var instructionNode = connectNode.Nodes.Add(instruction.Id, instruction.Name, 3, 3);
                     instructionNode.Tag = instruction;
-                    var noticesNode = instructionNode.Nodes.Add("Notice", "通知", 3, 3);
+                    var noticesNode = instructionNode.Nodes.Add("Notice", "通知", 4, 4);
                     foreach (var noticeInfo in instruction.NoticeInfos)
                     {
-                        var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 4, 4);
+                        var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 5, 5);
                         noticeNode.Tag = noticeInfo;
                     }
-                    var commandsNode = instructionNode.Nodes.Add("Command", "命令", 3, 3);
+                    var commandsNode = instructionNode.Nodes.Add("Command", "命令", 4, 4);
                     foreach (var commandInfo in instruction.CommandInfos)
                     {
-                        var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 5, 5);
+                        var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 6, 6);
                         commandNode.Tag = commandInfo;
                     }
                 }

@@ -29,6 +29,7 @@ namespace QpTestClient.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CommandInfoControl));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpBasic = new System.Windows.Forms.TabPage();
             this.txtBasic = new System.Windows.Forms.TextBox();
@@ -249,7 +250,7 @@ namespace QpTestClient.Controls
             // 
             // btnExecuteTest
             // 
-            this.btnExecuteTest.Image = global::QpTestClient.Properties.Resources._009_HighPriority_32x32_72;
+            this.btnExecuteTest.Image = ((System.Drawing.Image)(resources.GetObject("btnExecuteTest.Image")));
             this.btnExecuteTest.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExecuteTest.Name = "btnExecuteTest";
             this.btnExecuteTest.Size = new System.Drawing.Size(63, 24);

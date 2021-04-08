@@ -134,12 +134,13 @@ namespace QpTestClient
             this.ilQpInstructions.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             this.ilQpInstructions.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilQpInstructions.ImageStream")));
             this.ilQpInstructions.TransparentColor = System.Drawing.Color.Transparent;
-            this.ilQpInstructions.Images.SetKeyName(0, "Connection.png");
-            this.ilQpInstructions.Images.SetKeyName(1, "Connection.png");
-            this.ilQpInstructions.Images.SetKeyName(2, "Instruction.png");
-            this.ilQpInstructions.Images.SetKeyName(3, "Folder.png");
-            this.ilQpInstructions.Images.SetKeyName(4, "Notice.png");
-            this.ilQpInstructions.Images.SetKeyName(5, "Command.png");
+            this.ilQpInstructions.Images.SetKeyName(0, "earth_16px_583348_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(1, "plug_connect_16px_514215_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(2, "plug_disconnect_slash_16px_514217_easyicon.net (1).png");
+            this.ilQpInstructions.Images.SetKeyName(3, "archive_16px_1092529_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(4, "folder_12px_1084454_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(5, "speaker_volume_16px_514569_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(6, "command_16px_583324_easyicon.net.png");
             // 
             // gbNodeInfo
             // 
