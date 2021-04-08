@@ -187,6 +187,7 @@ namespace QpTestClient
             this.Controls.Add(this.scMain);
             this.Controls.Add(this.ssMain);
             this.Controls.Add(this.tsMain);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
