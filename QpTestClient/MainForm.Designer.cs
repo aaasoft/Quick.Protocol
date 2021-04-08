@@ -34,6 +34,8 @@ namespace QpTestClient
             this.tsMain = new System.Windows.Forms.ToolStrip();
             this.btnFile = new System.Windows.Forms.ToolStripDropDownButton();
             this.btnAddConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnOpenConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnExit = new System.Windows.Forms.ToolStripMenuItem();
             this.ssMain = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.scMain = new System.Windows.Forms.SplitContainer();
@@ -44,6 +46,9 @@ namespace QpTestClient
             this.cmsBtnAddConnect = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsConnection = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnDisconnectConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnConnectConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDelConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSaveConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
@@ -69,7 +74,9 @@ namespace QpTestClient
             // 
             this.btnFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnAddConnection});
+            this.btnAddConnection,
+            this.btnOpenConnectionFile,
+            this.btnExit});
             this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
             this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFile.Name = "btnFile";
@@ -79,8 +86,20 @@ namespace QpTestClient
             // btnAddConnection
             // 
             this.btnAddConnection.Name = "btnAddConnection";
-            this.btnAddConnection.Size = new System.Drawing.Size(185, 26);
+            this.btnAddConnection.Size = new System.Drawing.Size(212, 26);
             this.btnAddConnection.Text = "添加连接(&A)...";
+            // 
+            // btnOpenConnectionFile
+            // 
+            this.btnOpenConnectionFile.Name = "btnOpenConnectionFile";
+            this.btnOpenConnectionFile.Size = new System.Drawing.Size(212, 26);
+            this.btnOpenConnectionFile.Text = "打开连接文件(&O)..";
+            // 
+            // btnExit
+            // 
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(212, 26);
+            this.btnExit.Text = "退出(&X)";
             // 
             // ssMain
             // 
@@ -169,15 +188,36 @@ namespace QpTestClient
             // 
             this.cmsConnection.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsConnection.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnDisconnectConnection});
+            this.btnDisconnectConnection,
+            this.btnConnectConnection,
+            this.btnDelConnection,
+            this.btnSaveConnectionFile});
             this.cmsConnection.Name = "cmsConnection";
-            this.cmsConnection.Size = new System.Drawing.Size(130, 28);
+            this.cmsConnection.Size = new System.Drawing.Size(211, 100);
             // 
             // btnDisconnectConnection
             // 
             this.btnDisconnectConnection.Name = "btnDisconnectConnection";
-            this.btnDisconnectConnection.Size = new System.Drawing.Size(129, 24);
+            this.btnDisconnectConnection.Size = new System.Drawing.Size(210, 24);
             this.btnDisconnectConnection.Text = "断开(&D)";
+            // 
+            // btnConnectConnection
+            // 
+            this.btnConnectConnection.Name = "btnConnectConnection";
+            this.btnConnectConnection.Size = new System.Drawing.Size(210, 24);
+            this.btnConnectConnection.Text = "连接";
+            // 
+            // btnDelConnection
+            // 
+            this.btnDelConnection.Name = "btnDelConnection";
+            this.btnDelConnection.Size = new System.Drawing.Size(210, 24);
+            this.btnDelConnection.Text = "删除(&D)";
+            // 
+            // btnSaveConnectionFile
+            // 
+            this.btnSaveConnectionFile.Name = "btnSaveConnectionFile";
+            this.btnSaveConnectionFile.Size = new System.Drawing.Size(210, 24);
+            this.btnSaveConnectionFile.Text = "保存为连接文件(&S)..";
             // 
             // MainForm
             // 
@@ -222,6 +262,11 @@ namespace QpTestClient
         private System.Windows.Forms.ToolStripMenuItem cmsBtnAddConnect;
         private System.Windows.Forms.ContextMenuStrip cmsConnection;
         private System.Windows.Forms.ToolStripMenuItem btnDisconnectConnection;
+        private System.Windows.Forms.ToolStripMenuItem btnOpenConnectionFile;
+        private System.Windows.Forms.ToolStripMenuItem btnExit;
+        private System.Windows.Forms.ToolStripMenuItem btnConnectConnection;
+        private System.Windows.Forms.ToolStripMenuItem btnDelConnection;
+        private System.Windows.Forms.ToolStripMenuItem btnSaveConnectionFile;
     }
 }
 

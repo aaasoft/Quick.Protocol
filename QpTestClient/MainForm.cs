@@ -24,7 +24,12 @@ namespace QpTestClient
             rootNode.ContextMenuStrip = cmsAllConnections;
             cmsBtnAddConnect.Click += BtnAddConnection_Click;
             btnAddConnection.Click += BtnAddConnection_Click;
+            btnOpenConnectionFile.Click += BtnOpenConnectionFile_Click;
+            btnExit.Click += BtnExit_Click;
             btnDisconnectConnection.Click += BtnDisconnectConnection_Click;
+            btnConnectConnection.Click += BtnConnectConnection_Click;
+            btnDelConnection.Click += BtnDelConnection_Click;
+            btnSaveConnectionFile.Click += BtnSaveConnectionFile_Click;
         }
 
         private void pushState(string state)
@@ -166,7 +171,36 @@ namespace QpTestClient
             if (client == null)
                 return;
             client.Close();
+            
+        }
+
+        private void BtnDelConnection_Click(object sender, EventArgs e)
+        {
+            var client = tvQpInstructions.SelectedNode.Tag as QpClient;
+            if (client == null)
+                return;
+            client.Close();
             tvQpInstructions.SelectedNode.Parent.Nodes.Remove(tvQpInstructions.SelectedNode);
+        }
+
+        private void BtnConnectConnection_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnSaveConnectionFile_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnOpenConnectionFile_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Working in progress...");
+        }
+
+        private void BtnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
