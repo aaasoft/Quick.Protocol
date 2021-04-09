@@ -8,13 +8,9 @@ namespace QpTestClient
 {
     public class ConnectionInfo
     {
+        public string Name { get; set; }
         public string QpClientTypeName { get; set; }
-        public string QpClientOptionsTypeName { get; set; }
-        public JObject QpClientOptions { get; set; }
-
-        public QpClient CreateQpClient()
-        {
-            return null;
-        }
+        public QpClientOptions QpClientOptions { get; set; }
+        public QpInstruction[] Instructions { get; set; }
     }
 }

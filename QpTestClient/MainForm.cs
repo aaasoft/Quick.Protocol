@@ -14,15 +14,14 @@ namespace QpTestClient
 {
     public partial class MainForm : Form
     {
-        private TreeNode rootNode;
+        private TreeNodeCollection treeNodeCollection;
 
         public MainForm()
         {
             InitializeComponent();
             Text = Application.ProductName;
-            rootNode = tvQpInstructions.Nodes.Add("root", "全部连接", 0, 0);
-            rootNode.ContextMenuStrip = cmsAllConnections;
-            cmsBtnAddConnect.Click += BtnAddConnection_Click;
+            treeNodeCollection = tvQpInstructions.Nodes;
+            cmsConnection.Opening += CmsConnection_Opening;
             btnAddConnection.Click += BtnAddConnection_Click;
             btnOpenConnectionFile.Click += BtnOpenConnectionFile_Click;
             btnExit.Click += BtnExit_Click;
@@ -44,11 +43,10 @@ namespace QpTestClient
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            foreach(TreeNode connectNode in rootNode.Nodes)
+            foreach (TreeNode connectNode in treeNodeCollection)
             {
-                var client = (QpClient)connectNode.Tag;
-                client.Close();
-                client = null;
+                var connectionContext = (ConnectionContext)connectNode.Tag;
+                connectionContext.Dispose();
             }
         }
 
@@ -83,10 +81,10 @@ namespace QpTestClient
             {
                 showContent(null);
             }
-            else if (nodeObj is QpClient)
+            else if (nodeObj is ConnectionContext)
             {
-                var qpClient = (QpClient)nodeObj;
-                showContent(getPropertyGridControl(qpClient.Options));
+                var connectionContext = (ConnectionContext)nodeObj;
+                showContent(getPropertyGridControl(connectionContext.ConnectionInfo.QpClientOptions));
             }
             else if (nodeObj is QpInstruction)
             {
@@ -98,62 +96,77 @@ namespace QpTestClient
             }
             else if (nodeObj is QpCommandInfo)
             {
-                QpClient client = null;
+                ConnectionContext connectionContext;
                 var currentNode = e.Node;
                 while (true)
                 {
-                    if (currentNode.Tag is QpClient)
+                    if (currentNode.Tag is ConnectionContext)
                     {
-                        client = (QpClient)currentNode.Tag;
+                        connectionContext = (ConnectionContext)currentNode.Tag;
                         break;
                     }
                     currentNode = currentNode.Parent;
                 }
-                showContent(new Controls.CommandInfoControl(client, (QpCommandInfo)nodeObj));
+                showContent(new Controls.CommandInfoControl(connectionContext.QpClient, (QpCommandInfo)nodeObj));
             }
         }
 
-        private void addConnection(string connectionInfo, QpClient qpClient, QpInstruction[] qpInstructions)
+
+        private void CmsConnection_Opening(object sender, CancelEventArgs e)
         {
-            var connectNode = rootNode.Nodes.Add(connectionInfo, connectionInfo, 1, 1);
-            connectNode.Tag = qpClient;
-            connectNode.ContextMenuStrip = cmsConnection;
-            qpClient.Disconnected += (sender, e) =>
-              {
-                  Invoke(new Action(() => connectNode.ImageIndex = connectNode.SelectedImageIndex = 2));
-              };
-            try
+            var connectionNode = tvQpInstructions.SelectedNode;
+            if(connectionNode==null)
             {
-                foreach (var instruction in qpInstructions)
+                e.Cancel = true;
+                return;
+            }
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
+            {
+                e.Cancel = true;
+                return;
+            }
+            if (connectionContext.Connected)
+            {
+                btnConnectConnection.Visible = false;
+                btnDisconnectConnection.Visible = true;
+            }
+            else
+            {
+                btnConnectConnection.Visible = true;
+                btnDisconnectConnection.Visible = false;
+            }
+        }
+
+        private void displayInstructions(TreeNode connectionNode ,QpInstruction[] instructions)
+        {
+            connectionNode.Nodes.Clear();
+            foreach (var instruction in instructions)
+            {
+                var instructionNode = connectionNode.Nodes.Add(instruction.Id, instruction.Name, 2, 2);
+                instructionNode.Tag = instruction;
+                var noticesNode = instructionNode.Nodes.Add("Notice", "通知", 3, 3);
+                foreach (var noticeInfo in instruction.NoticeInfos)
                 {
-                    var instructionNode = connectNode.Nodes.Add(instruction.Id, instruction.Name, 3, 3);
-                    instructionNode.Tag = instruction;
-                    var noticesNode = instructionNode.Nodes.Add("Notice", "通知", 4, 4);
-                    foreach (var noticeInfo in instruction.NoticeInfos)
-                    {
-                        var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 5, 5);
-                        noticeNode.Tag = noticeInfo;
-                    }
-                    var commandsNode = instructionNode.Nodes.Add("Command", "命令", 4, 4);
-                    foreach (var commandInfo in instruction.CommandInfos)
-                    {
-                        var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 6, 6);
-                        commandNode.Tag = commandInfo;
-                    }
+                    var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 3, 3);
+                    noticeNode.Tag = noticeInfo;
                 }
-                connectNode.ExpandAll();
-                rootNode.Expand();
+                var commandsNode = instructionNode.Nodes.Add("Command", "命令", 4, 4);
+                foreach (var commandInfo in instruction.CommandInfos)
+                {
+                    var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 4, 4);
+                    commandNode.Tag = commandInfo;
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("刷新指令集时出错，原因：" + ExceptionUtils.GetExceptionMessage(ex), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.Close();
-            }
-            finally
-            {
-                pushState_Ready();
-                tvQpInstructions.Enabled = true;
-            }
+        }
+
+        private void addConnection(ConnectionInfo connectionInfo)
+        {
+            var connectionNode = treeNodeCollection.Add(connectionInfo.Name, connectionInfo.Name, 0, 0);
+            connectionNode.Tag = new ConnectionContext(connectionInfo);
+            connectionNode.ContextMenuStrip = cmsConnection;
+            if (connectionInfo.Instructions != null)
+                displayInstructions(connectionNode, connectionInfo.Instructions);
         }
 
         private void BtnAddConnection_Click(object sender, EventArgs e)
@@ -162,30 +175,50 @@ namespace QpTestClient
             var ret = form.ShowDialog();
             if (ret != DialogResult.OK)
                 return;
-            addConnection(form.ConnectionInfo, form.QpClient, form.QpInstructions);
+            addConnection(form.ConnectionInfo);
         }
 
         private void BtnDisconnectConnection_Click(object sender, EventArgs e)
         {
-            var client =  tvQpInstructions.SelectedNode.Tag as QpClient;
-            if (client == null)
+            var connectionNode = tvQpInstructions.SelectedNode;
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
                 return;
-            client.Close();
-            
+            connectionContext.Dispose();
+            connectionNode.ImageIndex = connectionNode.SelectedImageIndex = 0;
         }
 
         private void BtnDelConnection_Click(object sender, EventArgs e)
         {
-            var client = tvQpInstructions.SelectedNode.Tag as QpClient;
-            if (client == null)
+            var connectionNode = tvQpInstructions.SelectedNode;
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
                 return;
-            client.Close();
-            tvQpInstructions.SelectedNode.Parent.Nodes.Remove(tvQpInstructions.SelectedNode);
+            connectionContext.Dispose();
+            treeNodeCollection.Remove(connectionNode);
         }
 
-        private void BtnConnectConnection_Click(object sender, EventArgs e)
+        private async void BtnConnectConnection_Click(object sender, EventArgs e)
         {
-
+            var connectionNode = tvQpInstructions.SelectedNode;
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
+                return;
+            try
+            {
+                await connectionContext.Connect();
+                connectionNode.ImageIndex = connectionNode.SelectedImageIndex = 1;
+                connectionContext.QpClient.Disconnected += (sender, e) =>
+                {
+                    Invoke(new Action(() => connectionNode.ImageIndex = connectionNode.SelectedImageIndex = 0));
+                };
+                displayInstructions(connectionNode, connectionContext.ConnectionInfo.Instructions);
+                connectionNode.ExpandAll();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"连接失败，原因：{ExceptionUtils.GetExceptionMessage(ex)}", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void BtnSaveConnectionFile_Click(object sender, EventArgs e)
@@ -195,7 +228,7 @@ namespace QpTestClient
 
         private void BtnOpenConnectionFile_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Working in progress...");
+
         }
 
         private void BtnExit_Click(object sender, EventArgs e)

@@ -14,6 +14,8 @@ namespace QpTestClient
         [STAThread]
         static void Main()
         {
+            QpClientTypeManager.Instance.Init();
+
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

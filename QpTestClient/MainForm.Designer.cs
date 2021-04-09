@@ -42,8 +42,6 @@ namespace QpTestClient
             this.tvQpInstructions = new System.Windows.Forms.TreeView();
             this.ilQpInstructions = new System.Windows.Forms.ImageList(this.components);
             this.gbNodeInfo = new System.Windows.Forms.GroupBox();
-            this.cmsAllConnections = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.cmsBtnAddConnect = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsConnection = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnDisconnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnConnectConnection = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,7 +53,6 @@ namespace QpTestClient
             this.scMain.Panel1.SuspendLayout();
             this.scMain.Panel2.SuspendLayout();
             this.scMain.SuspendLayout();
-            this.cmsAllConnections.SuspendLayout();
             this.cmsConnection.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -153,13 +150,11 @@ namespace QpTestClient
             this.ilQpInstructions.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             this.ilQpInstructions.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilQpInstructions.ImageStream")));
             this.ilQpInstructions.TransparentColor = System.Drawing.Color.Transparent;
-            this.ilQpInstructions.Images.SetKeyName(0, "earth_16px_583348_easyicon.net.png");
-            this.ilQpInstructions.Images.SetKeyName(1, "plug_connect_16px_514215_easyicon.net.png");
-            this.ilQpInstructions.Images.SetKeyName(2, "plug_disconnect_slash_16px_514217_easyicon.net (1).png");
-            this.ilQpInstructions.Images.SetKeyName(3, "archive_16px_1092529_easyicon.net.png");
-            this.ilQpInstructions.Images.SetKeyName(4, "folder_12px_1084454_easyicon.net.png");
-            this.ilQpInstructions.Images.SetKeyName(5, "speaker_volume_16px_514569_easyicon.net.png");
-            this.ilQpInstructions.Images.SetKeyName(6, "command_16px_583324_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(0, "connect_gray.png");
+            this.ilQpInstructions.Images.SetKeyName(1, "connect.png");
+            this.ilQpInstructions.Images.SetKeyName(2, "archive_16px_1092529_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(3, "speaker_volume_16px_514569_easyicon.net.png");
+            this.ilQpInstructions.Images.SetKeyName(4, "command_16px_583324_easyicon.net.png");
             // 
             // gbNodeInfo
             // 
@@ -169,20 +164,6 @@ namespace QpTestClient
             this.gbNodeInfo.Size = new System.Drawing.Size(552, 486);
             this.gbNodeInfo.TabIndex = 0;
             this.gbNodeInfo.TabStop = false;
-            // 
-            // cmsAllConnections
-            // 
-            this.cmsAllConnections.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.cmsAllConnections.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cmsBtnAddConnect});
-            this.cmsAllConnections.Name = "cmsAllConnections";
-            this.cmsAllConnections.Size = new System.Drawing.Size(172, 28);
-            // 
-            // cmsBtnAddConnect
-            // 
-            this.cmsBtnAddConnect.Name = "cmsBtnAddConnect";
-            this.cmsBtnAddConnect.Size = new System.Drawing.Size(171, 24);
-            this.cmsBtnAddConnect.Text = "添加连接(&A)...";
             // 
             // cmsConnection
             // 
@@ -240,7 +221,6 @@ namespace QpTestClient
             this.scMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).EndInit();
             this.scMain.ResumeLayout(false);
-            this.cmsAllConnections.ResumeLayout(false);
             this.cmsConnection.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -258,8 +238,6 @@ namespace QpTestClient
         private System.Windows.Forms.GroupBox gbNodeInfo;
         private System.Windows.Forms.ToolStripDropDownButton btnFile;
         private System.Windows.Forms.ToolStripMenuItem btnAddConnection;
-        private System.Windows.Forms.ContextMenuStrip cmsAllConnections;
-        private System.Windows.Forms.ToolStripMenuItem cmsBtnAddConnect;
         private System.Windows.Forms.ContextMenuStrip cmsConnection;
         private System.Windows.Forms.ToolStripMenuItem btnDisconnectConnection;
         private System.Windows.Forms.ToolStripMenuItem btnOpenConnectionFile;
