@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Quick.Protocol.WebSocket.Client
 {
+    [DisplayName("WebSocket")]
     public class QpWebSocketClient : QpClient
     {
         private QpWebSocketClientOptions options;

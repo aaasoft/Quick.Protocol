@@ -12,10 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Quick.Protocol.Pipeline\Quick.Protocol.Pipeline.csproj" />
-    <ProjectReference Include="..\Quick.Protocol.SerialPort\Quick.Protocol.SerialPort.csproj" />
-    <ProjectReference Include="..\Quick.Protocol.Tcp\Quick.Protocol.Tcp.csproj" />
-    <ProjectReference Include="..\Quick.Protocol.WebSocket.Client\Quick.Protocol.WebSocket.Client.csproj" />
     <ProjectReference Include="..\Quick.Protocol\Quick.Protocol.csproj" />
   </ItemGroup>
 

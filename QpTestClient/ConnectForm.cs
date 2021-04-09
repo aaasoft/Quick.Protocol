@@ -1,15 +1,13 @@
 ﻿using Quick.Protocol;
-using Quick.Protocol.Pipeline;
-using Quick.Protocol.SerialPort;
-using Quick.Protocol.Tcp;
 using Quick.Protocol.Utils;
-using Quick.Protocol.WebSocket.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -27,8 +25,47 @@ namespace QpTestClient
 
         public ConnectForm()
         {
-            InitializeComponent();
-            cbConnectType.SelectedIndex = 0;
+            InitializeComponent();            
+        }
+
+        private class QpClientTypeInfo
+        {
+            public string Name { get; set; }
+            public Type QpClientType { get; set; }
+            public Type QpClientOptionsType { get; set; }
+            public override string ToString() => Name;
+        }
+
+
+        private void ConnectForm_Load(object sender, EventArgs e)
+        {
+            foreach (var dllFile in Directory.GetFiles(".", $"{nameof(Quick)}.{nameof(Quick.Protocol)}.*.dll"))
+            {
+                var assembly = Assembly.Load(Path.GetFileNameWithoutExtension(dllFile));
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (!type.IsClass || !typeof(QpClient).IsAssignableFrom(type))
+                        continue;
+
+                    var typeConstructor = type.GetConstructors()[0];
+                    var typeConstructorParameters = typeConstructor.GetParameters();
+                    if (typeConstructorParameters == null || typeConstructorParameters.Length != 1)
+                        continue;
+                    var optionsType = typeConstructorParameters[0].ParameterType;
+                    var name = type.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? type.Name;
+
+                    cbConnectType.Items.Add(new QpClientTypeInfo()
+                    {
+                        Name = name,
+                        QpClientType = type,
+                        QpClientOptionsType = optionsType
+                    });
+                }
+            }
+            if (cbConnectType.Items.Count > 0)
+                cbConnectType.SelectedIndex = 0;
+            if (cbConnectType.Items.Count > 3)
+                cbConnectType.SelectedIndex = 2;
         }
 
         private async void btnConnect_Click(object sender, EventArgs e)
@@ -76,54 +113,11 @@ namespace QpTestClient
             getConnectionInfoFunc = null;
             getQpClientFunc = null;
 
-            switch (cbConnectType.SelectedIndex)
-            {
-                //TCP
-                case 0:
-                    var tcpOptions = new QpTcpClientOptions()
-                    {
-                        Host = "127.0.0.1",
-                        Port = 3011,
-                        Password = "HelloQP"
-                    };
-                    getConnectionInfoFunc = () => $"[TCP]{tcpOptions.Host}:{tcpOptions.Port}";
-                    getQpClientFunc = () => new QpTcpClient(tcpOptions);
-                    options = tcpOptions;
-                    break;
-                //命名管道
-                case 1:
-                    var pipelineOptions = new QpPipelineClientOptions()
-                    {
-                        PipeName = "Quick.Protocol",
-                        Password = "HelloQP"
-                    };
-                    getConnectionInfoFunc = () => $"[命名管道]{pipelineOptions.ServerName}\\{pipelineOptions.PipeName}";
-                    getQpClientFunc = () => new QpPipelineClient(pipelineOptions);
-                    options = pipelineOptions;
-                    break;
-                //串口
-                case 2:
-                    var serialPortOptions = new QpSerialPortClientOptions()
-                    {
-                        PortName = "COM1",
-                        Password = "HelloQP"
-                    };
-                    getConnectionInfoFunc = () => $"[串口]{serialPortOptions.PortName}";
-                    getQpClientFunc = () => new QpSerialPortClient(serialPortOptions);
-                    options = serialPortOptions;
-                    break;
-                //WebSocket
-                case 3:
-                    var webSocketOptions = new QpWebSocketClientOptions()
-                    {
-                        Url = "ws://127.0.0.1:3011/qp_test",
-                        Password = "HelloQP"
-                    };
-                    getConnectionInfoFunc = () => $"[WebSocket]{webSocketOptions.Url}";
-                    getQpClientFunc = () => new QpWebSocketClient(webSocketOptions);
-                    options = webSocketOptions;
-                    break;
-            }
+            var qpClientTypeInfo = (QpClientTypeInfo)cbConnectType.SelectedItem;
+            options = (QpClientOptions)Activator.CreateInstance(qpClientTypeInfo.QpClientOptionsType);
+            getConnectionInfoFunc = () => $"[{qpClientTypeInfo.Name}]{options}";
+            getQpClientFunc = () => (QpClient)Activator.CreateInstance(qpClientTypeInfo.QpClientType, options);
+
             pgOptions.SelectedObject = options;
             btnConnect.Enabled = pgOptions.SelectedObject != null;
         }

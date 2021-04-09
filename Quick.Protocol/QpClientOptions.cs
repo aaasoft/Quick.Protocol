@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Quick.Protocol
 {
-    public class QpClientOptions : QpCommandHandlerOptions
+    public abstract class QpClientOptions : QpCommandHandlerOptions
     {
         /// <summary>
         /// 连接超时(默认为5秒)
@@ -29,13 +29,13 @@ namespace Quick.Protocol
         /// </summary>
         [DisplayName("启用加密")]
         [Category("高级")]
-        public bool EnableEncrypt { get; set; }
+        public bool EnableEncrypt { get; set; } = false;
         /// <summary>
         /// 启用压缩(默认为false)
         /// </summary>
         [DisplayName("启用压缩")]
         [Category("高级")]
-        public bool EnableCompress { get; set; }
+        public bool EnableCompress { get; set; } = false;
 
         /// <summary>
         /// 当认证通过时
@@ -54,5 +54,13 @@ namespace Quick.Protocol
             InternalCompress = false;
             InternalEncrypt = false;
         }
+
+        /// <summary>
+        /// 获取连接信息
+        /// </summary>
+        /// <returns></returns>
+        public abstract string GetConnectionInfo();
+
+        public override string ToString() => GetConnectionInfo();
     }
 }

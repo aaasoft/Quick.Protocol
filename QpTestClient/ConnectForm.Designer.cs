@@ -53,11 +53,6 @@ namespace QpTestClient
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbConnectType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbConnectType.FormattingEnabled = true;
-            this.cbConnectType.Items.AddRange(new object[] {
-            "TCP",
-            "命名管道",
-            "串口",
-            "WebSocket"});
             this.cbConnectType.Location = new System.Drawing.Point(101, 12);
             this.cbConnectType.Name = "cbConnectType";
             this.cbConnectType.Size = new System.Drawing.Size(310, 28);
@@ -101,6 +96,7 @@ namespace QpTestClient
             this.Name = "ConnectForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "添加连接";
+            this.Load += new System.EventHandler(this.ConnectForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

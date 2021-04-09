@@ -13,7 +13,7 @@ namespace Quick.Protocol.Pipeline
 
         [Category("常用")]
         [DisplayName("管道名称")]
-        public string PipeName { get; set; }
+        public string PipeName { get; set; } = "Quick.Protocol";
 
         public override void Check()
         {
@@ -21,5 +21,7 @@ namespace Quick.Protocol.Pipeline
             if (string.IsNullOrEmpty(PipeName))
                 throw new ArgumentNullException(nameof(PipeName));
         }
+
+        public override string GetConnectionInfo() => $"{ServerName}\\{PipeName}";
     }
 }

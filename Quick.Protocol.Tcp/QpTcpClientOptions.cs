@@ -12,13 +12,13 @@ namespace Quick.Protocol.Tcp
         /// </summary>
         [DisplayName("主机")]
         [Category("常用")]
-        public string Host { get; set; }
+        public string Host { get; set; } = "127.0.0.1";
         /// <summary>
         /// 端口
         /// </summary>
         [DisplayName("端口")]
         [Category("常用")]
-        public int Port { get; set; }
+        public int Port { get; set; } = 3011;
         /// <summary>
         /// 本地主机
         /// </summary>
@@ -40,5 +40,7 @@ namespace Quick.Protocol.Tcp
             if (Port < 0 || Port > 65535)
                 throw new ArgumentException("Port must between 0 and 65535", nameof(Port));
         }
+
+        public override string GetConnectionInfo() => $"{Host}:{Port}";
     }
 }

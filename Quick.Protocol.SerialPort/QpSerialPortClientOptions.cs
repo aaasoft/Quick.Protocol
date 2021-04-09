@@ -13,7 +13,7 @@ namespace Quick.Protocol.SerialPort
         /// </summary>
         [DisplayName("端口名称")]
         [Category("常用")]
-        public string PortName { get; set; }
+        public string PortName { get; set; } = "COM1";
         /// <summary>
         /// 波特率
         /// </summary>
@@ -45,5 +45,7 @@ namespace Quick.Protocol.SerialPort
             if (string.IsNullOrEmpty(PortName))
                 throw new ArgumentNullException(nameof(PortName));
         }
+
+        public override string GetConnectionInfo() => PortName;
     }
 }

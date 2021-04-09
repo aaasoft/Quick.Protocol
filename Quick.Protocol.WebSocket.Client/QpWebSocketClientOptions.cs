@@ -12,7 +12,7 @@ namespace Quick.Protocol.WebSocket.Client
         /// </summary>
         [DisplayName("URL")]
         [Category("常用")]
-        public string Url { get; set; }
+        public string Url { get; set; } = "ws://127.0.0.1:3011/qp_test";
 
         public override void Check()
         {
@@ -22,5 +22,7 @@ namespace Quick.Protocol.WebSocket.Client
             if (!Url.StartsWith("ws://"))
                 throw new ArgumentException("Url must start with ws://", nameof(Url));
         }
+
+        public override string GetConnectionInfo() => Url;
     }
 }

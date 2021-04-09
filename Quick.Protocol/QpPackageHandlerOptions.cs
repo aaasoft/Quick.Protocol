@@ -21,7 +21,7 @@ namespace Quick.Protocol
         [Category("常用")]
         [DisplayName("密码")]
         [PasswordPropertyText(true)]
-        public string Password { get; set; }
+        public string Password { get; set; } = "HelloQP";
 
         private QpInstruction[] _InstructionSet = new QpInstruction[] { Base.Instruction };
         /// <summary>

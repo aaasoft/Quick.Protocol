@@ -1,12 +1,14 @@
 ﻿using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Quick.Protocol.SerialPort
 {
+    [DisplayName("串口")]
     public class QpSerialPortClient : QpClient
     {
         private QpSerialPortClientOptions options;
