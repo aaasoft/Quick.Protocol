@@ -44,6 +44,11 @@ namespace QpTestClient.Controls
         {
             btnExecuteTest.Enabled = false;
             txtTestResponse.Clear();
+            if(client==null)
+            {
+                txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 当前未连接，无法执行！{Environment.NewLine}");
+                return;
+            }
             txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 开始执行...{Environment.NewLine}");
             try
             {

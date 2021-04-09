@@ -194,7 +194,6 @@ namespace QpTestClient
             if (connectionContext == null)
                 return;
             connectionContext.Dispose();
-            connectionNode.ImageIndex = connectionNode.SelectedImageIndex = 0;
         }
 
         private void BtnDelConnection_Click(object sender, EventArgs e)

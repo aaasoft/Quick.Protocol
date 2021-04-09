@@ -113,6 +113,8 @@ namespace Quick.Protocol
         {
             cancellAll();
             Disconnect();
+            if (cts != null)
+                Disconnected?.Invoke(this, QpEventArgs.Empty);
         }
     }
 }
