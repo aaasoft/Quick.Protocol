@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Quick.Protocol.Utils;
+﻿using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +10,6 @@ namespace Quick.Protocol
 {
     public abstract class QpServer
     {
-        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private CancellationTokenSource cts;
         private QpServerOptions options;
         private List<QpServerChannel> channelList = new List<QpServerChannel>();
@@ -69,7 +67,8 @@ namespace Quick.Protocol
                 channelList.Add(channel);
             channel.Disconnected += (sender, e) =>
             {
-                logger.LogTrace("[Connection]{0} Disconnected.", channelName);
+                if (LogUtils.LogConnection)
+                    Console.WriteLine("[Connection]{0} Disconnected.", channelName);
                 RemoveChannel(channel);
                 try { stream.Dispose(); }
                 catch { }

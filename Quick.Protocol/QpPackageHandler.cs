@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
@@ -28,7 +27,6 @@ namespace Quick.Protocol
         /// </summary>
         public const int COMMAND_ID_LENGTH = 16;
 
-        private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         /// <summary>
         /// 心跳包
         /// </summary>
@@ -125,7 +123,7 @@ namespace Quick.Protocol
         protected virtual void OnReadError(Exception exception)
         {
             LastException = exception;
-            logger.LogTrace("[ReadError]{0}: {1}", DateTime.Now, ExceptionUtils.GetExceptionMessage(exception));
+            Console.WriteLine("[ReadError]{0}: {1}", DateTime.Now, ExceptionUtils.GetExceptionMessage(exception));
             InitQpPackageHandler_Stream(null);
         }
 
@@ -170,7 +168,7 @@ namespace Quick.Protocol
                     else
                     {
                         if (LogUtils.LogSplit)
-                            logger.LogTrace("{0}: [Send-SplitPackage]Length:{1}", DateTime.Now, packageTotalLength);
+                            Console.WriteLine("{0}: [Send-SplitPackage]Length:{1}", DateTime.Now, packageTotalLength);
 
                         //每个包内容的最大长度为对方缓存大小减包头大小
                         var maxTakeLength = BufferSize - PACKAGE_HEAD_LENGTH;
@@ -201,7 +199,7 @@ namespace Quick.Protocol
                 catch (Exception ex)
                 {
                     LastException = ex;
-                    logger.LogError("[SendPackage]" + ex.ToString());
+                    Console.WriteLine("[SendPackage]" + ex.ToString());
                 }
             }
         }
@@ -256,7 +254,7 @@ namespace Quick.Protocol
                 var packageTotalLength = contentOffset + contentLength;
 
                 if (LogUtils.LogNotice)
-                    logger.LogTrace("{0}: [Send-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                    Console.WriteLine("{0}: [Send-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                 return new Tuple<int, byte[]>(packageTotalLength, retBuffer);
             });
@@ -301,7 +299,7 @@ namespace Quick.Protocol
                 var packageTotalLength = contentOffset + contentLength;
 
                 if (LogUtils.LogCommand)
-                    logger.LogTrace("{0}: [Send-CommandRequestPackage]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandId, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                    Console.WriteLine("{0}: [Send-CommandRequestPackage]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandId, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                 return new Tuple<int, byte[]>(packageTotalLength, retBuffer);
             }, afterSendHandler);
@@ -352,7 +350,7 @@ namespace Quick.Protocol
                     var packageTotalLength = contentOffset + contentLength;
 
                     if (LogUtils.LogCommand)
-                        logger.LogTrace("{0}: [Send-CommandResponsePackage]CommandId:{1},Code:{2},Type:{3},Content:{4}", DateTime.Now, commandId, code, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                        Console.WriteLine("{0}: [Send-CommandResponsePackage]CommandId:{1},Code:{2},Type:{3},Content:{4}", DateTime.Now, commandId, code, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                     return new Tuple<int, byte[]>(packageTotalLength, retBuffer);
                 }
@@ -377,7 +375,7 @@ namespace Quick.Protocol
                     var packageTotalLength = messageOffset + messageLength;
 
                     if (LogUtils.LogNotice)
-                        logger.LogTrace("{0}: [Send-CommandResponsePackage]CommandId:{1},Code:{2},Message:{3}", DateTime.Now, commandId, code, message);
+                        Console.WriteLine("{0}: [Send-CommandResponsePackage]CommandId:{1},Code:{2},Message:{3}", DateTime.Now, commandId, code, message);
 
                     return new Tuple<int, byte[]>(packageTotalLength, retBuffer);
                 }
@@ -435,7 +433,7 @@ namespace Quick.Protocol
             //发送包内容
             stream.Write(packageBuffer.Array, packageBuffer.Offset, packageBuffer.Count);
             if (LogUtils.LogPackage)
-                logger.LogTrace(
+                Console.WriteLine(
                     "{0}: [Send-Package]Length:{1}，Type:{2}，Content:{}",
                     DateTime.Now,
                     packageBuffer.Count,
@@ -581,7 +579,7 @@ namespace Quick.Protocol
                         finalPackageBuffer = new ArraySegment<byte>(splitMs.ToArray());
                         splitMs.Dispose();
                         if (LogUtils.LogSplit)
-                            logger.LogTrace("{0}: [Recv-SplitPackage]Length:{1}", DateTime.Now, finalPackageBuffer.Count);
+                            Console.WriteLine("{0}: [Recv-SplitPackage]Length:{1}", DateTime.Now, finalPackageBuffer.Count);
                         break;
                     }
                 }
@@ -593,7 +591,7 @@ namespace Quick.Protocol
             }
 
             if (LogUtils.LogPackage)
-                logger.LogTrace(
+                Console.WriteLine(
                 "{0}: [Recv-Package]Length:{1}，Type:{2}，Content:{}",
                 DateTime.Now,
                 finalPackageBuffer.Count,
@@ -675,7 +673,7 @@ namespace Quick.Protocol
                     case QpPackageType.Heartbeat:
                         {
                             if (LogUtils.LogHeartbeat)
-                                logger.LogTrace("{0}: [Recv-HeartbetaPackage]", DateTime.Now);
+                                Console.WriteLine("{0}: [Recv-HeartbetaPackage]", DateTime.Now);
                             HeartbeatPackageReceived?.Invoke(this, QpEventArgs.Empty);
                             break;
                         }
@@ -691,7 +689,7 @@ namespace Quick.Protocol
                             var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
 
                             if (LogUtils.LogNotice)
-                                logger.LogTrace("{0}: [Recv-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                                Console.WriteLine("{0}: [Recv-NoticePackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                             OnRawNoticePackageReceived(typeName, content);
                             break;
@@ -711,7 +709,7 @@ namespace Quick.Protocol
                             var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
 
                             if (LogUtils.LogCommand)
-                                logger.LogTrace("{0}: [Recv-CommandRequestPackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                                Console.WriteLine("{0}: [Recv-CommandRequestPackage]Type:{1},Content:{2}", DateTime.Now, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                             OnCommandRequestReceived(commandId, typeName, content);
                             break;
@@ -747,7 +745,7 @@ namespace Quick.Protocol
                             }
 
                             if (LogUtils.LogCommand)
-                                logger.LogTrace("{0}: [Recv-CommandResponsePackage]Code:{1}，Message：{2}，Type:{3},Content:{4}", DateTime.Now, code, message, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                                Console.WriteLine("{0}: [Recv-CommandResponsePackage]Code:{1}，Message：{2}，Type:{3},Content:{4}", DateTime.Now, code, message, typeName, LogUtils.LogContent ? content : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                             OnCommandResponseReceived(commandId, code, message, typeName, content);
                             break;

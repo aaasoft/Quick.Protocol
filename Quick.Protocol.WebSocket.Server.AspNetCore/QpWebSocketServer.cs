@@ -11,7 +11,6 @@ namespace Quick.Protocol.WebSocket.Server.AspNetCore
 {
     public class QpWebSocketServer : QpServer
     {
-        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private Queue<WebSocketContext> webSocketContextQueue = new Queue<WebSocketContext>();
         private AutoResetEvent waitForConnectionAutoResetEvent;
 
@@ -52,7 +51,8 @@ namespace Quick.Protocol.WebSocket.Server.AspNetCore
             waitForConnectionAutoResetEvent.Set();
             return Task.Delay(-1, cts.Token).ContinueWith(t =>
              {
-                 logger.LogTrace("[Connection]{0} disconnected.", connectionInfoStr);
+                 if (LogUtils.LogConnection)
+                     Console.WriteLine("[Connection]{0} disconnected.", connectionInfoStr);
              });
         }
 
@@ -79,12 +79,14 @@ namespace Quick.Protocol.WebSocket.Server.AspNetCore
                 {
                     try
                     {
-                        logger.LogTrace("[Connection]{0} connected.", context.ConnectionInfo);
+                        if (LogUtils.LogConnection)
+                            Console.WriteLine("[Connection]{0} connected.", context.ConnectionInfo);
                         OnNewChannelConnected(new WebSocketServerStream(context.WebSocket,context.Cts), context.ConnectionInfo, token);
                     }
                     catch (Exception ex)
                     {
-                        logger.LogDebug("[Connection]Init&Start Channel error,reason:{0}", ex.ToString());
+                        if (LogUtils.LogConnection)
+                            Console.WriteLine("[Connection]Init&Start Channel error,reason:{0}", ex.ToString());
                         try { context.WebSocket.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.InternalServerError, ex.Message, CancellationToken.None); }
                         catch { }
                     }

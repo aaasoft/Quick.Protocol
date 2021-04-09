@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Quick.Protocol.Utils;
+﻿using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +10,6 @@ namespace Quick.Protocol.SerialPort
 {
     public class QpSerialPortServer : QpServer
     {
-        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private QpSerialPortServerOptions options;
         private System.IO.Ports.SerialPort serialPort;
         private bool isAccepted = false;
@@ -24,14 +22,16 @@ namespace Quick.Protocol.SerialPort
         public override void Start()
         {
             this.ChannelDisconnected += QpSerialPortServer_ChannelDisconnected;
-            logger.LogTrace($"Opening SerialPort[{options.PortName}]...");
+            if (LogUtils.LogConnection)
+                Console.WriteLine($"Opening SerialPort[{options.PortName}]...");
             serialPort = new System.IO.Ports.SerialPort(options.PortName,
                                                 options.BaudRate,
                                                 options.Parity,
                                                 options.DataBits,
                                                 options.StopBits);
             serialPort.Open();
-            logger.LogTrace($"SerialPort[{options.PortName}] open success.");
+            if (LogUtils.LogConnection)
+                Console.WriteLine($"SerialPort[{options.PortName}] open success.");
             isAccepted = false;
             base.Start();
         }

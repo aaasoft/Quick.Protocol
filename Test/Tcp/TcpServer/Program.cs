@@ -10,7 +10,7 @@ namespace TcpServer
     {
         static void Main(string[] args)
         {
-            Quick.Protocol.Utils.LogUtils.AddConsole();
+            Quick.Protocol.Utils.LogUtils.LogConnection = true;
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = true;
             //Quick.Protocol.Utils.LogUtils.LogPackage = true;
             //Quick.Protocol.Utils.LogUtils.LogContent = true;

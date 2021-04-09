@@ -6,7 +6,7 @@ namespace SerialPortClient
     {
         static void Main(string[] args)
         {
-            Quick.Protocol.Utils.LogUtils.AddConsole();
+            Quick.Protocol.Utils.LogUtils.LogConnection = true;
 
             var client = new Quick.Protocol.SerialPort.QpSerialPortClient(new Quick.Protocol.SerialPort.QpSerialPortClientOptions()
             {

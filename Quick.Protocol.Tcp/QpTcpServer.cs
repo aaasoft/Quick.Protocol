@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Quick.Protocol.Utils;
+﻿using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -11,7 +10,6 @@ namespace Quick.Protocol.Tcp
 {
     public class QpTcpServer : QpServer
     {
-        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private TcpListener tcpListener;
         private QpTcpServerOptions options;
 
@@ -45,12 +43,14 @@ namespace Quick.Protocol.Tcp
                 try
                 {
                     var remoteEndPointStr = "TCP:" + tcpClient.Client.RemoteEndPoint.ToString();
-                    logger.LogTrace("[Connection]{0} connected.", remoteEndPointStr);
+                    if (LogUtils.LogConnection)
+                        Console.WriteLine("[Connection]{0} connected.", remoteEndPointStr);
                     OnNewChannelConnected(tcpClient.GetStream(), remoteEndPointStr, token);
                 }
                 catch (Exception ex)
                 {
-                    logger.LogDebug("[Connection]Init&Start Channel error,reason:{0}", ex.ToString());
+                    if (LogUtils.LogConnection)
+                        Console.WriteLine("[Connection]Init&Start Channel error,reason:{0}", ex.ToString());
                     try { tcpClient.Close(); }
                     catch { }
                 }

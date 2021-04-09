@@ -7,7 +7,7 @@ namespace SerialPortServer
     {
         static void Main(string[] args)
         {
-            Quick.Protocol.Utils.LogUtils.AddConsole();
+            Quick.Protocol.Utils.LogUtils.LogConnection = true;
 
             var server = new Quick.Protocol.SerialPort.QpSerialPortServer(new Quick.Protocol.SerialPort.QpSerialPortServerOptions()
             {

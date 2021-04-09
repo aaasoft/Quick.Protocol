@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Quick.Protocol.Utils;
+﻿using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +10,6 @@ namespace Quick.Protocol.Pipeline
 {
     public class QpPipelineClient : QpClient
     {
-        private readonly ILogger logger = LogUtils.GetCurrentClassLogger();
         private QpPipelineClientOptions options;
         private NamedPipeClientStream pipeClientStream;
         public QpPipelineClient(QpPipelineClientOptions options) : base(options)

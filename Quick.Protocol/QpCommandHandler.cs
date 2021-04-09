@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Quick.Protocol.Utils;
 using System;
 using System.Collections.Concurrent;
@@ -11,8 +10,6 @@ namespace Quick.Protocol
 {
     public abstract class QpCommandHandler : QpPackageHandler
     {
-        private static readonly ILogger logger = LogUtils.GetCurrentClassLogger();
-
         private QpCommandHandlerOptions options;
 
         private Dictionary<string, Type> commandRequestTypeDict = new Dictionary<string, Type>();
@@ -78,7 +75,7 @@ namespace Quick.Protocol
                 catch
                 {
                     if (LogUtils.LogCommand)
-                        logger.LogTrace("{0}: [Send-CommandRequestPackage-Timeout]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandContext.Id, requestTypeName, LogUtils.LogContent ? requestContent : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                        Console.WriteLine("{0}: [Send-CommandRequestPackage-Timeout]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandContext.Id, requestTypeName, LogUtils.LogContent ? requestContent : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                     if (commandContext.ResponseTask.Status == TaskStatus.Created)
                     {
@@ -115,7 +112,7 @@ namespace Quick.Protocol
                 catch
                 {
                     if (LogUtils.LogCommand)
-                        logger.LogTrace("{0}: [Send-CommandRequestPackage-Timeout]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandContext.Id, typeName, LogUtils.LogContent ? requestContent : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
+                        Console.WriteLine("{0}: [Send-CommandRequestPackage-Timeout]CommandId:{1},Type:{2},Content:{3}", DateTime.Now, commandContext.Id, typeName, LogUtils.LogContent ? requestContent : LogUtils.NOT_SHOW_CONTENT_MESSAGE);
 
                     if (commandContext.ResponseTask.Status == TaskStatus.Created)
                     {

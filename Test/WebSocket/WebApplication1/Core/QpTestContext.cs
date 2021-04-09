@@ -13,8 +13,9 @@ namespace WebApplication1.Core
 
         public QpTestContext(IApplicationBuilder app)
         {
+            Quick.Protocol.Utils.LogUtils.LogConnection = true;
             Quick.Protocol.Utils.LogUtils.LogHeartbeat = false;
-            Quick.Protocol.Utils.LogUtils.AddConsole();
+            
             app.UseQuickProtocol(new Quick.Protocol.WebSocket.Server.AspNetCore.QpWebSocketServerOptions()
             {
                 Path = "/qp_test",
