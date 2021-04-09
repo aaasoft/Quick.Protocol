@@ -40,12 +40,13 @@ namespace QpTestClient
 
             if (cbConnectType.Items.Count <= 0)
                 return;
-            var index = 0;
-            if (cbConnectType.Items.Count > 3)
-                index = 2;
-            cbConnectType.SelectedIndex = index;
-        }
 
+            var item = QpClientTypeManager.Instance.GetAll().FirstOrDefault(t => t.QpClientType.FullName == "Quick.Protocol.Tcp.QpTcpClient");
+            if (item != null)
+                cbConnectType.SelectedItem = item;
+            else
+                cbConnectType.SelectedIndex = 0;
+        }
 
         private void cbConnectType_SelectedIndexChanged(object sender, EventArgs e)
         {

@@ -34,10 +34,8 @@ namespace QpTestClient
             this.tsMain = new System.Windows.Forms.ToolStrip();
             this.btnFile = new System.Windows.Forms.ToolStripDropDownButton();
             this.btnAddConnection = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnOpenConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnImportConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
             this.btnExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.ssMain = new System.Windows.Forms.StatusStrip();
-            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.tvQpInstructions = new System.Windows.Forms.TreeView();
             this.ilQpInstructions = new System.Windows.Forms.ImageList(this.components);
@@ -46,9 +44,8 @@ namespace QpTestClient
             this.btnDisconnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnConnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelConnection = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnSaveConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnExportConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
-            this.ssMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
             this.scMain.Panel2.SuspendLayout();
@@ -72,7 +69,7 @@ namespace QpTestClient
             this.btnFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnAddConnection,
-            this.btnOpenConnectionFile,
+            this.btnImportConnectionFile,
             this.btnExit});
             this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
             this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -83,37 +80,20 @@ namespace QpTestClient
             // btnAddConnection
             // 
             this.btnAddConnection.Name = "btnAddConnection";
-            this.btnAddConnection.Size = new System.Drawing.Size(212, 26);
-            this.btnAddConnection.Text = "添加连接(&A)...";
+            this.btnAddConnection.Size = new System.Drawing.Size(155, 26);
+            this.btnAddConnection.Text = "添加(&A)...";
             // 
-            // btnOpenConnectionFile
+            // btnImportConnectionFile
             // 
-            this.btnOpenConnectionFile.Name = "btnOpenConnectionFile";
-            this.btnOpenConnectionFile.Size = new System.Drawing.Size(212, 26);
-            this.btnOpenConnectionFile.Text = "打开连接文件(&O)..";
+            this.btnImportConnectionFile.Name = "btnImportConnectionFile";
+            this.btnImportConnectionFile.Size = new System.Drawing.Size(155, 26);
+            this.btnImportConnectionFile.Text = "导入(&I)..";
             // 
             // btnExit
             // 
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(212, 26);
+            this.btnExit.Size = new System.Drawing.Size(155, 26);
             this.btnExit.Text = "退出(&X)";
-            // 
-            // ssMain
-            // 
-            this.ssMain.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblStatus});
-            this.ssMain.Location = new System.Drawing.Point(0, 513);
-            this.ssMain.Name = "ssMain";
-            this.ssMain.Size = new System.Drawing.Size(833, 26);
-            this.ssMain.TabIndex = 4;
-            this.ssMain.Text = "statusStrip1";
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(39, 20);
-            this.lblStatus.Text = "就绪";
             // 
             // scMain
             // 
@@ -128,7 +108,7 @@ namespace QpTestClient
             // scMain.Panel2
             // 
             this.scMain.Panel2.Controls.Add(this.gbNodeInfo);
-            this.scMain.Size = new System.Drawing.Size(833, 486);
+            this.scMain.Size = new System.Drawing.Size(833, 512);
             this.scMain.SplitterDistance = 277;
             this.scMain.TabIndex = 5;
             // 
@@ -141,7 +121,7 @@ namespace QpTestClient
             this.tvQpInstructions.Location = new System.Drawing.Point(0, 0);
             this.tvQpInstructions.Name = "tvQpInstructions";
             this.tvQpInstructions.SelectedImageIndex = 0;
-            this.tvQpInstructions.Size = new System.Drawing.Size(277, 486);
+            this.tvQpInstructions.Size = new System.Drawing.Size(277, 512);
             this.tvQpInstructions.TabIndex = 0;
             this.tvQpInstructions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvQpInstructions_AfterSelect);
             // 
@@ -161,7 +141,7 @@ namespace QpTestClient
             this.gbNodeInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbNodeInfo.Location = new System.Drawing.Point(0, 0);
             this.gbNodeInfo.Name = "gbNodeInfo";
-            this.gbNodeInfo.Size = new System.Drawing.Size(552, 486);
+            this.gbNodeInfo.Size = new System.Drawing.Size(552, 512);
             this.gbNodeInfo.TabIndex = 0;
             this.gbNodeInfo.TabStop = false;
             // 
@@ -172,33 +152,33 @@ namespace QpTestClient
             this.btnDisconnectConnection,
             this.btnConnectConnection,
             this.btnDelConnection,
-            this.btnSaveConnectionFile});
+            this.btnExportConnectionFile});
             this.cmsConnection.Name = "cmsConnection";
-            this.cmsConnection.Size = new System.Drawing.Size(211, 100);
+            this.cmsConnection.Size = new System.Drawing.Size(137, 100);
             // 
             // btnDisconnectConnection
             // 
             this.btnDisconnectConnection.Name = "btnDisconnectConnection";
-            this.btnDisconnectConnection.Size = new System.Drawing.Size(210, 24);
+            this.btnDisconnectConnection.Size = new System.Drawing.Size(136, 24);
             this.btnDisconnectConnection.Text = "断开(&D)";
             // 
             // btnConnectConnection
             // 
             this.btnConnectConnection.Name = "btnConnectConnection";
-            this.btnConnectConnection.Size = new System.Drawing.Size(210, 24);
+            this.btnConnectConnection.Size = new System.Drawing.Size(136, 24);
             this.btnConnectConnection.Text = "连接";
             // 
             // btnDelConnection
             // 
             this.btnDelConnection.Name = "btnDelConnection";
-            this.btnDelConnection.Size = new System.Drawing.Size(210, 24);
+            this.btnDelConnection.Size = new System.Drawing.Size(136, 24);
             this.btnDelConnection.Text = "删除(&D)";
             // 
-            // btnSaveConnectionFile
+            // btnExportConnectionFile
             // 
-            this.btnSaveConnectionFile.Name = "btnSaveConnectionFile";
-            this.btnSaveConnectionFile.Size = new System.Drawing.Size(210, 24);
-            this.btnSaveConnectionFile.Text = "保存为连接文件(&S)..";
+            this.btnExportConnectionFile.Name = "btnExportConnectionFile";
+            this.btnExportConnectionFile.Size = new System.Drawing.Size(136, 24);
+            this.btnExportConnectionFile.Text = "导出(&X)..";
             // 
             // MainForm
             // 
@@ -206,17 +186,15 @@ namespace QpTestClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(833, 539);
             this.Controls.Add(this.scMain);
-            this.Controls.Add(this.ssMain);
             this.Controls.Add(this.tsMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.tsMain.ResumeLayout(false);
             this.tsMain.PerformLayout();
-            this.ssMain.ResumeLayout(false);
-            this.ssMain.PerformLayout();
             this.scMain.Panel1.ResumeLayout(false);
             this.scMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).EndInit();
@@ -230,21 +208,19 @@ namespace QpTestClient
         #endregion
 
         private System.Windows.Forms.ToolStrip tsMain;
-        private System.Windows.Forms.StatusStrip ssMain;
         private System.Windows.Forms.SplitContainer scMain;
         private System.Windows.Forms.TreeView tvQpInstructions;
-        private System.Windows.Forms.ToolStripStatusLabel lblStatus;
         private System.Windows.Forms.ImageList ilQpInstructions;
         private System.Windows.Forms.GroupBox gbNodeInfo;
         private System.Windows.Forms.ToolStripDropDownButton btnFile;
         private System.Windows.Forms.ToolStripMenuItem btnAddConnection;
         private System.Windows.Forms.ContextMenuStrip cmsConnection;
         private System.Windows.Forms.ToolStripMenuItem btnDisconnectConnection;
-        private System.Windows.Forms.ToolStripMenuItem btnOpenConnectionFile;
+        private System.Windows.Forms.ToolStripMenuItem btnImportConnectionFile;
         private System.Windows.Forms.ToolStripMenuItem btnExit;
         private System.Windows.Forms.ToolStripMenuItem btnConnectConnection;
         private System.Windows.Forms.ToolStripMenuItem btnDelConnection;
-        private System.Windows.Forms.ToolStripMenuItem btnSaveConnectionFile;
+        private System.Windows.Forms.ToolStripMenuItem btnExportConnectionFile;
     }
 }
 

@@ -28,6 +28,7 @@ namespace Quick.Protocol
         /// 支持的指令集
         /// </summary>
         [Browsable(false)]
+        [JsonIgnore]
         public QpInstruction[] InstructionSet
         {
             get { return _InstructionSet; }
