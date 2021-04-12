@@ -329,6 +329,9 @@ namespace QpTestClient
             if (qpNoticeInfo == null)
                 return;
 
+            ConnectionContext connectionContext = findConnectionContext(noticeNode);
+            var form = new Forms.NoticeRecvForm(connectionContext, qpNoticeInfo);
+            form.Show();
         }
 
         private void BtnTestCommand_Click(object sender, EventArgs e)
@@ -339,7 +342,7 @@ namespace QpTestClient
                 return;
 
             ConnectionContext connectionContext = findConnectionContext(commandNode);
-            var form = new Forms.CommandTestForm(connectionContext, qpCommandInfo);          
+            var form = new Forms.CommandTestForm(connectionContext, qpCommandInfo);
             form.Show();
         }
     }
