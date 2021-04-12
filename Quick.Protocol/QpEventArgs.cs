@@ -55,6 +55,10 @@ namespace Quick.Protocol
         /// 内容
         /// </summary>
         public string Content { get; set; }
+        /// <summary>
+        /// 是否已处理
+        /// </summary>
+        public bool Handled { get; set; } = false;
     }
 
     /// <summary>

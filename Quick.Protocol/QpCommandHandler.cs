@@ -127,12 +127,17 @@ namespace Quick.Protocol
 
         protected override void OnCommandRequestReceived(string commandId, string typeName, string content)
         {
-            RawCommandRequestPackageReceived?.Invoke(this, new RawCommandRequestPackageReceivedEventArgs()
+            var eventArgs = new RawCommandRequestPackageReceivedEventArgs()
             {
                 CommandId = commandId,
                 TypeName = typeName,
                 Content = content
-            });
+            };
+            RawCommandRequestPackageReceived?.Invoke(this, eventArgs);
+            //如果已经处理，则直接返回
+            if (eventArgs.Handled)
+                return;
+
             //如果在字典中未找到此类型名称，则直接返回
             if (!commandRequestTypeDict.ContainsKey(typeName))
                 return;
@@ -157,7 +162,7 @@ namespace Quick.Protocol
                         if (commandExecuterManager.CanExecuteCommand(typeName))
                         {
                             hasCommandExecuter = true;
-                            var responseModel = commandExecuterManager.ExecuteCommand(typeName, contentModel);
+                            var responseModel = commandExecuterManager.ExecuteCommand(this, typeName, contentModel);
                             SendCommandResponsePackage(commandId, 0, null, cmdResponseType.FullName, JsonConvert.SerializeObject(responseModel));
                             break;
                         }

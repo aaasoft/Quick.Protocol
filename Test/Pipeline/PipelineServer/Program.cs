@@ -15,7 +15,7 @@ namespace PipelineServer
             //Quick.Protocol.Utils.LogUtils.LogContent = true;
 
             var commandExecuterManager = new CommandExecuterManager();
-            commandExecuterManager.Register<Quick.Protocol.Commands.PrivateCommand.Request, Quick.Protocol.Commands.PrivateCommand.Response>(req =>
+            commandExecuterManager.Register<Quick.Protocol.Commands.PrivateCommand.Request, Quick.Protocol.Commands.PrivateCommand.Response>((handler, req) =>
             {
                 return new Quick.Protocol.Commands.PrivateCommand.Response()
                 {

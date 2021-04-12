@@ -19,7 +19,7 @@ namespace Quick.Protocol
             commandExecuterDict[cmdRequestTypeName] = commandExecuter;
         }
 
-        public void Register<TCmdRequest, TCmdResponse>(Func<TCmdRequest, TCmdResponse> commandExecuter)
+        public void Register<TCmdRequest, TCmdResponse>(Func<QpPackageHandler, TCmdRequest, TCmdResponse> commandExecuter)
             where TCmdRequest : class, new()
             where TCmdResponse : class, new()
         {
@@ -27,7 +27,7 @@ namespace Quick.Protocol
             Register(cmdRequestTypeName, commandExecuter);
         }
 
-        public void Register<TCmdRequest, TCmdResponse>(TCmdRequest request, Func<TCmdRequest, TCmdResponse> commandExecuter)
+        public void Register<TCmdRequest, TCmdResponse>(TCmdRequest request, Func<QpPackageHandler, TCmdRequest, TCmdResponse> commandExecuter)
             where TCmdRequest : class, IQpCommandRequest<TCmdResponse>, new()
             where TCmdResponse : class, new()
         {
@@ -38,15 +38,16 @@ namespace Quick.Protocol
         /// <summary>
         /// 执行命令
         /// </summary>
+        /// <param name="handler"></param>
         /// <param name="cmdRequestTypeName"></param>
         /// <param name="cmdRequestModel"></param>
         /// <returns></returns>
-        public object ExecuteCommand(string cmdRequestTypeName, object cmdRequestModel)
+        public object ExecuteCommand(QpPackageHandler handler, string cmdRequestTypeName, object cmdRequestModel)
         {
             if (!CanExecuteCommand(cmdRequestTypeName))
                 throw new IOException($"Command Request Type[{cmdRequestTypeName}] has no executer.");
             Delegate commandExecuter = commandExecuterDict[cmdRequestTypeName];
-            return commandExecuter.DynamicInvoke(new object[] { cmdRequestModel });
+            return commandExecuter.DynamicInvoke(new object[] { handler, cmdRequestModel });
         }
 
         /// <summary>
