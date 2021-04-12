@@ -7,13 +7,13 @@
     <Copyright />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>scbeta</Authors>
-    <Version>2.0.0</Version>
+    <Version>2.0.0-alpha</Version>
     <Company />
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NJsonSchema" Version="10.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NJsonSchema" Version="10.4.1" />
   </ItemGroup>
 
 </Project>
