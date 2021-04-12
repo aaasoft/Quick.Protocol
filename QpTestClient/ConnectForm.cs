@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Quick.Protocol;
 using Quick.Protocol.Utils;
+using Quick.Xml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,8 +26,8 @@ namespace QpTestClient
         }
 
         public void EditConnectionInfo(ConnectionInfo connectionInfo)
-        {
-            this.ConnectionInfo = connectionInfo;
+        {            
+            this.ConnectionInfo = XmlConvert.Deserialize<ConnectionInfo>(XmlConvert.Serialize(connectionInfo));
             txtName.Text = connectionInfo.Name;
             var qpClientTypeInfo = QpClientTypeManager.Instance.GetAll().FirstOrDefault(t => t.QpClientType.FullName == connectionInfo.QpClientTypeName);
             cbConnectType.SelectedItem = qpClientTypeInfo;
@@ -40,8 +41,10 @@ namespace QpTestClient
 
             if (cbConnectType.Items.Count <= 0)
                 return;
-
-            var item = QpClientTypeManager.Instance.GetAll().FirstOrDefault(t => t.QpClientType.FullName == "Quick.Protocol.Tcp.QpTcpClient");
+            var qpClientTypeName = "Quick.Protocol.Tcp.QpTcpClient";
+            if (ConnectionInfo != null)
+                qpClientTypeName = ConnectionInfo.QpClientTypeName;
+            var item = QpClientTypeManager.Instance.GetAll().FirstOrDefault(t => t.QpClientType.FullName == qpClientTypeName);
             if (item != null)
                 cbConnectType.SelectedItem = item;
             else

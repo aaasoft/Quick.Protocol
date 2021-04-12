@@ -31,6 +31,7 @@ namespace QpTestClient
             btnExit.Click += BtnExit_Click;
             btnDisconnectConnection.Click += BtnDisconnectConnection_Click;
             btnConnectConnection.Click += BtnConnectConnection_Click;
+            btnEditConnection.Click += BtnEditConnection_Click;
             btnDelConnection.Click += BtnDelConnection_Click;
             btnExportConnectionFile.Click += BtnExportConnectionFile_Click;
         }
@@ -134,12 +135,14 @@ namespace QpTestClient
             {
                 btnConnectConnection.Visible = false;
                 btnDisconnectConnection.Visible = true;
+                btnEditConnection.Visible = false;
                 btnDelConnection.Visible = false;
             }
             else
             {
                 btnConnectConnection.Visible = true;
                 btnDisconnectConnection.Visible = false;
+                btnEditConnection.Visible = true;
                 btnDelConnection.Visible = true;
             }
         }
@@ -242,6 +245,26 @@ namespace QpTestClient
                 MessageBox.Show($"连接失败，原因：{ExceptionUtils.GetExceptionMessage(ex)}", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             this.Enabled = true;
+        }
+
+        private void BtnEditConnection_Click(object sender, EventArgs e)
+        {
+            var connectionNode = tvQpInstructions.SelectedNode;
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
+                return;
+
+            var form = new ConnectForm();
+            form.EditConnectionInfo(connectionContext.ConnectionInfo);
+            var ret = form.ShowDialog();
+            if (ret != DialogResult.OK)
+                return;
+            var connectionInfo = form.ConnectionInfo;
+            connectionContext.Dispose();
+            treeNodeCollection.Remove(connectionNode);
+
+            addConnection(connectionInfo);
+            QpdFileUtils.SaveQpbFile(connectionInfo);
         }
 
         private void BtnExportConnectionFile_Click(object sender, EventArgs e)

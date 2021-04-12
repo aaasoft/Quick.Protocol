@@ -45,6 +45,7 @@ namespace QpTestClient
             this.btnConnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnExportConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnEditConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
@@ -60,7 +61,7 @@ namespace QpTestClient
             this.btnFile});
             this.tsMain.Location = new System.Drawing.Point(0, 0);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(648, 25);
+            this.tsMain.Size = new System.Drawing.Size(833, 27);
             this.tsMain.TabIndex = 2;
             this.tsMain.Text = "toolStrip1";
             // 
@@ -74,32 +75,32 @@ namespace QpTestClient
             this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
             this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFile.Name = "btnFile";
-            this.btnFile.Size = new System.Drawing.Size(59, 22);
+            this.btnFile.Size = new System.Drawing.Size(71, 24);
             this.btnFile.Text = "文件(&F)";
             // 
             // btnAddConnection
             // 
             this.btnAddConnection.Name = "btnAddConnection";
-            this.btnAddConnection.Size = new System.Drawing.Size(125, 22);
+            this.btnAddConnection.Size = new System.Drawing.Size(155, 26);
             this.btnAddConnection.Text = "添加(&A)...";
             // 
             // btnImportConnectionFile
             // 
             this.btnImportConnectionFile.Name = "btnImportConnectionFile";
-            this.btnImportConnectionFile.Size = new System.Drawing.Size(125, 22);
+            this.btnImportConnectionFile.Size = new System.Drawing.Size(155, 26);
             this.btnImportConnectionFile.Text = "导入(&I)..";
             // 
             // btnExit
             // 
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(125, 22);
+            this.btnExit.Size = new System.Drawing.Size(155, 26);
             this.btnExit.Text = "退出(&X)";
             // 
             // scMain
             // 
             this.scMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scMain.Location = new System.Drawing.Point(0, 25);
-            this.scMain.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.scMain.Location = new System.Drawing.Point(0, 27);
+            this.scMain.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.scMain.Name = "scMain";
             // 
             // scMain.Panel1
@@ -109,9 +110,8 @@ namespace QpTestClient
             // scMain.Panel2
             // 
             this.scMain.Panel2.Controls.Add(this.gbNodeInfo);
-            this.scMain.Size = new System.Drawing.Size(648, 433);
-            this.scMain.SplitterDistance = 215;
-            this.scMain.SplitterWidth = 3;
+            this.scMain.Size = new System.Drawing.Size(833, 512);
+            this.scMain.SplitterDistance = 276;
             this.scMain.TabIndex = 5;
             // 
             // tvQpInstructions
@@ -121,10 +121,10 @@ namespace QpTestClient
             this.tvQpInstructions.ImageIndex = 0;
             this.tvQpInstructions.ImageList = this.ilQpInstructions;
             this.tvQpInstructions.Location = new System.Drawing.Point(0, 0);
-            this.tvQpInstructions.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.tvQpInstructions.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tvQpInstructions.Name = "tvQpInstructions";
             this.tvQpInstructions.SelectedImageIndex = 0;
-            this.tvQpInstructions.Size = new System.Drawing.Size(215, 433);
+            this.tvQpInstructions.Size = new System.Drawing.Size(276, 512);
             this.tvQpInstructions.TabIndex = 0;
             this.tvQpInstructions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvQpInstructions_AfterSelect);
             // 
@@ -143,10 +143,10 @@ namespace QpTestClient
             // 
             this.gbNodeInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbNodeInfo.Location = new System.Drawing.Point(0, 0);
-            this.gbNodeInfo.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.gbNodeInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.gbNodeInfo.Name = "gbNodeInfo";
-            this.gbNodeInfo.Padding = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.gbNodeInfo.Size = new System.Drawing.Size(430, 433);
+            this.gbNodeInfo.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.gbNodeInfo.Size = new System.Drawing.Size(553, 512);
             this.gbNodeInfo.TabIndex = 0;
             this.gbNodeInfo.TabStop = false;
             // 
@@ -156,44 +156,51 @@ namespace QpTestClient
             this.cmsConnection.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnDisconnectConnection,
             this.btnConnectConnection,
+            this.btnEditConnection,
             this.btnDelConnection,
             this.btnExportConnectionFile});
             this.cmsConnection.Name = "cmsConnection";
-            this.cmsConnection.Size = new System.Drawing.Size(123, 92);
+            this.cmsConnection.Size = new System.Drawing.Size(137, 124);
             // 
             // btnDisconnectConnection
             // 
             this.btnDisconnectConnection.Name = "btnDisconnectConnection";
-            this.btnDisconnectConnection.Size = new System.Drawing.Size(122, 22);
+            this.btnDisconnectConnection.Size = new System.Drawing.Size(136, 24);
             this.btnDisconnectConnection.Text = "断开(&D)";
             // 
             // btnConnectConnection
             // 
             this.btnConnectConnection.Name = "btnConnectConnection";
-            this.btnConnectConnection.Size = new System.Drawing.Size(122, 22);
+            this.btnConnectConnection.Size = new System.Drawing.Size(136, 24);
             this.btnConnectConnection.Text = "连接";
             // 
             // btnDelConnection
             // 
             this.btnDelConnection.Name = "btnDelConnection";
-            this.btnDelConnection.Size = new System.Drawing.Size(122, 22);
+            this.btnDelConnection.Size = new System.Drawing.Size(136, 24);
             this.btnDelConnection.Text = "删除(&D)";
             // 
             // btnExportConnectionFile
             // 
             this.btnExportConnectionFile.Name = "btnExportConnectionFile";
-            this.btnExportConnectionFile.Size = new System.Drawing.Size(122, 22);
+            this.btnExportConnectionFile.Size = new System.Drawing.Size(136, 24);
             this.btnExportConnectionFile.Text = "导出(&X)..";
+            // 
+            // btnEditConnection
+            // 
+            this.btnEditConnection.Name = "btnEditConnection";
+            this.btnEditConnection.Size = new System.Drawing.Size(136, 24);
+            this.btnEditConnection.Text = "编辑(&E)..";
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(648, 458);
+            this.ClientSize = new System.Drawing.Size(833, 539);
             this.Controls.Add(this.scMain);
             this.Controls.Add(this.tsMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
@@ -227,6 +234,7 @@ namespace QpTestClient
         private System.Windows.Forms.ToolStripMenuItem btnConnectConnection;
         private System.Windows.Forms.ToolStripMenuItem btnDelConnection;
         private System.Windows.Forms.ToolStripMenuItem btnExportConnectionFile;
+        private System.Windows.Forms.ToolStripMenuItem btnEditConnection;
     }
 }
 
