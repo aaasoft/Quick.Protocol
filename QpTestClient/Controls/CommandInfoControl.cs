@@ -12,11 +12,9 @@ namespace QpTestClient.Controls
 {
     public partial class CommandInfoControl : UserControl
     {
-        private QpClient client;
         private QpCommandInfo item;
-        public CommandInfoControl(QpClient client, QpCommandInfo item)
+        public CommandInfoControl(QpCommandInfo item)
         {
-            this.client = client;
             this.item = item;
             InitializeComponent();
 
@@ -35,38 +33,6 @@ namespace QpTestClient.Controls
             txtRequestSchemaSample.Text = item.RequestTypeSchemaSample;
             txtResponseSchema.Text = item.ResponseTypeSchema;
             txtResponseSchemaSample.Text = item.ResponseTypeSchemaSample;
-
-            txtTestRequest.Text = item.RequestTypeSchemaSample;
-            btnExecuteTest.Click += BtnExecuteTest_Click;
-        }
-
-        private async void BtnExecuteTest_Click(object sender, EventArgs e)
-        {
-            btnExecuteTest.Enabled = false;
-            txtTestResponse.Clear();
-            if(client==null)
-            {
-                txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 当前未连接，无法执行！{Environment.NewLine}");
-                return;
-            }
-            txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 开始执行...{Environment.NewLine}");
-            try
-            {
-                var ret = await client.SendCommand(item.RequestTypeName, txtTestRequest.Text.Trim());
-                txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 执行成功{Environment.NewLine}");
-                txtTestResponse.AppendText($"类型：{ret.TypeName}{Environment.NewLine}");
-                txtTestResponse.AppendText($"内容{Environment.NewLine}");
-                txtTestResponse.AppendText($"--------------------------{Environment.NewLine}");
-                txtTestResponse.AppendText(ret.Content);
-            }
-            catch (Exception ex)
-            {
-                txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 执行失败{Environment.NewLine}");
-                txtTestResponse.AppendText($"错误信息{Environment.NewLine}");
-                txtTestResponse.AppendText($"--------------------------{Environment.NewLine}");
-                txtTestResponse.AppendText(ExceptionUtils.GetExceptionMessage(ex));
-            }
-            btnExecuteTest.Enabled = true;
         }
     }
 }

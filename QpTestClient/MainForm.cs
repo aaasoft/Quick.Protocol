@@ -29,11 +29,16 @@ namespace QpTestClient
             btnAddConnection.Click += BtnAddConnection_Click;
             btnImportConnectionFile.Click += BtnImportConnectionFile_Click;
             btnExit.Click += BtnExit_Click;
+            //连接相关
             btnDisconnectConnection.Click += BtnDisconnectConnection_Click;
             btnConnectConnection.Click += BtnConnectConnection_Click;
             btnEditConnection.Click += BtnEditConnection_Click;
             btnDelConnection.Click += BtnDelConnection_Click;
             btnExportConnectionFile.Click += BtnExportConnectionFile_Click;
+            //通知相关
+            btnBeginRecvNotice.Click += BtnBeginRecvNotice_Click;
+            //命令相关
+            btnTestCommand.Click += BtnTestCommand_Click;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -53,6 +58,33 @@ namespace QpTestClient
                 var connectionContext = (ConnectionContext)connectNode.Tag;
                 connectionContext.Dispose();
             }
+        }
+
+        private void BtnImportConnectionFile_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = QPDFILE_FILTER;
+            var ret = ofd.ShowDialog();
+            if (ret == DialogResult.Cancel)
+                return;
+            try
+            {
+                var file = ofd.FileName;
+                ConnectionInfo connectionInfo = QpdFileUtils.Load(file);
+                connectionInfo.Name = Path.GetFileNameWithoutExtension(file);
+                addConnection(connectionInfo);
+                QpdFileUtils.SaveQpbFile(connectionInfo);
+                MessageBox.Show("导入成功！", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"导入失败，原因：{ExceptionUtils.GetExceptionMessage(ex)}", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void BtnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void showContent(Control item)
@@ -101,21 +133,25 @@ namespace QpTestClient
             }
             else if (nodeObj is QpCommandInfo)
             {
-                ConnectionContext connectionContext;
-                var currentNode = e.Node;
-                while (true)
-                {
-                    if (currentNode.Tag is ConnectionContext)
-                    {
-                        connectionContext = (ConnectionContext)currentNode.Tag;
-                        break;
-                    }
-                    currentNode = currentNode.Parent;
-                }
-                showContent(new Controls.CommandInfoControl(connectionContext.QpClient, (QpCommandInfo)nodeObj));
+                showContent(new Controls.CommandInfoControl((QpCommandInfo)nodeObj));
             }
         }
 
+        private ConnectionContext findConnectionContext(TreeNode treeNode)
+        {
+            ConnectionContext connectionContext = null;
+            var currentNode = treeNode;
+            while (currentNode != null)
+            {
+                if (currentNode.Tag is ConnectionContext)
+                {
+                    connectionContext = (ConnectionContext)currentNode.Tag;
+                    break;
+                }
+                currentNode = currentNode.Parent;
+            }
+            return connectionContext;
+        }
 
         private void CmsConnection_Opening(object sender, CancelEventArgs e)
         {
@@ -158,12 +194,14 @@ namespace QpTestClient
                 foreach (var noticeInfo in instruction.NoticeInfos)
                 {
                     var noticeNode = noticesNode.Nodes.Add(noticeInfo.NoticeTypeName, noticeInfo.Name, 3, 3);
+                    noticeNode.ContextMenuStrip = cmsNotice;
                     noticeNode.Tag = noticeInfo;
                 }
                 var commandsNode = instructionNode.Nodes.Add("Command", "命令", 4, 4);
                 foreach (var commandInfo in instruction.CommandInfos)
                 {
                     var commandNode = commandsNode.Nodes.Add(commandInfo.RequestTypeName, commandInfo.Name, 4, 4);
+                    commandNode.ContextMenuStrip = cmsCommand;
                     commandNode.Tag = commandInfo;
                 }
             }
@@ -284,31 +322,25 @@ namespace QpTestClient
             MessageBox.Show("导出成功！", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void BtnImportConnectionFile_Click(object sender, EventArgs e)
+        private void BtnBeginRecvNotice_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = QPDFILE_FILTER;
-            var ret = ofd.ShowDialog();
-            if (ret == DialogResult.Cancel)
+            var noticeNode = tvQpInstructions.SelectedNode;
+            var qpNoticeInfo = noticeNode.Tag as QpNoticeInfo;
+            if (qpNoticeInfo == null)
                 return;
-            try
-            {
-                var file = ofd.FileName;
-                ConnectionInfo connectionInfo = QpdFileUtils.Load(file);
-                connectionInfo.Name = Path.GetFileNameWithoutExtension(file);
-                addConnection(connectionInfo);
-                QpdFileUtils.SaveQpbFile(connectionInfo);
-                MessageBox.Show("导入成功！", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"导入失败，原因：{ExceptionUtils.GetExceptionMessage(ex)}", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+
         }
 
-        private void BtnExit_Click(object sender, EventArgs e)
+        private void BtnTestCommand_Click(object sender, EventArgs e)
         {
-            this.Close();
+            var commandNode = tvQpInstructions.SelectedNode;
+            var qpCommandInfo = commandNode.Tag as QpCommandInfo;
+            if (qpCommandInfo == null)
+                return;
+
+            ConnectionContext connectionContext = findConnectionContext(commandNode);
+            var form = new Forms.CommandTestForm(connectionContext, qpCommandInfo);          
+            form.Show();
         }
     }
 }

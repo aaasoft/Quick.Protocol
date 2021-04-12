@@ -43,15 +43,21 @@ namespace QpTestClient
             this.cmsConnection = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnDisconnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnConnectConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnEditConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnExportConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnEditConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsNotice = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnBeginRecvNotice = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsCommand = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnTestCommand = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
             this.scMain.Panel2.SuspendLayout();
             this.scMain.SuspendLayout();
             this.cmsConnection.SuspendLayout();
+            this.cmsNotice.SuspendLayout();
+            this.cmsCommand.SuspendLayout();
             this.SuspendLayout();
             // 
             // tsMain
@@ -174,6 +180,12 @@ namespace QpTestClient
             this.btnConnectConnection.Size = new System.Drawing.Size(136, 24);
             this.btnConnectConnection.Text = "连接";
             // 
+            // btnEditConnection
+            // 
+            this.btnEditConnection.Name = "btnEditConnection";
+            this.btnEditConnection.Size = new System.Drawing.Size(136, 24);
+            this.btnEditConnection.Text = "编辑(&E)..";
+            // 
             // btnDelConnection
             // 
             this.btnDelConnection.Name = "btnDelConnection";
@@ -186,11 +198,33 @@ namespace QpTestClient
             this.btnExportConnectionFile.Size = new System.Drawing.Size(136, 24);
             this.btnExportConnectionFile.Text = "导出(&X)..";
             // 
-            // btnEditConnection
+            // cmsNotice
             // 
-            this.btnEditConnection.Name = "btnEditConnection";
-            this.btnEditConnection.Size = new System.Drawing.Size(136, 24);
-            this.btnEditConnection.Text = "编辑(&E)..";
+            this.cmsNotice.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsNotice.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnBeginRecvNotice});
+            this.cmsNotice.Name = "cmsNotice";
+            this.cmsNotice.Size = new System.Drawing.Size(167, 28);
+            // 
+            // btnBeginRecvNotice
+            // 
+            this.btnBeginRecvNotice.Name = "btnBeginRecvNotice";
+            this.btnBeginRecvNotice.Size = new System.Drawing.Size(166, 24);
+            this.btnBeginRecvNotice.Text = "开始接收(&R)..";
+            // 
+            // cmsCommand
+            // 
+            this.cmsCommand.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsCommand.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnTestCommand});
+            this.cmsCommand.Name = "cmsCommand";
+            this.cmsCommand.Size = new System.Drawing.Size(136, 28);
+            // 
+            // btnTestCommand
+            // 
+            this.btnTestCommand.Name = "btnTestCommand";
+            this.btnTestCommand.Size = new System.Drawing.Size(135, 24);
+            this.btnTestCommand.Text = "测试(&T)..";
             // 
             // MainForm
             // 
@@ -213,6 +247,8 @@ namespace QpTestClient
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).EndInit();
             this.scMain.ResumeLayout(false);
             this.cmsConnection.ResumeLayout(false);
+            this.cmsNotice.ResumeLayout(false);
+            this.cmsCommand.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,6 +271,10 @@ namespace QpTestClient
         private System.Windows.Forms.ToolStripMenuItem btnDelConnection;
         private System.Windows.Forms.ToolStripMenuItem btnExportConnectionFile;
         private System.Windows.Forms.ToolStripMenuItem btnEditConnection;
+        private System.Windows.Forms.ContextMenuStrip cmsNotice;
+        private System.Windows.Forms.ToolStripMenuItem btnBeginRecvNotice;
+        private System.Windows.Forms.ContextMenuStrip cmsCommand;
+        private System.Windows.Forms.ToolStripMenuItem btnTestCommand;
     }
 }
 
