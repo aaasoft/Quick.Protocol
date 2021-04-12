@@ -761,30 +761,26 @@ namespace Quick.Protocol
         /// <param name="content"></param>
         protected void OnRawNoticePackageReceived(string typeName, string content)
         {
+            //触发RawNoticePackageReceived事件
             RawNoticePackageReceived?.Invoke(this, new RawNoticePackageReceivedEventArgs()
             {
                 TypeName = typeName,
                 Content = content
             });
-            //如果在字典中未找到此类型名称，则直接返回
-            if (!noticeTypeDict.ContainsKey(typeName))
-                return;
-            var contentModel = JsonConvert.DeserializeObject(content, noticeTypeDict[typeName]);
-            OnNoticePackageReceived(typeName, contentModel);
-        }
 
-        /// <summary>
-        /// 接收到通知数据包时
-        /// </summary>
-        /// <param name="typeName"></param>
-        /// <param name="contentModel"></param>
-        protected virtual void OnNoticePackageReceived(string typeName, object contentModel)
-        {
-            NoticePackageReceived?.Invoke(this, new NoticePackageReceivedEventArgs()
+            //如果配置了触发NoticePackageReceived事件
+            if (options.RaiseNoticePackageReceivedEvent)
             {
-                TypeName = typeName,
-                ContentModel = contentModel
-            });
+                //如果在字典中未找到此类型名称，则直接返回
+                if (!noticeTypeDict.ContainsKey(typeName))
+                    return;
+                var contentModel = JsonConvert.DeserializeObject(content, noticeTypeDict[typeName]);
+                NoticePackageReceived?.Invoke(this, new NoticePackageReceivedEventArgs()
+                {
+                    TypeName = typeName,
+                    ContentModel = contentModel
+                });
+            }
         }
 
         /// <summary>

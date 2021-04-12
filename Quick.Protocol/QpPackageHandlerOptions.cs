@@ -71,5 +71,12 @@ namespace Quick.Protocol
             if (Password == null)
                 throw new ArgumentNullException(nameof(Password));
         }
+
+        /// <summary>
+        /// 是否触发NoticePackageReceived事件
+        /// </summary>
+        [Category("高级")]
+        [DisplayName("是否触发NoticePackageReceived事件")]
+        public bool RaiseNoticePackageReceivedEvent { get; set; } = true;
     }
 }
