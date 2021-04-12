@@ -685,7 +685,7 @@ namespace Quick.Protocol
                             var typeNameOffset = typeNameLengthOffset + 1;
                             var typeName = encoding.GetString(package.Array, typeNameOffset, typeNameLength);
 
-                            var contentOffset = typeNameOffset + 1 + typeNameLength;
+                            var contentOffset = typeNameOffset + typeNameLength;
                             var content = encoding.GetString(package.Array, contentOffset, package.Offset + package.Count - contentOffset);
 
                             if (LogUtils.LogNotice)

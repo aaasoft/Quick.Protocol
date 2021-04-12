@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TcpServer
 {
@@ -68,6 +70,18 @@ Content-Length: {Encoding.UTF8.GetByteCount(messsge)}
         private static void Server_ChannelConnected(object sender, QpServerChannel e)
         {
             Console.WriteLine($"{DateTime.Now.ToLongTimeString()}: 通道[{e.ChannelName}]已连接!");
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    e.SendNoticePackage(new Quick.Protocol.Notices.PrivateNotice()
+                    {
+                        Action = "NowTime",
+                        Content = DateTime.Now.ToString()
+                    });
+                }
+            });
         }
 
         private static void Server_ChannelDisconnected(object sender, QpServerChannel e)

@@ -21,7 +21,8 @@ namespace TcpClient
                 EnableCompress = true,
                 EnableEncrypt = true
             });
-
+            client.RawNoticePackageReceived += Client_RawNoticePackageReceived;
+            client.NoticePackageReceived += Client_NoticePackageReceived;
             client.Disconnected += (sender, e) =>
             {
                 Console.WriteLine("连接已断开");
@@ -46,6 +47,16 @@ namespace TcpClient
                 });
             });
             Console.ReadLine();
+        }
+
+        private static void Client_RawNoticePackageReceived(object sender, Quick.Protocol.RawNoticePackageReceivedEventArgs e)
+        {
+            Console.WriteLine($"[Client_RawNoticePackageReceived]TypeName:{e.TypeName},Content:{e.Content}");
+        }
+
+        private static void Client_NoticePackageReceived(object sender, Quick.Protocol.NoticePackageReceivedEventArgs e)
+        {
+            Console.WriteLine($"[Client_NoticePackageReceived]TypeName:{e.TypeName},ContentModel:{e.ContentModel}");
         }
     }
 }
