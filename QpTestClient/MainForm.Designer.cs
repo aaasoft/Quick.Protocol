@@ -44,8 +44,9 @@ namespace QpTestClient
             this.cmsConnection = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnDisconnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnConnectConnection = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.separatorConnection = new System.Windows.Forms.ToolStripSeparator();
             this.btnRecvNotice_Connection = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnTestCommand_Connection = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnEditConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelConnection = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,7 +55,7 @@ namespace QpTestClient
             this.btnRecvNotice_Notice = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsCommand = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnTestCommand_Command = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnTestCommand_Connection = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnRecvHeartbeat_Connection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
@@ -174,7 +175,8 @@ namespace QpTestClient
             this.cmsConnection.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnDisconnectConnection,
             this.btnConnectConnection,
-            this.toolStripSeparator2,
+            this.separatorConnection,
+            this.btnRecvHeartbeat_Connection,
             this.btnRecvNotice_Connection,
             this.btnTestCommand_Connection,
             this.toolStripSeparator3,
@@ -182,52 +184,58 @@ namespace QpTestClient
             this.btnDelConnection,
             this.btnExportConnectionFile});
             this.cmsConnection.Name = "cmsConnection";
-            this.cmsConnection.Size = new System.Drawing.Size(167, 184);
+            this.cmsConnection.Size = new System.Drawing.Size(169, 208);
             // 
             // btnDisconnectConnection
             // 
             this.btnDisconnectConnection.Name = "btnDisconnectConnection";
-            this.btnDisconnectConnection.Size = new System.Drawing.Size(166, 24);
+            this.btnDisconnectConnection.Size = new System.Drawing.Size(168, 24);
             this.btnDisconnectConnection.Text = "断开(&D)";
             // 
             // btnConnectConnection
             // 
             this.btnConnectConnection.Name = "btnConnectConnection";
-            this.btnConnectConnection.Size = new System.Drawing.Size(166, 24);
+            this.btnConnectConnection.Size = new System.Drawing.Size(168, 24);
             this.btnConnectConnection.Text = "连接";
             // 
-            // toolStripSeparator2
+            // separatorConnection
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(163, 6);
+            this.separatorConnection.Name = "separatorConnection";
+            this.separatorConnection.Size = new System.Drawing.Size(165, 6);
             // 
             // btnRecvNotice_Connection
             // 
             this.btnRecvNotice_Connection.Name = "btnRecvNotice_Connection";
-            this.btnRecvNotice_Connection.Size = new System.Drawing.Size(166, 24);
+            this.btnRecvNotice_Connection.Size = new System.Drawing.Size(168, 24);
             this.btnRecvNotice_Connection.Text = "接收通知(&R)..";
+            // 
+            // btnTestCommand_Connection
+            // 
+            this.btnTestCommand_Connection.Name = "btnTestCommand_Connection";
+            this.btnTestCommand_Connection.Size = new System.Drawing.Size(168, 24);
+            this.btnTestCommand_Connection.Text = "测试命令(&T)..";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(163, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(165, 6);
             // 
             // btnEditConnection
             // 
             this.btnEditConnection.Name = "btnEditConnection";
-            this.btnEditConnection.Size = new System.Drawing.Size(166, 24);
+            this.btnEditConnection.Size = new System.Drawing.Size(168, 24);
             this.btnEditConnection.Text = "编辑(&E)..";
             // 
             // btnDelConnection
             // 
             this.btnDelConnection.Name = "btnDelConnection";
-            this.btnDelConnection.Size = new System.Drawing.Size(166, 24);
+            this.btnDelConnection.Size = new System.Drawing.Size(168, 24);
             this.btnDelConnection.Text = "删除(&D)";
             // 
             // btnExportConnectionFile
             // 
             this.btnExportConnectionFile.Name = "btnExportConnectionFile";
-            this.btnExportConnectionFile.Size = new System.Drawing.Size(166, 24);
+            this.btnExportConnectionFile.Size = new System.Drawing.Size(168, 24);
             this.btnExportConnectionFile.Text = "导出(&X)..";
             // 
             // cmsNotice
@@ -258,11 +266,11 @@ namespace QpTestClient
             this.btnTestCommand_Command.Size = new System.Drawing.Size(135, 24);
             this.btnTestCommand_Command.Text = "测试(&T)..";
             // 
-            // btnTestCommand_Connection
+            // btnRecvHeartbeat_Connection
             // 
-            this.btnTestCommand_Connection.Name = "btnTestCommand_Connection";
-            this.btnTestCommand_Connection.Size = new System.Drawing.Size(166, 24);
-            this.btnTestCommand_Connection.Text = "测试命令(&T)..";
+            this.btnRecvHeartbeat_Connection.Name = "btnRecvHeartbeat_Connection";
+            this.btnRecvHeartbeat_Connection.Size = new System.Drawing.Size(168, 24);
+            this.btnRecvHeartbeat_Connection.Text = "接收心跳(&H)..";
             // 
             // MainForm
             // 
@@ -314,10 +322,11 @@ namespace QpTestClient
         private System.Windows.Forms.ContextMenuStrip cmsCommand;
         private System.Windows.Forms.ToolStripMenuItem btnTestCommand_Command;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator separatorConnection;
         private System.Windows.Forms.ToolStripMenuItem btnRecvNotice_Connection;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem btnTestCommand_Connection;
+        private System.Windows.Forms.ToolStripMenuItem btnRecvHeartbeat_Connection;
     }
 }
 

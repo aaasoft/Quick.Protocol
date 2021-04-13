@@ -434,7 +434,7 @@ namespace Quick.Protocol
             stream.Write(packageBuffer.Array, packageBuffer.Offset, packageBuffer.Count);
             if (LogUtils.LogPackage)
                 Console.WriteLine(
-                    "{0}: [Send-Package]Length:{1}，Type:{2}，Content:{}",
+                    "{0}: [Send-Package]Length:{1}，Type:{2}，Content:{3}",
                     DateTime.Now,
                     packageBuffer.Count,
                     (QpPackageType)packageType,
@@ -592,7 +592,7 @@ namespace Quick.Protocol
 
             if (LogUtils.LogPackage)
                 Console.WriteLine(
-                "{0}: [Recv-Package]Length:{1}，Type:{2}，Content:{}",
+                "{0}: [Recv-Package]Length:{1}，Type:{2}，Content:{3}",
                 DateTime.Now,
                 finalPackageBuffer.Count,
                 (QpPackageType)finalPackageBuffer.Array[finalPackageBuffer.Offset + PACKAGE_HEAD_LENGTH - 1],

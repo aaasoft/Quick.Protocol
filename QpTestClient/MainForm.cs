@@ -32,6 +32,7 @@ namespace QpTestClient
             //连接相关
             btnDisconnectConnection.Click += BtnDisconnectConnection_Click;
             btnConnectConnection.Click += BtnConnectConnection_Click;
+            btnRecvHeartbeat_Connection.Click += BtnRecvHeartbeat_Connection_Click;
             btnRecvNotice_Connection.Click += BtnRecvNotice_Connection_Click;
             btnTestCommand_Connection.Click += BtnTestCommand_Connection_Click;
             btnEditConnection.Click += BtnEditConnection_Click;
@@ -42,6 +43,7 @@ namespace QpTestClient
             //命令相关
             btnTestCommand_Command.Click += BtnTestCommand_Command_Click;
         }
+
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -197,6 +199,8 @@ namespace QpTestClient
             {
                 btnConnectConnection.Visible = false;
                 btnDisconnectConnection.Visible = true;
+                separatorConnection.Visible = true;
+                btnRecvHeartbeat_Connection.Visible = true;
                 btnRecvNotice_Connection.Visible = true;
                 btnTestCommand_Connection.Visible = true;
                 btnEditConnection.Visible = false;
@@ -206,6 +210,8 @@ namespace QpTestClient
             {
                 btnConnectConnection.Visible = true;
                 btnDisconnectConnection.Visible = false;
+                separatorConnection.Visible = false;
+                btnRecvHeartbeat_Connection.Visible = false;
                 btnRecvNotice_Connection.Visible = false;
                 btnTestCommand_Connection.Visible = false;
                 btnEditConnection.Visible = true;
@@ -317,6 +323,17 @@ namespace QpTestClient
                 MessageBox.Show($"连接失败，原因：{ExceptionUtils.GetExceptionMessage(ex)}", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             this.Enabled = true;
+        }
+
+        private void BtnRecvHeartbeat_Connection_Click(object sender, EventArgs e)
+        {
+            var connectionNode = tvQpInstructions.SelectedNode;
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
+                return;
+
+            var form = new Forms.HeartbeatRecvForm(connectionContext);
+            form.Show();
         }
 
         private void BtnRecvNotice_Connection_Click(object sender, EventArgs e)
