@@ -63,8 +63,8 @@ namespace QpTestClient.Forms
                 if (txtTestResponse.IsDisposed)
                     return;
                 txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 执行成功{Environment.NewLine}");
-                txtTestResponse.AppendText($"类型：{ret.TypeName}{Environment.NewLine}");
-                txtTestResponse.AppendText($"内容{Environment.NewLine}");
+                txtTestResponse.AppendText($"命令响应类型：{ret.TypeName}{Environment.NewLine}");
+                txtTestResponse.AppendText($"响应内容{Environment.NewLine}");
                 txtTestResponse.AppendText($"--------------------------{Environment.NewLine}");
                 txtTestResponse.AppendText(ret.Content);
             }

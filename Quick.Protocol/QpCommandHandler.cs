@@ -138,15 +138,17 @@ namespace Quick.Protocol
             if (eventArgs.Handled)
                 return;
 
-            //如果在字典中未找到此类型名称，则直接返回
-            if (!commandRequestTypeDict.ContainsKey(typeName))
-                return;
-
-            var cmdRequestType = commandRequestTypeDict[typeName];
-            var cmdResponseType = commandRequestTypeResponseTypeDict[cmdRequestType];
+            
 
             try
             {
+                //如果在字典中未找到此类型名称，则直接返回
+                if (!commandRequestTypeDict.ContainsKey(typeName))
+                    throw new CommandException(255, $"Unknown RequestType: {typeName}.");
+
+                var cmdRequestType = commandRequestTypeDict[typeName];
+                var cmdResponseType = commandRequestTypeResponseTypeDict[cmdRequestType];
+
                 var contentModel = JsonConvert.DeserializeObject(content, cmdRequestType);
                 CommandRequestPackageReceived?.Invoke(this, new CommandRequestPackageReceivedEventArgs()
                 {
