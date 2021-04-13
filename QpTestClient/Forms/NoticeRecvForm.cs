@@ -52,12 +52,20 @@ namespace QpTestClient.Forms
                 var lines = txtLog.Lines;
                 if (lines.Length > maxLines)
                     txtLog.Lines = lines.Skip(lines.Length - maxLines).ToArray();
+                txtLog.Select(txtLog.TextLength, 0);
                 txtLog.ScrollToCaret();
             }));
         }
 
         private void btnStartRecv_Click(object sender, EventArgs e)
         {
+            client = connectionContext.QpClient;
+            if (client == null)
+            {
+                pushLog($"当前未连接，无法接收！");
+                return;
+            }
+
             txtFormTitle.Enabled = false;
             txtNoticeTypeName.Enabled = false;
             nudMaxLines.Enabled = false;
@@ -65,13 +73,7 @@ namespace QpTestClient.Forms
             btnStopRecv.Enabled = true;
 
             noticeTypeName = txtNoticeTypeName.Text.Trim();
-            maxLines = Convert.ToInt32(nudMaxLines.Value);
-            client = connectionContext.QpClient;
-            if (client == null)
-            {
-                pushLog($"当前未连接，无法接收！{Environment.NewLine}");
-                return;
-            }
+            maxLines = Convert.ToInt32(nudMaxLines.Value);            
             pushLog("开始接收..");
             client.Disconnected += Client_Disconnected;
             client.RawNoticePackageReceived += Client_RawNoticePackageReceived;
