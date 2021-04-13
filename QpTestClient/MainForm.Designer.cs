@@ -53,7 +53,8 @@ namespace QpTestClient
             this.cmsNotice = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnRecvNotice_Notice = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsCommand = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.btnTestCommand = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnTestCommand_Command = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnTestCommand_Connection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scMain)).BeginInit();
             this.scMain.Panel1.SuspendLayout();
@@ -175,12 +176,13 @@ namespace QpTestClient
             this.btnConnectConnection,
             this.toolStripSeparator2,
             this.btnRecvNotice_Connection,
+            this.btnTestCommand_Connection,
             this.toolStripSeparator3,
             this.btnEditConnection,
             this.btnDelConnection,
             this.btnExportConnectionFile});
             this.cmsConnection.Name = "cmsConnection";
-            this.cmsConnection.Size = new System.Drawing.Size(167, 160);
+            this.cmsConnection.Size = new System.Drawing.Size(167, 184);
             // 
             // btnDisconnectConnection
             // 
@@ -246,15 +248,21 @@ namespace QpTestClient
             // 
             this.cmsCommand.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsCommand.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnTestCommand});
+            this.btnTestCommand_Command});
             this.cmsCommand.Name = "cmsCommand";
             this.cmsCommand.Size = new System.Drawing.Size(136, 28);
             // 
-            // btnTestCommand
+            // btnTestCommand_Command
             // 
-            this.btnTestCommand.Name = "btnTestCommand";
-            this.btnTestCommand.Size = new System.Drawing.Size(135, 24);
-            this.btnTestCommand.Text = "测试(&T)..";
+            this.btnTestCommand_Command.Name = "btnTestCommand_Command";
+            this.btnTestCommand_Command.Size = new System.Drawing.Size(135, 24);
+            this.btnTestCommand_Command.Text = "测试(&T)..";
+            // 
+            // btnTestCommand_Connection
+            // 
+            this.btnTestCommand_Connection.Name = "btnTestCommand_Connection";
+            this.btnTestCommand_Connection.Size = new System.Drawing.Size(166, 24);
+            this.btnTestCommand_Connection.Text = "测试命令(&T)..";
             // 
             // MainForm
             // 
@@ -304,11 +312,12 @@ namespace QpTestClient
         private System.Windows.Forms.ContextMenuStrip cmsNotice;
         private System.Windows.Forms.ToolStripMenuItem btnRecvNotice_Notice;
         private System.Windows.Forms.ContextMenuStrip cmsCommand;
-        private System.Windows.Forms.ToolStripMenuItem btnTestCommand;
+        private System.Windows.Forms.ToolStripMenuItem btnTestCommand_Command;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem btnRecvNotice_Connection;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem btnTestCommand_Connection;
     }
 }
 

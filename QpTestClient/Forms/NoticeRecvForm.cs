@@ -80,7 +80,7 @@ namespace QpTestClient.Forms
         private void Client_Disconnected(object sender, EventArgs e)
         {
             pushLog("连接已断开!");
-            btnStopRecv_Click(sender, e);
+            Invoke(new Action(() => btnStopRecv_Click(sender, e)));
         }
 
         private void Client_RawNoticePackageReceived(object sender, RawNoticePackageReceivedEventArgs e)

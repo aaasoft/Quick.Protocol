@@ -13,38 +13,55 @@ namespace QpTestClient.Forms
     public partial class CommandTestForm : Form
     {
         private ConnectionContext connectionContext;
-        private QpCommandInfo item;
 
-        public CommandTestForm(ConnectionContext connectionContext, QpCommandInfo item)
+        public CommandTestForm(ConnectionContext connectionContext, QpCommandInfo qpCommandInfo = null)
         {
             this.connectionContext = connectionContext;
-            this.item = item;
 
             InitializeComponent();
-            this.Text += $" - {item.Name} - {connectionContext.ConnectionInfo.Name}";
-            txtCommandRequestTypeName.Text = item.RequestTypeName;
+            if (qpCommandInfo == null)
+            {
+                txtFormTitle.Text = $"{Text} - {connectionContext.ConnectionInfo.Name}";
+            }
+            else
+            {
+                txtFormTitle.Text = $"{Text} - {qpCommandInfo.Name} - {connectionContext.ConnectionInfo.Name}";
+                txtTestRequest.Text = qpCommandInfo.RequestTypeSchemaSample;
+                txtCommandRequestTypeName.Text = qpCommandInfo.RequestTypeName;
+            }
         }
 
-        private void CommandTestForm_Load(object sender, EventArgs e)
+        private async void btnSend_Click(object sender, EventArgs e)
         {
-            txtTestRequest.Text = item.RequestTypeSchemaSample;
-            btnExecuteTest.Click += BtnExecuteTest_Click;
-        }
+            var commandRequestTypeName = txtCommandRequestTypeName.Text.Trim();
+            if (string.IsNullOrEmpty(commandRequestTypeName))
+            {
+                txtCommandRequestTypeName.Focus();
+                return;
+            }
+            var requestContent = txtTestRequest.Text.Trim();
+            if (string.IsNullOrEmpty(requestContent))
+            {
+                txtTestRequest.Focus();
+                return;
+            }
 
-        private async void BtnExecuteTest_Click(object sender, EventArgs e)
-        {
-            btnExecuteTest.Enabled = false;
-            txtTestResponse.Clear();
             var qpClient = connectionContext.QpClient;
             if (qpClient == null)
             {
                 txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 当前未连接，无法执行！{Environment.NewLine}");
                 return;
             }
+
+            btnSend.Enabled = false;
+            txtTestRequest.Focus();
+            txtTestResponse.Clear();
             txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 开始执行...{Environment.NewLine}");
             try
             {
-                var ret = await qpClient.SendCommand(item.RequestTypeName, txtTestRequest.Text.Trim());
+                var ret = await qpClient.SendCommand(commandRequestTypeName, requestContent);
+                if (txtTestResponse.IsDisposed)
+                    return;
                 txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 执行成功{Environment.NewLine}");
                 txtTestResponse.AppendText($"类型：{ret.TypeName}{Environment.NewLine}");
                 txtTestResponse.AppendText($"内容{Environment.NewLine}");
@@ -53,12 +70,19 @@ namespace QpTestClient.Forms
             }
             catch (Exception ex)
             {
+                if (txtTestResponse.IsDisposed)
+                    return;
                 txtTestResponse.AppendText($"{DateTime.Now.ToLongTimeString()}: 执行失败{Environment.NewLine}");
                 txtTestResponse.AppendText($"错误信息{Environment.NewLine}");
                 txtTestResponse.AppendText($"--------------------------{Environment.NewLine}");
                 txtTestResponse.AppendText(ExceptionUtils.GetExceptionMessage(ex));
             }
-            btnExecuteTest.Enabled = true;
+            btnSend.Enabled = true;
+        }
+
+        private void txtFormTitle_TextChanged(object sender, EventArgs e)
+        {
+            Text = txtFormTitle.Text.Trim();
         }
     }
 }

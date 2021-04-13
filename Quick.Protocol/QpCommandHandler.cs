@@ -145,16 +145,16 @@ namespace Quick.Protocol
             var cmdRequestType = commandRequestTypeDict[typeName];
             var cmdResponseType = commandRequestTypeResponseTypeDict[cmdRequestType];
 
-            var contentModel = JsonConvert.DeserializeObject(content, cmdRequestType);
-            CommandRequestPackageReceived?.Invoke(this, new CommandRequestPackageReceivedEventArgs()
-            {
-                CommandId = commandId,
-                TypeName = typeName,
-                ContentModel = contentModel
-            });
-
             try
             {
+                var contentModel = JsonConvert.DeserializeObject(content, cmdRequestType);
+                CommandRequestPackageReceived?.Invoke(this, new CommandRequestPackageReceivedEventArgs()
+                {
+                    CommandId = commandId,
+                    TypeName = typeName,
+                    ContentModel = contentModel
+                });
+
                 var hasCommandExecuter = false;
                 if (options.CommandExecuterManagerList != null)
                     foreach (var commandExecuterManager in options.CommandExecuterManagerList)

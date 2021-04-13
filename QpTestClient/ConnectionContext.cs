@@ -57,8 +57,9 @@ namespace QpTestClient
         public void Dispose()
         {
             Connected = false;
-            QpClient?.Close();
+            var client = QpClient;
             QpClient = null;
+            client?.Close();
         }
     }
 }

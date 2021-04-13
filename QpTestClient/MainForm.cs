@@ -33,13 +33,14 @@ namespace QpTestClient
             btnDisconnectConnection.Click += BtnDisconnectConnection_Click;
             btnConnectConnection.Click += BtnConnectConnection_Click;
             btnRecvNotice_Connection.Click += BtnRecvNotice_Connection_Click;
+            btnTestCommand_Connection.Click += BtnTestCommand_Connection_Click;
             btnEditConnection.Click += BtnEditConnection_Click;
             btnDelConnection.Click += BtnDelConnection_Click;
             btnExportConnectionFile.Click += BtnExportConnectionFile_Click;
             //通知相关
             btnRecvNotice_Notice.Click += BtnRecvNotice_Notice_Click;
             //命令相关
-            btnTestCommand.Click += BtnTestCommand_Click;
+            btnTestCommand_Command.Click += BtnTestCommand_Command_Click;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -158,7 +159,7 @@ namespace QpTestClient
             }
             else if (nodeObj is QpCommandInfo)
             {
-                
+                BtnTestCommand_Command_Click(sender, e);
             }
         }
 
@@ -197,6 +198,7 @@ namespace QpTestClient
                 btnConnectConnection.Visible = false;
                 btnDisconnectConnection.Visible = true;
                 btnRecvNotice_Connection.Visible = true;
+                btnTestCommand_Connection.Visible = true;
                 btnEditConnection.Visible = false;
                 btnDelConnection.Visible = false;
             }
@@ -205,6 +207,7 @@ namespace QpTestClient
                 btnConnectConnection.Visible = true;
                 btnDisconnectConnection.Visible = false;
                 btnRecvNotice_Connection.Visible = false;
+                btnTestCommand_Connection.Visible = false;
                 btnEditConnection.Visible = true;
                 btnDelConnection.Visible = true;
             }
@@ -296,7 +299,11 @@ namespace QpTestClient
                 connectionNode.ImageIndex = connectionNode.SelectedImageIndex = 1;
                 connectionContext.QpClient.Disconnected += (sender, e) =>
                 {
-                    Invoke(new Action(() => connectionNode.ImageIndex = connectionNode.SelectedImageIndex = 0));
+                    Invoke(new Action(() =>
+                    {
+                        connectionNode.ImageIndex = connectionNode.SelectedImageIndex = 0;
+                        connectionContext.Dispose();
+                    }));
                 };
                 displayInstructions(connectionNode, connectionContext.ConnectionInfo.Instructions);
                 connectionNode.ExpandAll();
@@ -320,6 +327,17 @@ namespace QpTestClient
                 return;
 
             var form = new Forms.NoticeRecvForm(connectionContext);
+            form.Show();
+        }
+
+        private void BtnTestCommand_Connection_Click(object sender, EventArgs e)
+        {
+            var connectionNode = tvQpInstructions.SelectedNode;
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
+                return;
+
+            var form = new Forms.CommandTestForm(connectionContext);
             form.Show();
         }
 
@@ -372,7 +390,7 @@ namespace QpTestClient
             form.Show();
         }
 
-        private void BtnTestCommand_Click(object sender, EventArgs e)
+        private void BtnTestCommand_Command_Click(object sender, EventArgs e)
         {
             var commandNode = tvQpInstructions.SelectedNode;
             var qpCommandInfo = commandNode.Tag as QpCommandInfo;
