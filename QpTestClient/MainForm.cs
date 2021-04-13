@@ -32,11 +32,12 @@ namespace QpTestClient
             //连接相关
             btnDisconnectConnection.Click += BtnDisconnectConnection_Click;
             btnConnectConnection.Click += BtnConnectConnection_Click;
+            btnRecvNotice_Connection.Click += BtnRecvNotice_Connection_Click;
             btnEditConnection.Click += BtnEditConnection_Click;
             btnDelConnection.Click += BtnDelConnection_Click;
             btnExportConnectionFile.Click += BtnExportConnectionFile_Click;
             //通知相关
-            btnBeginRecvNotice.Click += BtnBeginRecvNotice_Click;
+            btnRecvNotice_Notice.Click += BtnRecvNotice_Notice_Click;
             //命令相关
             btnTestCommand.Click += BtnTestCommand_Click;
         }
@@ -137,6 +138,30 @@ namespace QpTestClient
             }
         }
 
+        private void tvQpInstructions_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            var nodeObj = node.Tag;
+
+            if (nodeObj == null)
+                return;
+
+            if (nodeObj is ConnectionContext)
+            {
+                var connectionContext = (ConnectionContext)nodeObj;
+                if (!connectionContext.Connected)
+                    BtnConnectConnection_Click(sender, e);
+            }
+            else if (nodeObj is QpNoticeInfo)
+            {
+                BtnRecvNotice_Notice_Click(sender, e);
+            }
+            else if (nodeObj is QpCommandInfo)
+            {
+                
+            }
+        }
+
         private ConnectionContext findConnectionContext(TreeNode treeNode)
         {
             ConnectionContext connectionContext = null;
@@ -171,6 +196,7 @@ namespace QpTestClient
             {
                 btnConnectConnection.Visible = false;
                 btnDisconnectConnection.Visible = true;
+                btnRecvNotice_Connection.Visible = true;
                 btnEditConnection.Visible = false;
                 btnDelConnection.Visible = false;
             }
@@ -178,6 +204,7 @@ namespace QpTestClient
             {
                 btnConnectConnection.Visible = true;
                 btnDisconnectConnection.Visible = false;
+                btnRecvNotice_Connection.Visible = false;
                 btnEditConnection.Visible = true;
                 btnDelConnection.Visible = true;
             }
@@ -285,6 +312,17 @@ namespace QpTestClient
             this.Enabled = true;
         }
 
+        private void BtnRecvNotice_Connection_Click(object sender, EventArgs e)
+        {
+            var connectionNode = tvQpInstructions.SelectedNode;
+            var connectionContext = connectionNode.Tag as ConnectionContext;
+            if (connectionContext == null)
+                return;
+
+            var form = new Forms.NoticeRecvForm(connectionContext);
+            form.Show();
+        }
+
         private void BtnEditConnection_Click(object sender, EventArgs e)
         {
             var connectionNode = tvQpInstructions.SelectedNode;
@@ -322,7 +360,7 @@ namespace QpTestClient
             MessageBox.Show("导出成功！", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void BtnBeginRecvNotice_Click(object sender, EventArgs e)
+        private void BtnRecvNotice_Notice_Click(object sender, EventArgs e)
         {
             var noticeNode = tvQpInstructions.SelectedNode;
             var qpNoticeInfo = noticeNode.Tag as QpNoticeInfo;

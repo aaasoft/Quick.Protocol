@@ -35,6 +35,7 @@ namespace QpTestClient
             this.btnFile = new System.Windows.Forms.ToolStripDropDownButton();
             this.btnAddConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnImportConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnExit = new System.Windows.Forms.ToolStripMenuItem();
             this.scMain = new System.Windows.Forms.SplitContainer();
             this.tvQpInstructions = new System.Windows.Forms.TreeView();
@@ -43,11 +44,14 @@ namespace QpTestClient
             this.cmsConnection = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnDisconnectConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnConnectConnection = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnRecvNotice_Connection = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnEditConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.btnExportConnectionFile = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsNotice = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.btnBeginRecvNotice = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnRecvNotice_Notice = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsCommand = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnTestCommand = new System.Windows.Forms.ToolStripMenuItem();
             this.tsMain.SuspendLayout();
@@ -77,6 +81,7 @@ namespace QpTestClient
             this.btnFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnAddConnection,
             this.btnImportConnectionFile,
+            this.toolStripSeparator1,
             this.btnExit});
             this.btnFile.Image = ((System.Drawing.Image)(resources.GetObject("btnFile.Image")));
             this.btnFile.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -95,6 +100,11 @@ namespace QpTestClient
             this.btnImportConnectionFile.Name = "btnImportConnectionFile";
             this.btnImportConnectionFile.Size = new System.Drawing.Size(155, 26);
             this.btnImportConnectionFile.Text = "导入(&I)..";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(152, 6);
             // 
             // btnExit
             // 
@@ -133,6 +143,7 @@ namespace QpTestClient
             this.tvQpInstructions.Size = new System.Drawing.Size(276, 512);
             this.tvQpInstructions.TabIndex = 0;
             this.tvQpInstructions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvQpInstructions_AfterSelect);
+            this.tvQpInstructions.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvQpInstructions_NodeMouseDoubleClick);
             // 
             // ilQpInstructions
             // 
@@ -162,55 +173,74 @@ namespace QpTestClient
             this.cmsConnection.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnDisconnectConnection,
             this.btnConnectConnection,
+            this.toolStripSeparator2,
+            this.btnRecvNotice_Connection,
+            this.toolStripSeparator3,
             this.btnEditConnection,
             this.btnDelConnection,
             this.btnExportConnectionFile});
             this.cmsConnection.Name = "cmsConnection";
-            this.cmsConnection.Size = new System.Drawing.Size(137, 124);
+            this.cmsConnection.Size = new System.Drawing.Size(167, 160);
             // 
             // btnDisconnectConnection
             // 
             this.btnDisconnectConnection.Name = "btnDisconnectConnection";
-            this.btnDisconnectConnection.Size = new System.Drawing.Size(136, 24);
+            this.btnDisconnectConnection.Size = new System.Drawing.Size(166, 24);
             this.btnDisconnectConnection.Text = "断开(&D)";
             // 
             // btnConnectConnection
             // 
             this.btnConnectConnection.Name = "btnConnectConnection";
-            this.btnConnectConnection.Size = new System.Drawing.Size(136, 24);
+            this.btnConnectConnection.Size = new System.Drawing.Size(166, 24);
             this.btnConnectConnection.Text = "连接";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(163, 6);
+            // 
+            // btnRecvNotice_Connection
+            // 
+            this.btnRecvNotice_Connection.Name = "btnRecvNotice_Connection";
+            this.btnRecvNotice_Connection.Size = new System.Drawing.Size(166, 24);
+            this.btnRecvNotice_Connection.Text = "接收通知(&R)..";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(163, 6);
             // 
             // btnEditConnection
             // 
             this.btnEditConnection.Name = "btnEditConnection";
-            this.btnEditConnection.Size = new System.Drawing.Size(136, 24);
+            this.btnEditConnection.Size = new System.Drawing.Size(166, 24);
             this.btnEditConnection.Text = "编辑(&E)..";
             // 
             // btnDelConnection
             // 
             this.btnDelConnection.Name = "btnDelConnection";
-            this.btnDelConnection.Size = new System.Drawing.Size(136, 24);
+            this.btnDelConnection.Size = new System.Drawing.Size(166, 24);
             this.btnDelConnection.Text = "删除(&D)";
             // 
             // btnExportConnectionFile
             // 
             this.btnExportConnectionFile.Name = "btnExportConnectionFile";
-            this.btnExportConnectionFile.Size = new System.Drawing.Size(136, 24);
+            this.btnExportConnectionFile.Size = new System.Drawing.Size(166, 24);
             this.btnExportConnectionFile.Text = "导出(&X)..";
             // 
             // cmsNotice
             // 
             this.cmsNotice.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsNotice.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnBeginRecvNotice});
+            this.btnRecvNotice_Notice});
             this.cmsNotice.Name = "cmsNotice";
             this.cmsNotice.Size = new System.Drawing.Size(167, 28);
             // 
-            // btnBeginRecvNotice
+            // btnRecvNotice_Notice
             // 
-            this.btnBeginRecvNotice.Name = "btnBeginRecvNotice";
-            this.btnBeginRecvNotice.Size = new System.Drawing.Size(166, 24);
-            this.btnBeginRecvNotice.Text = "开始接收(&R)..";
+            this.btnRecvNotice_Notice.Name = "btnRecvNotice_Notice";
+            this.btnRecvNotice_Notice.Size = new System.Drawing.Size(166, 24);
+            this.btnRecvNotice_Notice.Text = "接收通知(&R)..";
             // 
             // cmsCommand
             // 
@@ -272,9 +302,13 @@ namespace QpTestClient
         private System.Windows.Forms.ToolStripMenuItem btnExportConnectionFile;
         private System.Windows.Forms.ToolStripMenuItem btnEditConnection;
         private System.Windows.Forms.ContextMenuStrip cmsNotice;
-        private System.Windows.Forms.ToolStripMenuItem btnBeginRecvNotice;
+        private System.Windows.Forms.ToolStripMenuItem btnRecvNotice_Notice;
         private System.Windows.Forms.ContextMenuStrip cmsCommand;
         private System.Windows.Forms.ToolStripMenuItem btnTestCommand;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem btnRecvNotice_Connection;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 

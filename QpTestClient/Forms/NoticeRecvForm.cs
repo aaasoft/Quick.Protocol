@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -12,53 +13,101 @@ namespace QpTestClient.Forms
     public partial class NoticeRecvForm : Form
     {
         private ConnectionContext connectionContext;
-        private QpNoticeInfo item;
         private QpClient client;
+        private string noticeTypeName = null;
+        private int maxLines;
 
-        public NoticeRecvForm(ConnectionContext connectionContext, QpNoticeInfo item)
+        public NoticeRecvForm(ConnectionContext connectionContext, QpNoticeInfo noticeInfo = null)
         {
             this.connectionContext = connectionContext;
-            this.item = item;
             InitializeComponent();
-            this.Text += $" - {item.Name} - {connectionContext.ConnectionInfo.Name}";
-        }
 
-
-        private void NoticeRecvForm_Load(object sender, EventArgs e)
-        {
-            client = connectionContext.QpClient;
-            if (client == null)
+            if (noticeInfo == null)
             {
-                txtLog.Text = $"{DateTime.Now.ToLongTimeString()}: 当前未连接，无法接收！{Environment.NewLine}";
-                return;
+                txtFormTitle.Text = $"{Text} - {connectionContext.ConnectionInfo.Name}";
+                txtNoticeTypeName.Text = "*";
             }
-            txtLog.Text = $"{DateTime.Now.ToLongTimeString()}: 开始接收..{Environment.NewLine}";
-            client.RawNoticePackageReceived += Client_RawNoticePackageReceived;
-        }
-
-        private void Client_RawNoticePackageReceived(object sender, RawNoticePackageReceivedEventArgs e)
-        {
-            if (e.TypeName != item.NoticeTypeName)
-                return;
-
-            Invoke(new Action(() =>
+            else
             {
-                txtLog.Clear();
-                txtLog.AppendText($"{DateTime.Now.ToLongTimeString()}: 接收到通知{Environment.NewLine}");
-                txtLog.AppendText($"类型：{e.TypeName}{Environment.NewLine}");
-                txtLog.AppendText($"内容{Environment.NewLine}");
-                txtLog.AppendText($"--------------------------{Environment.NewLine}");
-                txtLog.AppendText(e.Content);
-            }));
+                txtFormTitle.Text = $"{Text} - {noticeInfo.Name} - {connectionContext.ConnectionInfo.Name}";
+                txtNoticeTypeName.Text = noticeInfo.NoticeTypeName;
+            }
         }
 
         private void NoticeRecvForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            btnStopRecv_Click(sender, e);
+        }
+
+        private void txtFormTitle_TextChanged(object sender, EventArgs e)
+        {
+            Text = txtFormTitle.Text;
+        }
+
+        private void pushLog(string line)
+        {
+            Invoke(new Action(() =>
+            {
+                txtLog.AppendText($"{DateTime.Now.ToLongTimeString()}: {line}{Environment.NewLine}");
+                var lines = txtLog.Lines;
+                if (lines.Length > maxLines)
+                    txtLog.Lines = lines.Skip(lines.Length - maxLines).ToArray();
+                txtLog.ScrollToCaret();
+            }));
+        }
+
+        private void btnStartRecv_Click(object sender, EventArgs e)
+        {
+            txtFormTitle.Enabled = false;
+            txtNoticeTypeName.Enabled = false;
+            nudMaxLines.Enabled = false;
+            btnStartRecv.Enabled = false;
+            btnStopRecv.Enabled = true;
+
+            noticeTypeName = txtNoticeTypeName.Text.Trim();
+            maxLines = Convert.ToInt32(nudMaxLines.Value);
+            client = connectionContext.QpClient;
+            if (client == null)
+            {
+                pushLog($"当前未连接，无法接收！{Environment.NewLine}");
+                return;
+            }
+            pushLog("开始接收..");
+            client.Disconnected += Client_Disconnected;
+            client.RawNoticePackageReceived += Client_RawNoticePackageReceived;
+        }
+
+        private void Client_Disconnected(object sender, EventArgs e)
+        {
+            pushLog("连接已断开!");
+            btnStopRecv_Click(sender, e);
+        }
+
+        private void Client_RawNoticePackageReceived(object sender, RawNoticePackageReceivedEventArgs e)
+        {
+            if (noticeTypeName != "*" && e.TypeName != noticeTypeName)
+                return;
+            if (noticeTypeName == "*")
+                pushLog($"Type:{e.TypeName},Content:{e.Content}");
+            else
+                pushLog(e.Content);
+        }
+
+        private void btnStopRecv_Click(object sender, EventArgs e)
+        {
+            txtFormTitle.Enabled = true;
+            txtNoticeTypeName.Enabled = true;
+            nudMaxLines.Enabled = true;
+            btnStartRecv.Enabled = true;
+            btnStopRecv.Enabled = false;
+
             if (client != null)
             {
+                client.Disconnected -= Client_Disconnected;
                 client.RawNoticePackageReceived -= Client_RawNoticePackageReceived;
                 client = null;
             }
+            pushLog("已停止接收.");
         }
     }
 }
