@@ -44,9 +44,9 @@ namespace TcpServer
                         {
                             writer.WriteLine($@"HTTP/1.1 200 OK
 Content-Type: text/html; charset=utf-8
-Content-Length: {Encoding.UTF8.GetByteCount(messAge)}
+Content-Length: {Encoding.UTF8.GetByteCount(message)}
 
-{messAge}");
+{message}");
                         }
                     }
                     catch { }
