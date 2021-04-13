@@ -27,7 +27,7 @@ namespace TcpServer
                 ServerProgram = nameof(TcpServer) + " 1.0",
                 ProtocolErrorHandler = (stream, readBuffer) =>
                 {
-                    var messsge = $@"
+                    string message = $@"
 <html>
     <head>
         <title>Quick.Protocol</title>
@@ -44,9 +44,9 @@ namespace TcpServer
                         {
                             writer.WriteLine($@"HTTP/1.1 200 OK
 Content-Type: text/html; charset=utf-8
-Content-Length: {Encoding.UTF8.GetByteCount(messsge)}
+Content-Length: {Encoding.UTF8.GetByteCount(messAge)}
 
-{messsge}");
+{messAge}");
                         }
                     }
                     catch { }

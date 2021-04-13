@@ -28,14 +28,27 @@ namespace Microsoft.AspNetCore.Builder
                     }
                     else
                     {
-                        await context.Response.WriteAsync($@"Quick.Protocol
-------------
-ServerProgram:{options.ServerProgram}
-InstructionSet: {string.Join(" | ", options.InstructionSet.Select(t => $"{t.Name}({t.Id})"))}
-MaxPackageSize:{options.MaxPackageSize}
-BufferSize:{options.BufferSize}
-HeartBeatInterval:{options.HeartBeatInterval}
-Path:{options.Path}");
+                        var message = $@"
+<html>
+    <head>
+        <title>Quick.Protocol</title>
+    </head>
+    <body>
+        <p>Welcome to use <b>Quick.Protocol</b>.</p>
+        <p>Source Code:<a href=""http://github.com/aaasoft/Quick.Protocol"">http://github.com/aaasoft/Quick.Protocol</a></p>
+        <p>ServerProgram:{string.Join(" | ", options.InstructionSet.Select(t => $"{t.Name}({t.Id})"))}</p>
+        <p>InstructionSet:{DateTime.Now}</p>
+        <p>MaxPackageSize:{options.MaxPackageSize}</p>
+        <p>BufferSize:{options.BufferSize}</p>
+        <p>BufferSize:{options.BufferSize}</p>
+        <p>HeartBeatInterval:{options.HeartBeatInterval}</p>
+        <p>Time:{DateTime.Now}</p>
+    </body>
+</html>";
+                        var rep = context.Response;
+                        rep.ContentType = "text/html; charset=utf-8";
+                        rep.ContentLength = Encoding.UTF8.GetByteCount(message);
+                        await context.Response.WriteAsync(message, Encoding.UTF8);
                     }
                 }
                 else
