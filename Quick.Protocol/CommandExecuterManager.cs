@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Quick.Protocol
@@ -13,6 +14,11 @@ namespace Quick.Protocol
         {
 
         }
+
+        /// <summary>
+        /// 获取全部注册的命令请求类型名称
+        /// </summary>
+        public string[] GetRegisterCommandRequestTypeNames() => commandExecuterDict.Keys.ToArray();
 
         public void Register(string cmdRequestTypeName, Delegate commandExecuter)
         {

@@ -62,7 +62,6 @@ namespace Quick.Protocol
         protected void OnNewChannelConnected(Stream stream, string channelName, CancellationToken token)
         {
             var channel = new QpServerChannel(this, stream, channelName, token, options.Clone());
-            ChannelConnected?.Invoke(this, channel);
             lock (channelList)
                 channelList.Add(channel);
             channel.Disconnected += (sender, e) =>
@@ -77,6 +76,7 @@ namespace Quick.Protocol
             Task.Run(() =>
             {
                 channel.Start();
+                ChannelConnected?.Invoke(this, channel);
             });
         }
 
