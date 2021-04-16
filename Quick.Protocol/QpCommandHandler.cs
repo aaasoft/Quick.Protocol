@@ -138,8 +138,6 @@ namespace Quick.Protocol
             if (eventArgs.Handled)
                 return;
 
-            
-
             try
             {
                 //如果在字典中未找到此类型名称，则直接返回
@@ -174,11 +172,21 @@ namespace Quick.Protocol
             }
             catch (CommandException ex)
             {
-                SendCommandResponsePackage(commandId, ex.Code, ExceptionUtils.GetExceptionMessage(ex), null, null);
+                string errorMessage;
+                if (options.DebugMode)
+                    errorMessage = ExceptionUtils.GetExceptionString(ex);
+                else
+                    errorMessage = ExceptionUtils.GetExceptionMessage(ex);
+                SendCommandResponsePackage(commandId, ex.Code, errorMessage, null, null);
             }
             catch (Exception ex)
             {
-                SendCommandResponsePackage(commandId, 255, ExceptionUtils.GetExceptionMessage(ex), null, null);
+                string errorMessage;
+                if (options.DebugMode)
+                    errorMessage = ExceptionUtils.GetExceptionString(ex);
+                else
+                    errorMessage = ExceptionUtils.GetExceptionMessage(ex);
+                SendCommandResponsePackage(commandId, 255, errorMessage, null, null);
             }
         }
 
