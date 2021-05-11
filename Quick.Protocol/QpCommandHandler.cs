@@ -35,6 +35,15 @@ namespace Quick.Protocol
         /// </summary>
         public event EventHandler<CommandResponsePackageReceivedEventArgs> CommandResponsePackageReceived;
 
+        /// <summary>
+        /// 添加命令执行器管理器
+        /// </summary>
+        /// <param name="commandExecuterManager"></param>
+        public void AddCommandExecuterManager(CommandExecuterManager commandExecuterManager)
+        {
+            options.CommandExecuterManagerList.Add(commandExecuterManager);
+        }
+
         protected QpCommandHandler(QpCommandHandlerOptions options) : base(options)
         {
             this.options = options;

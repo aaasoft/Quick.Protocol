@@ -216,17 +216,14 @@ namespace Quick.Protocol
             });
         }
 
-        /// <summary>
-        /// 发送通知包
-        /// </summary>
-        public void SendNoticePackage(object package)
+        public void SendNoticePackage(string noticePackageTypeName, string noticePackageContent)
         {
             sendPackage(buffer =>
             {
                 //设置包类型
                 buffer[PACKAGE_HEAD_LENGTH - 1] = (byte)QpPackageType.Notice;
-                var typeName = package.GetType().FullName;
-                var content = JsonConvert.SerializeObject(package);
+                var typeName = noticePackageTypeName;
+                var content = noticePackageContent;
 
                 var typeNameByteLengthOffset = PACKAGE_HEAD_LENGTH;
                 //写入类名
@@ -261,9 +258,17 @@ namespace Quick.Protocol
         }
 
         /// <summary>
+        /// 发送通知包
+        /// </summary>
+        public void SendNoticePackage(object package)
+        {
+            SendNoticePackage(package.GetType().FullName, JsonConvert.SerializeObject(package));
+        }
+
+        /// <summary>
         /// 发送命令请求包
         /// </summary>
-        protected void SendCommandRequestPackage(string commandId, string typeName, string content, Action afterSendHandler = null)
+        public void SendCommandRequestPackage(string commandId, string typeName, string content, Action afterSendHandler = null)
         {
             sendPackage(buffer =>
             {
@@ -308,7 +313,7 @@ namespace Quick.Protocol
         /// <summary>
         /// 发送命令响应包
         /// </summary>
-        protected void SendCommandResponsePackage(string commandId, byte code, string message, string typeName, string content)
+        public void SendCommandResponsePackage(string commandId, byte code, string message, string typeName, string content)
         {
             sendPackage(buffer =>
             {

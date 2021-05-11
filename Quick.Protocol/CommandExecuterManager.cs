@@ -48,7 +48,7 @@ namespace Quick.Protocol
         /// <param name="cmdRequestTypeName"></param>
         /// <param name="cmdRequestModel"></param>
         /// <returns></returns>
-        public object ExecuteCommand(QpPackageHandler handler, string cmdRequestTypeName, object cmdRequestModel)
+        public virtual object ExecuteCommand(QpPackageHandler handler, string cmdRequestTypeName, object cmdRequestModel)
         {
             if (!CanExecuteCommand(cmdRequestTypeName))
                 throw new IOException($"Command Request Type[{cmdRequestTypeName}] has no executer.");
@@ -61,7 +61,7 @@ namespace Quick.Protocol
         /// </summary>
         /// <param name="cmdRequestTypeName"></param>
         /// <returns></returns>
-        public bool CanExecuteCommand(string cmdRequestTypeName)
+        public virtual bool CanExecuteCommand(string cmdRequestTypeName)
         {
             return commandExecuterDict.ContainsKey(cmdRequestTypeName);
         }
