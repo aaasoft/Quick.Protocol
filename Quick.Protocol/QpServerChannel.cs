@@ -145,8 +145,8 @@ namespace Quick.Protocol
             base.OnReadError(exception);
             if (IsConnected)
             {
-                Disconnected?.Invoke(this, QpEventArgs.Empty);
                 IsConnected = false;
+                Disconnected?.Invoke(this, QpEventArgs.Empty);                
             }
         }
     }

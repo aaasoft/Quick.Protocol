@@ -103,8 +103,8 @@ namespace Quick.Protocol
         {
             if (IsConnected)
             {
-                Disconnected?.Invoke(this, QpEventArgs.Empty);
                 IsConnected = false;
+                Disconnected?.Invoke(this, QpEventArgs.Empty);                
             }
         }
 
