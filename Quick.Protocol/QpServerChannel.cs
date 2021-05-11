@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Quick.Protocol
 {
-    public class QpServerChannel : QpCommandHandler
+    public class QpServerChannel : QpChannel
     {
         private QpServer server;
         private Stream stream;
@@ -48,7 +48,7 @@ namespace Quick.Protocol
             BeginReadPackage(cancellationToken);
         }
 
-        private Commands.Connect.Response connect(QpPackageHandler handler, Commands.Connect.Request request)
+        private Commands.Connect.Response connect(QpChannel handler, Commands.Connect.Request request)
         {
             if (request.InstructionIds != null)
             {
@@ -67,7 +67,7 @@ namespace Quick.Protocol
             };
         }
 
-        private Commands.Authenticate.Response authenticate(QpPackageHandler handler, Commands.Authenticate.Request request)
+        private Commands.Authenticate.Response authenticate(QpChannel handler, Commands.Authenticate.Request request)
         {
             if (Utils.CryptographyUtils.ComputeMD5Hash(question + options.Password) != request.Answer)
             {
@@ -81,7 +81,7 @@ namespace Quick.Protocol
             return new Commands.Authenticate.Response();
         }
 
-        private Commands.HandShake.Response handShake(QpPackageHandler handler, Commands.HandShake.Request request)
+        private Commands.HandShake.Response handShake(QpChannel handler, Commands.HandShake.Request request)
         {
             options.CommandExecuterManagerList.AddRange(authedCommandExecuterManagerList);
             options.InternalCompress = request.EnableCompress;
@@ -97,7 +97,7 @@ namespace Quick.Protocol
             return new Commands.HandShake.Response();
         }
 
-        private Commands.GetQpInstructions.Response getQpInstructions(QpPackageHandler handler, Commands.GetQpInstructions.Request request)
+        private Commands.GetQpInstructions.Response getQpInstructions(QpChannel handler, Commands.GetQpInstructions.Request request)
         {
             return new Commands.GetQpInstructions.Response()
             {

@@ -25,7 +25,7 @@ namespace Quick.Protocol
             commandExecuterDict[cmdRequestTypeName] = commandExecuter;
         }
 
-        public void Register<TCmdRequest, TCmdResponse>(Func<QpPackageHandler, TCmdRequest, TCmdResponse> commandExecuter)
+        public void Register<TCmdRequest, TCmdResponse>(Func<QpChannel, TCmdRequest, TCmdResponse> commandExecuter)
             where TCmdRequest : class, new()
             where TCmdResponse : class, new()
         {
@@ -33,7 +33,7 @@ namespace Quick.Protocol
             Register(cmdRequestTypeName, commandExecuter);
         }
 
-        public void Register<TCmdRequest, TCmdResponse>(TCmdRequest request, Func<QpPackageHandler, TCmdRequest, TCmdResponse> commandExecuter)
+        public void Register<TCmdRequest, TCmdResponse>(TCmdRequest request, Func<QpChannel, TCmdRequest, TCmdResponse> commandExecuter)
             where TCmdRequest : class, IQpCommandRequest<TCmdResponse>, new()
             where TCmdResponse : class, new()
         {
@@ -48,7 +48,7 @@ namespace Quick.Protocol
         /// <param name="cmdRequestTypeName"></param>
         /// <param name="cmdRequestModel"></param>
         /// <returns></returns>
-        public virtual object ExecuteCommand(QpPackageHandler handler, string cmdRequestTypeName, object cmdRequestModel)
+        public virtual object ExecuteCommand(QpChannel handler, string cmdRequestTypeName, object cmdRequestModel)
         {
             if (!CanExecuteCommand(cmdRequestTypeName))
                 throw new IOException($"Command Request Type[{cmdRequestTypeName}] has no executer.");

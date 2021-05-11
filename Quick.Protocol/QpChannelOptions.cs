@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Quick.Protocol
 {
-    public abstract class QpPackageHandlerOptions
+    public abstract class QpChannelOptions
     {
         /// <summary>
         /// 心跳间隔，为发送或接收超时中小的值的三分一
@@ -83,5 +83,19 @@ namespace Quick.Protocol
         [Category("高级")]
         [DisplayName("是否触发NoticePackageReceived事件")]
         public bool RaiseNoticePackageReceivedEvent { get; set; } = true;
+
+        /// <summary>
+        /// 指令执行器管理器列表
+        /// </summary>
+        [JsonIgnore]
+        public List<CommandExecuterManager> CommandExecuterManagerList = new List<CommandExecuterManager>();
+
+        // <summary>
+        // 注册指令执行器管理器
+        // </summary>
+        public void RegisterCommandExecuterManager(CommandExecuterManager commandExecuterManager)
+        {
+            CommandExecuterManagerList.Add(commandExecuterManager);
+        }
     }
 }

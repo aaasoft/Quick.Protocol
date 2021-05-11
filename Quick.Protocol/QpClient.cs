@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Quick.Protocol
 {
-    public abstract class QpClient : QpCommandHandler
+    public abstract class QpClient : QpChannel
     {
         private CancellationTokenSource cts = null;
         public QpClientOptions Options { get; private set; }
