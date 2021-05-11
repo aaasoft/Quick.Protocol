@@ -40,6 +40,7 @@ namespace Quick.Protocol
             var token = cts.Token;
 
             var stream = await InnerConnectAsync();
+            IsConnected = true;
 
             //初始化网络
             InitQpPackageHandler_Stream(stream);
@@ -84,11 +85,8 @@ namespace Quick.Protocol
         {
             base.OnReadError(exception);
             Options.Init();
-            var tmpAuthPassed = authPassed;
             cancellAll();
             Disconnect();
-            if (tmpAuthPassed)
-                Disconnected?.Invoke(this, QpEventArgs.Empty);
         }
 
         private void cancellAll()
@@ -103,7 +101,11 @@ namespace Quick.Protocol
 
         protected virtual void Disconnect()
         {
-            InitQpPackageHandler_Stream(null);
+            if (IsConnected)
+            {
+                Disconnected?.Invoke(this, QpEventArgs.Empty);
+                IsConnected = false;
+            }
         }
 
         /// <summary>
@@ -112,8 +114,8 @@ namespace Quick.Protocol
         public void Close()
         {
             cancellAll();
-            Disconnect();
-            Disconnected?.Invoke(this, QpEventArgs.Empty);
+            InitQpPackageHandler_Stream(null);
+            Disconnect();            
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Quick.Protocol
 
             //修改缓存大小
             ChangeBufferSize(options.BufferSize);
-
+            IsConnected = true;
             InitQpPackageHandler_Stream(stream);
             //开始读取其他数据包
             BeginReadPackage(cancellationToken);
@@ -143,7 +143,11 @@ namespace Quick.Protocol
                 }
             }
             base.OnReadError(exception);
-            Disconnected?.Invoke(this, QpEventArgs.Empty);
+            if (IsConnected)
+            {
+                Disconnected?.Invoke(this, QpEventArgs.Empty);
+                IsConnected = false;
+            }
         }
     }
 }

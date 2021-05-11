@@ -49,6 +49,12 @@ namespace Quick.Protocol
         private ICryptoTransform enc;
         private ICryptoTransform dec;
         private Encoding encoding = Encoding.UTF8;
+
+        /// <summary>
+        /// 当时是否连接
+        /// </summary>
+        public bool IsConnected { get; protected set; }
+
         /// <summary>
         /// 最后的异常
         /// </summary>
@@ -131,7 +137,10 @@ namespace Quick.Protocol
                 try { QpPackageHandler_Stream?.Dispose(); }
                 catch { }
             QpPackageHandler_Stream = stream;
-            ChangeTransportTimeout();
+
+            options.InternalCompress = false;
+            options.InternalEncrypt = false;
+            ChangeTransportTimeout();            
         }
 
         /// <summary>
