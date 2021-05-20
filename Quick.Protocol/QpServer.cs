@@ -67,7 +67,7 @@ namespace Quick.Protocol
             channel.Disconnected += (sender, e) =>
             {
                 if (LogUtils.LogConnection)
-                    Console.WriteLine("[Connection]{0} Disconnected.", channelName);
+                    LogUtils.Log("[Connection]{0} Disconnected.", channelName);
                 RemoveChannel(channel);
                 try { stream.Dispose(); }
                 catch { }

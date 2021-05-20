@@ -17,7 +17,25 @@ namespace Quick.Protocol.Utils
         public static bool LogNotice { get; set; } = false;
         public static bool LogCommand { get; set; } = false;
         public static bool LogContent { get; set; } = false;
-        public static bool LogSplit{ get; set; } = false;
+        public static bool LogSplit { get; set; } = false;
         public static bool LogConnection { get; set; } = false;
+
+        private static Action<string> LogHandler = null;
+
+        public static void SetConsoleLogHandler() => SetLogHandler(Console.WriteLine);
+        public static void SetLogHandler(Action<string> logHandler)
+        {
+            LogHandler = logHandler;
+        }
+
+        public static void Log(string template, params object[] args)
+        {
+            Log(string.Format(template, args));
+        }
+
+        public static void Log(string content)
+        {
+            LogHandler?.Invoke(content);
+        }
     }
 }

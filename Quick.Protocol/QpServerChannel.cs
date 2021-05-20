@@ -136,7 +136,7 @@ namespace Quick.Protocol
                     var protocolException = (ProtocolException)exception;
                     server.RemoveChannel(this);
                     if (LogUtils.LogConnection)
-                        Console.WriteLine("[ProtocolErrorHandler]{0}: Begin ProtocolErrorHandler invoke...", DateTime.Now);
+                        LogUtils.Log("[ProtocolErrorHandler]{0}: Begin ProtocolErrorHandler invoke...", DateTime.Now);
 
                     options.ProtocolErrorHandler.Invoke(stream, protocolException.ReadBuffer);
                     return;
