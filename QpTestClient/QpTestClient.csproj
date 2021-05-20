@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Product>QP测试客户端</Product>
     <Authors>scbeta</Authors>
-    <Version>2.0.0</Version>
+    <Version>2.0.2</Version>
     <ApplicationIcon>Images\Globe.ico</ApplicationIcon>
   </PropertyGroup>
 
