@@ -225,7 +225,8 @@ namespace Quick.Protocol
                 catch (Exception ex)
                 {
                     LastException = ex;
-                    LogUtils.Log("[SendPackage]" + ex.ToString());
+                    LogUtils.Log("[SendPackage]" + ExceptionUtils.GetExceptionString(ex));
+                    throw ex;
                 }
             }
         }
