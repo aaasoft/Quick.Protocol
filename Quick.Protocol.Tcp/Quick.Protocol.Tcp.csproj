@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/aaasoft/Quick.Protocol</PackageProjectUrl>
     <RepositoryUrl>https://github.com/aaasoft/Quick.Protocol</RepositoryUrl>
-    <Version>2.0.3</Version>
+    <Version>2.0.4</Version>
     <Authors>scbeta</Authors>
     <Company />
     <Product>Quick.Protocol</Product>
