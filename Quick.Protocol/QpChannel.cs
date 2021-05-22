@@ -149,7 +149,7 @@ namespace Quick.Protocol
         protected virtual void OnReadError(Exception exception)
         {
             LastException = exception;
-            LogUtils.Log("[ReadError]{0}: {1}", DateTime.Now, ExceptionUtils.GetExceptionMessage(exception));
+            LogUtils.Log("[ReadError]{0}: {1}", DateTime.Now, ExceptionUtils.GetExceptionString(exception));
             InitQpPackageHandler_Stream(null);
         }
 

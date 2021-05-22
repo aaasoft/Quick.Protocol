@@ -13,7 +13,7 @@ namespace Quick.Protocol
     {
         private QpServer server;
         private Stream stream;
-        private CancellationToken cancellationToken;
+        private CancellationTokenSource cts;
         private QpServerOptions options;
         private string question;
         //通过认证后，才允许使用的命令执行管理器列表
@@ -36,16 +36,16 @@ namespace Quick.Protocol
             this.server = server;
             this.stream = stream;
             this.ChannelName = channelName;
-            this.cancellationToken = cancellationToken;
             this.options = options;
             this.authedCommandExecuterManagerList = options.CommandExecuterManagerList;
-
+            cts = new CancellationTokenSource();
+            cancellationToken.Register(() => Stop());
             //修改缓存大小
             ChangeBufferSize(options.BufferSize);
             IsConnected = true;
             InitQpPackageHandler_Stream(stream);
             //开始读取其他数据包
-            BeginReadPackage(cancellationToken);
+            BeginReadPackage(cts.Token);
         }
 
         private Commands.Connect.Response connect(QpChannel handler, Commands.Connect.Request request)
@@ -93,7 +93,7 @@ namespace Quick.Protocol
 
             //开始心跳
             if (options.HeartBeatInterval > 0)
-                BeginHeartBeat(cancellationToken);
+                BeginHeartBeat(cts.Token);
             return new Commands.HandShake.Response();
         }
 
@@ -120,11 +120,14 @@ namespace Quick.Protocol
         /// </summary>
         public void Stop()
         {
-            try 
+            try
             {
+                if (cts != null && !cts.IsCancellationRequested)
+                    cts.Cancel();
                 stream?.Close();
                 stream?.Dispose();
-            } catch { }
+            }
+            catch { }
         }
 
         protected override void OnReadError(Exception exception)
@@ -142,11 +145,12 @@ namespace Quick.Protocol
                     return;
                 }
             }
+            Stop();
             base.OnReadError(exception);
             if (IsConnected)
             {
                 IsConnected = false;
-                Disconnected?.Invoke(this, QpEventArgs.Empty);                
+                Disconnected?.Invoke(this, QpEventArgs.Empty);
             }
         }
     }
