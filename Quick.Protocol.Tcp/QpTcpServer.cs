@@ -1,6 +1,7 @@
 ﻿using Quick.Protocol.Utils;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -12,7 +13,7 @@ namespace Quick.Protocol.Tcp
     {
         private TcpListener tcpListener;
         private QpTcpServerOptions options;
-
+        public EndPoint ListenEndPoint { get; private set; }
         public QpTcpServer(QpTcpServerOptions options) : base(options)
         {
             this.options = options;
@@ -22,7 +23,7 @@ namespace Quick.Protocol.Tcp
         {
             tcpListener = new TcpListener(options.Address, options.Port);
             tcpListener.Start();
-
+            ListenEndPoint = tcpListener.LocalEndpoint;
             base.Start();
         }
 
