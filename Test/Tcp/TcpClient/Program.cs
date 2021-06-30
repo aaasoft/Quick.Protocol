@@ -40,11 +40,11 @@ namespace TcpClient
                     return;
                 }
                 Console.WriteLine("连接成功");
-                _ = client.SendCommand(new Quick.Protocol.Commands.PrivateCommand.Request()
-                {
-                    Action = "ABC",
-                    Content = "123"
-                });
+                //_ = client.SendCommand(new Quick.Protocol.Commands.PrivateCommand.Request()
+                //{
+                //    Action = "ABC",
+                //    Content = "123"
+                //});
             });
             Console.ReadLine();
         }

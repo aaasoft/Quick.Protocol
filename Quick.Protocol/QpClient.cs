@@ -12,8 +12,7 @@ namespace Quick.Protocol
     public abstract class QpClient : QpChannel
     {
         private CancellationTokenSource cts = null;
-        public QpClientOptions Options { get; private set; }
-        private bool authPassed = false;
+        public QpClientOptions Options { get; private set; }        
 
         /// <summary>
         /// 连接断开时
@@ -69,7 +68,6 @@ namespace Quick.Protocol
                 TransportTimeout = Options.TransportTimeout
             }, 5000, () =>
             {
-                authPassed = true;
                 Options.OnAuthPassed();
             });
 
@@ -91,7 +89,6 @@ namespace Quick.Protocol
 
         private void cancellAll()
         {
-            authPassed = false;
             if (cts != null)
             {
                 cts.Cancel();

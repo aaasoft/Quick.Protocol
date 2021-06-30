@@ -62,8 +62,12 @@ namespace Quick.Protocol
         protected void OnNewChannelConnected(Stream stream, string channelName, CancellationToken token)
         {
             var channel = new QpServerChannel(this, stream, channelName, token, options.Clone());
-            lock (channelList)
-                channelList.Add(channel);
+            //认证通过后，才将通道添加到通道列表里面
+            channel.Auchenticated += (sender, e) =>
+            {
+                lock (channelList)
+                    channelList.Add(channel);
+            };
             channel.Disconnected += (sender, e) =>
             {
                 if (LogUtils.LogConnection)
