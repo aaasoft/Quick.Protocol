@@ -13,6 +13,7 @@ namespace Quick.Protocol
         private CancellationTokenSource cts;
         private QpServerOptions options;
         private List<QpServerChannel> channelList = new List<QpServerChannel>();
+        private List<QpServerChannel> auchenticatedChannelList = new List<QpServerChannel>();
 
         /// <summary>
         /// 增加Tag属性，用于引用与QpServer相关的对象
@@ -30,6 +31,19 @@ namespace Quick.Protocol
                     return channelList.ToArray();
             }
         }
+
+        /// <summary>
+        /// 已通过认证的通道
+        /// </summary>
+        public QpServerChannel[] AuchenticatedChannel
+        {
+            get
+            {
+                lock (auchenticatedChannelList)
+                    return auchenticatedChannelList.ToArray();
+            }
+        }
+
         /// <summary>
         /// 通道连接上时
         /// </summary>
@@ -57,16 +71,23 @@ namespace Quick.Protocol
             lock (channelList)
                 if (channelList.Contains(channel))
                     channelList.Remove(channel);
+            lock (auchenticatedChannelList)
+                if (auchenticatedChannelList.Contains(channel))
+                    auchenticatedChannelList.Remove(channel);
         }
 
         protected void OnNewChannelConnected(Stream stream, string channelName, CancellationToken token)
         {
             var channel = new QpServerChannel(this, stream, channelName, token, options.Clone());
-            //认证通过后，才将通道添加到通道列表里面
+            //将通道加入到全部通道列表里面
+            lock (channelList)
+                channelList.Add(channel);
+
+            //认证通过后，才将通道添加到已认证通道列表里面
             channel.Auchenticated += (sender, e) =>
             {
-                lock (channelList)
-                    channelList.Add(channel);
+                lock (auchenticatedChannelList)
+                    auchenticatedChannelList.Add(channel);
             };
             channel.Disconnected += (sender, e) =>
             {
