@@ -23,26 +23,12 @@ namespace Quick.Protocol
         /// <summary>
         /// 获取全部的通道
         /// </summary>
-        public QpServerChannel[] Channels
-        {
-            get
-            {
-                lock (channelList)
-                    return channelList.ToArray();
-            }
-        }
+        public QpServerChannel[] Channels { get; private set; } = new QpServerChannel[0];
 
         /// <summary>
         /// 已通过认证的通道
         /// </summary>
-        public QpServerChannel[] AuchenticatedChannel
-        {
-            get
-            {
-                lock (auchenticatedChannelList)
-                    return auchenticatedChannelList.ToArray();
-            }
-        }
+        public QpServerChannel[] AuchenticatedChannels { get; private set; } = new QpServerChannel[0];
 
         /// <summary>
         /// 通道连接上时
@@ -70,10 +56,16 @@ namespace Quick.Protocol
         {
             lock (channelList)
                 if (channelList.Contains(channel))
+                {
                     channelList.Remove(channel);
+                    Channels = channelList.ToArray();
+                }
             lock (auchenticatedChannelList)
                 if (auchenticatedChannelList.Contains(channel))
+                {
                     auchenticatedChannelList.Remove(channel);
+                    AuchenticatedChannels = auchenticatedChannelList.ToArray();
+                }
         }
 
         protected void OnNewChannelConnected(Stream stream, string channelName, CancellationToken token)
@@ -81,13 +73,19 @@ namespace Quick.Protocol
             var channel = new QpServerChannel(this, stream, channelName, token, options.Clone());
             //将通道加入到全部通道列表里面
             lock (channelList)
+            {
                 channelList.Add(channel);
+                Channels = channelList.ToArray();
+            }
 
             //认证通过后，才将通道添加到已认证通道列表里面
             channel.Auchenticated += (sender, e) =>
             {
                 lock (auchenticatedChannelList)
+                {
                     auchenticatedChannelList.Add(channel);
+                    AuchenticatedChannels = auchenticatedChannelList.ToArray();
+                }
             };
             channel.Disconnected += (sender, e) =>
             {
