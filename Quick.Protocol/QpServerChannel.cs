@@ -43,6 +43,15 @@ namespace Quick.Protocol
             //修改缓存大小
             ChangeBufferSize(options.BufferSize);
             IsConnected = true;
+
+            //初始化连接相关指令处理器
+            var connectAndAuthCommandExecuterManager = new CommandExecuterManager();
+            connectAndAuthCommandExecuterManager.Register(new Commands.Connect.Request(), connect);
+            connectAndAuthCommandExecuterManager.Register(new Commands.Authenticate.Request(), authenticate);
+            connectAndAuthCommandExecuterManager.Register(new Commands.HandShake.Request(), handShake);
+            connectAndAuthCommandExecuterManager.Register(new Commands.GetQpInstructions.Request(), getQpInstructions);
+            options.CommandExecuterManagerList = new List<CommandExecuterManager>() { connectAndAuthCommandExecuterManager };
+
             InitQpPackageHandler_Stream(stream);
             //开始读取其他数据包
             BeginReadPackage(cts.Token);
@@ -103,16 +112,6 @@ namespace Quick.Protocol
             {
                 Data = options.InstructionSet
             };
-        }
-
-        public void Start()
-        {
-            var connectAndAuthCommandExecuterManager = new CommandExecuterManager();
-            connectAndAuthCommandExecuterManager.Register(new Commands.Connect.Request(), connect);
-            connectAndAuthCommandExecuterManager.Register(new Commands.Authenticate.Request(), authenticate);
-            connectAndAuthCommandExecuterManager.Register(new Commands.HandShake.Request(), handShake);
-            connectAndAuthCommandExecuterManager.Register(new Commands.GetQpInstructions.Request(), getQpInstructions);
-            options.CommandExecuterManagerList = new List<CommandExecuterManager>() { connectAndAuthCommandExecuterManager };
         }
 
         /// <summary>

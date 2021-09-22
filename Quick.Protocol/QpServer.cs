@@ -98,7 +98,6 @@ namespace Quick.Protocol
             };
             Task.Run(() =>
             {
-                channel.Start();
                 ChannelConnected?.Invoke(this, channel);
             });
         }
