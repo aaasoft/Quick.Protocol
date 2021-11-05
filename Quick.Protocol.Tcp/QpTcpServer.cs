@@ -29,7 +29,7 @@ namespace Quick.Protocol.Tcp
 
         public override void Stop()
         {
-            tcpListener.Stop();
+            tcpListener?.Stop();
             tcpListener = null;
             base.Stop();
         }
