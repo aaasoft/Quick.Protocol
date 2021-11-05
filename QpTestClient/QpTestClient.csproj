@@ -6,9 +6,16 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Product>QP测试客户端</Product>
-    <Authors>scbeta</Authors>
+    <AssemblyTitle>QP测试客户端</AssemblyTitle>
+    <Authors>aaasoft</Authors>
     <Version>2.0.10</Version>
     <ApplicationIcon>Images\Globe.ico</ApplicationIcon>
+    <Description>用于测试连接到Quick.Protocol服务端的客户端。
+
+项目地址：https://github.com/aaasoft/Quick.Protocol</Description>
+    <Copyright>Apache License</Copyright>
+    <RepositoryUrl>https://github.com/aaasoft/Quick.Protocol</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/aaasoft/Quick.Protocol</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -87,6 +87,7 @@ namespace Quick.Protocol
         /// <summary>
         /// 指令执行器管理器列表
         /// </summary>
+        [Browsable(false)]
         [JsonIgnore]
         public List<CommandExecuterManager> CommandExecuterManagerList { get; set; } = new List<CommandExecuterManager>();
 

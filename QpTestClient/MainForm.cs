@@ -42,6 +42,8 @@ namespace QpTestClient
             btnRecvNotice_Notice.Click += BtnRecvNotice_Notice_Click;
             //命令相关
             btnTestCommand_Command.Click += BtnTestCommand_Command_Click;
+
+            this.Text += $" ver:{ProductInfoUtils.GetAssemblyVersion()}";
         }
 
 
@@ -417,6 +419,11 @@ namespace QpTestClient
             ConnectionContext connectionContext = findConnectionContext(commandNode);
             var form = new Forms.CommandTestForm(connectionContext, qpCommandInfo);
             form.Show();
+        }
+
+        private void 关于ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox().ShowDialog();
         }
     }
 }
