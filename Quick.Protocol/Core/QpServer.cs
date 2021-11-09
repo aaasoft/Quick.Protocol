@@ -26,14 +26,8 @@ namespace Quick.Protocol.Core
         /// <summary>
         /// 获取全部的通道
         /// </summary>
-        public QpServerChannel[] Channels
-        {
-            get
-            {
-                lock (channelList)
-                    return channelList.ToArray();
-            }
-        }
+        public QpServerChannel[] Channels { get; private set; } = new QpServerChannel[0];
+
         /// <summary>
         /// 通道连接上时
         /// </summary>
@@ -60,7 +54,10 @@ namespace Quick.Protocol.Core
         {
             lock (channelList)
                 if (channelList.Contains(channel))
+                {
                     channelList.Remove(channel);
+                    Channels = channelList.ToArray();
+                }
         }
 
         protected void OnNewChannelConnected(Stream stream, string channelName, CancellationToken token)
@@ -68,7 +65,10 @@ namespace Quick.Protocol.Core
             var channel = new QpServerChannel(this, stream, channelName, token, options.Clone());
             ChannelConnected?.Invoke(this, channel);
             lock (channelList)
+            {
                 channelList.Add(channel);
+                Channels = channelList.ToArray();
+            }
             channel.Disconnected += (sender, e) =>
             {
                 logger.LogTrace("[Connection]{0} Disconnected.", channelName);
