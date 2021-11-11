@@ -63,11 +63,6 @@ namespace Quick.Protocol
         [DisplayName("最大包大小")]
         public int MaxPackageSize { get; set; } = 10 * 1024 * 1024;
 
-        [Category("高级")]
-        [DisplayName("调试模式")]
-        [Description("调试模式为True时，会显示更多信息信息以方便调试")]
-        public bool DebugMode { get; set; } = false;
-
         public virtual void Check()
         {
             if (InternalTransportTimeout <= 0)

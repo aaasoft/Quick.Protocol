@@ -972,20 +972,12 @@ namespace Quick.Protocol
             }
             catch (CommandException ex)
             {
-                string errorMessage;
-                if (options.DebugMode)
-                    errorMessage = ExceptionUtils.GetExceptionString(ex);
-                else
-                    errorMessage = ExceptionUtils.GetExceptionMessage(ex);
+                string errorMessage = ExceptionUtils.GetExceptionString(ex);
                 SendCommandResponsePackage(commandId, ex.Code, errorMessage, null, null);
             }
             catch (Exception ex)
             {
-                string errorMessage;
-                if (options.DebugMode)
-                    errorMessage = ExceptionUtils.GetExceptionString(ex);
-                else
-                    errorMessage = ExceptionUtils.GetExceptionMessage(ex);
+                string errorMessage = ExceptionUtils.GetExceptionString(ex);
                 SendCommandResponsePackage(commandId, 255, errorMessage, null, null);
             }
         }
