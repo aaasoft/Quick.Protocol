@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/aaasoft/Quick.Protocol</PackageProjectUrl>
     <RepositoryUrl>https://github.com/aaasoft/Quick.Protocol</RepositoryUrl>
-    <Version>2.0.10</Version>
+    <Version>2.0.11</Version>
     <Authors>scbeta</Authors>
     <Company />
     <Product>Quick.Protocol</Product>
