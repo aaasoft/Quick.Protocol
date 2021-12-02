@@ -20,8 +20,8 @@ namespace QpTestClient.Controls
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"名称：{item.Name}");
-            sb.AppendLine($"请求编号：{item.RequestTypeName}");
-            sb.AppendLine($"响应编号：{item.ResponseTypeName}");
+            sb.AppendLine($"请求类名称：{item.RequestTypeName}");
+            sb.AppendLine($"响应类名称：{item.ResponseTypeName}");
             if (!string.IsNullOrEmpty(item.Description))
             {
                 sb.AppendLine("描述:");
